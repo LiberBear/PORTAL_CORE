@@ -1,0 +1,34 @@
+<?
+$MESS["AUTH_LOGIN_BUTTON"] = "Увійти";
+$MESS["AUTH_CLOSE_WINDOW"] = "Закрити";
+$MESS["AUTH_LOGIN"] = "Логін";
+$MESS["AUTH_PASSWORD"] = "Пароль";
+$MESS["AUTH_REMEMBER_ME"] = "запам'ятати мене";
+$MESS["AUTH_FORGOT_PASSWORD_2"] = "Забули пароль?";
+$MESS["AUTH_REGISTER"] = "Реєстрація";
+$MESS["AUTH_LOGOUT"] = "Вийти";
+$MESS["AUTH_MP"] = "Мій портал";
+$MESS["AUTH_WELCOME_TEXT"] = "Доброго дня";
+$MESS["AUTH_CAPTCHA_PROMT"] = "Введіть слово на картинці";
+$MESS["AUTH_BZP"] = "Бізнес-процеси";
+$MESS["AUTH_NEW_MESSAGES"] = "Повідомлення";
+$MESS["AUTH_NEW_MESSAGES_DESCR"] = "Переглянути повідомлення";
+$MESS["AUTH_PERSONAL_PAGE"] = "Моя сторінка";
+$MESS["AUTH_PERSONAL_PAGE_DESCR"] = "Посилання на різні елементи управління профілем";
+$MESS["AUTH_PROFILE"] = "Змінити профіль";
+$MESS["AUTH_PROFILE_DESCR"] = "Змінити дані свого профілю";
+$MESS["AUTH_TASKS"] = "Завдання";
+$MESS["AUTH_TASKS_DESCR"] = "Переглянути свої завдання";
+$MESS["AUTH_CALENDAR"] = "Календар";
+$MESS["AUTH_CALENDAR_DESCR"] = "Переглянути свій календар";
+$MESS["AUTH_PHOTO"] = "Фотографії";
+$MESS["AUTH_BLOG"] = "Блог";
+$MESS["AUTH_FILES"] = "Мій диск";
+$MESS["AUTH_GROUPS"] = "Групи";
+$MESS["AUTH_LOG"] = "Жива стрічка";
+$MESS["AUTH_MICROBLOG"] = "Мікроблог";
+$MESS["AUTH_USER_MENU"] = "меню користувача";
+$MESS["AUTH_EXCHANGE"] = "Нові листи в Microsoft Exchange";
+$MESS["AUTH_EXTMAIL"] = "Нові листи в поштовій скриньці";
+$MESS["AUTH_EXTMAIL_ERR"] = "Змінити налаштування поштової скриньки";
+?>

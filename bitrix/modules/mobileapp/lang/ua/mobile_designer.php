@@ -1,0 +1,37 @@
+<?
+$MESS["MOBILEAPP_ANDROID"] = "OS Android";
+$MESS["MOBILEAPP_IOS"] = "iOS";
+$MESS["MOBILEAPP_WP"] = "Windows Phone";
+$MESS["MOBILEAPP_GLOBAL"] = "Загальна";
+$MESS["MOBILEAPP_CONFIGNAME_ANDROID"] = "Конфігурація для OS Android";
+$MESS["MOBILEAPP_CONFIGNAME_GLOBAL"] = "Загальна конфігурація";
+$MESS["MOBILEAPP_CONFIGNAME_IOS"] = "Конфігурація для iOS";
+$MESS["MOBILEAPP_CONFIGNAME_WP"] = "Конфігурація для Windows Phone";
+$MESS["MOBILEAPP_ADD_IMAGE"] = "Додати зображення";
+$MESS["MOBILEAPP_SELECT_IMAGE"] = "Вибрати картинку";
+$MESS["MOBILEAPP_APP_PLATFORM"] = "Додати платформу";
+$MESS["MOBILEAPP_SAVE"] = "Зберегти";
+$MESS["MOBILEAPP_CREATE"] = "Створити";
+$MESS["MOBILEAPP_CLOSE"] = "Закрити";
+$MESS["MOBILEAPP_REMOVE"] = "Видалити";
+$MESS["MOBILEAPP_BACK"] = "Назад";
+$MESS["MOBILEAPP_TITLE"] = "Тема";
+$MESS["MOBILEAPP_NO_APPS"] = "У вас немає жодного додатки";
+$MESS["MOBILEAPP_CREATE_APP"] = "Створити додаток";
+$MESS["MOBILEAPP_APP_NAME"] = "Назва";
+$MESS["MOBILEAPP_LABEL_CODE"] = "Код додатки (латиницею)";
+$MESS["MOBILEAPP_LABEL_APP_FOLDER"] = "Папка додатки";
+$MESS["MOBILEAPP_PREVIEW_MAIN"] = "Основний";
+$MESS["MOBILEAPP_PREVIEW_LOAD"] = "Завантаження";
+$MESS["MOBILEAPP_PREVIEW_LISTS"] = "Списки";
+$MESS["MOBILEAPP_CREATE_NEW_TEMPLATE"] = "Створити новий шаблон";
+$MESS["MOBILEAPP_WITHOUT_TEMPLATE"] = "Не створювати шаблон";
+$MESS["MOBILEAPP_NEW_TEMPLATE_NAME"] = "Назва шаблону";
+$MESS["MOBILEAPP_SELECT_TEMPLATE"] = "Вибрати існуючий";
+$MESS["MOBILEAPP_APP_TEMPLATE"] = "Шаблон додатки";
+$MESS["MOBILEAPP_PREVIEW_HINT"] = "Натисніть на елемент програми, щоб налаштувати його параметри";
+$MESS["MOBILEAPP_APP_SAVE_CONFIG_WAIT"] = "Збереження конфігурації";
+$MESS["MOBILEAPP_APP_REMOVE_CONFIG_WAIT"] = "Видалення конфігурації";
+$MESS["MOBILEAPP_APP_CREATE_CONFIG_WAIT"] = "Створення конфігурації";
+$MESS["MOBILEAPP_APP_IS_ALREADY_EXISTS"] = "Додаток із заданим символьним кодом вже існує!";
+?>

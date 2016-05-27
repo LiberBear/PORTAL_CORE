@@ -1,0 +1,36 @@
+<?
+$MESS["CRM_STATUS_TYPE_STATUS"] = "Статусы";
+$MESS["CRM_STATUS_TYPE_SOURCE"] = "Источники";
+$MESS["CRM_STATUS_TYPE_CONTACT_TYPE"] = "Тип контакта";
+$MESS["CRM_STATUS_TYPE_COMPANY_TYPE"] = "Тип компании";
+$MESS["CRM_STATUS_TYPE_EMPLOYEES"] = "Кол-во сотрудников";
+$MESS["CRM_STATUS_TYPE_INDUSTRY"] = "Сфера деятельности";
+$MESS["CRM_STATUS_TYPE_DEAL_TYPE"] = "Тип сделки";
+$MESS["CRM_STATUS_TYPE_DEAL_STAGE"] = "Стадии сделки";
+$MESS["CRM_STATUS_TYPE_QUOTE_STATUS"] = "Статусы предложения";
+$MESS["CRM_STATUS_TYPE_DEAL_STATE"] = "Состояние сделки";
+$MESS["CRM_STATUS_TYPE_EVENT_TYPE"] = "Тип события";
+$MESS["CRM_STATUS_ERR_NAME"] = "Пустое имя статуса.";
+$MESS["CRM_STATUS_ERR_SYSTEM"] = "Не правильно задан флаг \"системный статус\"";
+$MESS["CRM_STATUS_ERR_STATUS_ID"] = "Пустой идентификатор статуса статуса.";
+$MESS["CRM_STATUS_ERR_DUPLICATE_STATUS_ID"] = "Указанный идентификатор статуса, уже существует.";
+$MESS["CRM_STATUS_TYPE_INVOICE_STATUS"] = "Статусы счёта";
+$MESS["CRM_STATUS_TYPE_PRODUCT"] = "Продукты";
+$MESS["CRM_STATUS_TYPE_HONORIFIC"] = "Обращения";
+$MESS["CRM_STATUS_TYPE_STATUS_NEW"] = "Не обработан";
+$MESS["CRM_STATUS_TYPE_STATUS_ASSIGNED"] = "Назначен ответственный";
+$MESS["CRM_STATUS_TYPE_STATUS_DETAILS"] = "Уточнение информации";
+$MESS["CRM_STATUS_TYPE_STATUS_CANNOT_CONTACT"] = "Не удалось связаться";
+$MESS["CRM_STATUS_TYPE_STATUS_IN_PROCESS"] = "В обработке";
+$MESS["CRM_STATUS_TYPE_STATUS_ON_HOLD"] = "Обработка приостановлена";
+$MESS["CRM_STATUS_TYPE_STATUS_CONVERTED"] = "Сконвертирован";
+$MESS["CRM_STATUS_TYPE_STATUS_RESTORED"] = "Восстановлен";
+$MESS["CRM_STATUS_TYPE_STATUS_JUNK"] = "Некачественный лид";
+$MESS["CRM_DEAL_STAGE_NEW"] = "В обработке";
+$MESS["CRM_DEAL_STAGE_ON_HOLD"] = "Обработка приостановлена";
+$MESS["CRM_DEAL_STAGE_DETAILS"] = "Уточнение информации";
+$MESS["CRM_DEAL_STAGE_PROPOSAL"] = "Предложение";
+$MESS["CRM_DEAL_STAGE_NEGOTIATION"] = "Переговоры в процессе";
+$MESS["CRM_DEAL_STAGE_WON"] = "Сделка заключена";
+$MESS["CRM_DEAL_STAGE_LOSE"] = "Сделка не заключена";
+?>

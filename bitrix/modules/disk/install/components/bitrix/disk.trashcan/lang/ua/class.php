@@ -1,0 +1,36 @@
+<?
+$MESS["DISK_TRASHCAN_ERROR_COULD_NOT_FIND_OBJECT"] = "Не вдалося знайти об'єкт.";
+$MESS["DISK_TRASHCAN_NAME"] = "Кошик";
+$MESS["DISK_TRASHCAN_COLUMN_ID"] = "ID";
+$MESS["DISK_TRASHCAN_COLUMN_NAME"] = "Назва";
+$MESS["DISK_TRASHCAN_COLUMN_CREATE_TIME"] = "Створено";
+$MESS["DISK_TRASHCAN_COLUMN_UPDATE_TIME"] = "Змінено";
+$MESS["DISK_TRASHCAN_COLUMN_CREATE_USER"] = "Хто створив";
+$MESS["DISK_TRASHCAN_COLUMN_UPDATE_USER"] = "Хто змінив";
+$MESS["DISK_TRASHCAN_COLUMN_FORMATTED_SIZE"] = "Розмір";
+$MESS["DISK_TRASHCAN_ACT_DESTROY"] = "Видалити";
+$MESS["DISK_TRASHCAN_ACT_OPEN"] = "Відкрити";
+$MESS["DISK_TRASHCAN_ACT_DOWNLOAD"] = "Завантажити";
+$MESS["DISK_TRASHCAN_ACT_RESTORE"] = "Відновити";
+$MESS["DISK_TRASHCAN_TRASH_DELETE_TITLE"] = "Підтвердження видалення";
+$MESS["DISK_TRASHCAN_TRASH_RESTORE_TITLE"] = "Підтвердження відновлення";
+$MESS["DISK_TRASHCAN_TRASH_EMPTY_TITLE"] = "Очищення кошика";
+$MESS["DISK_TRASHCAN_TRASH_DELETE_DESTROY_FILE_CONFIRM"] = "Ви хочете видалити назавжди документ '#NAME#'?";
+$MESS["DISK_TRASHCAN_TRASH_DELETE_DESTROY_FOLDER_CONFIRM"] = "Ви хочете видалити назавжди папку '#NAME#'?";
+$MESS["DISK_TRASHCAN_TRASH_RESTORE_FILE_CONFIRM"] = "Ви хочете відновити документ '#NAME#'?";
+$MESS["DISK_TRASHCAN_TRASH_RESTORE_FOLDER_CONFIRM"] = "Ви хочете відновити папку '#NAME#'?";
+$MESS["DISK_TRASHCAN_TRASH_DELETE_FOLDER_CONFIRM"] = "Ви хочете перемістити папку '#NAME#' у кошик?";
+$MESS["DISK_TRASHCAN_TRASH_DELETE_FILE_CONFIRM"] = "Ви хочете перемістити документ '#NAME#' у кошик?";
+$MESS["DISK_TRASHCAN_TRASH_DELETE_GROUP_CONFIRM"] = "Ви хочете видалити назавжди відмічені об'єкти?";
+$MESS["DISK_TRASHCAN_TRASH_RESTORE_GROUP_CONFIRM"] = "Ви хочете відновити зазначені об'єкти?";
+$MESS["DISK_TRASHCAN_TRASH_EMPTY_FOLDER_CONFIRM"] = "Ви хочете очистити кошик?";
+$MESS["DISK_TRASHCAN_TRASH_EMPTY_BUTTON"] = "Очистити";
+$MESS["DISK_TRASHCAN_TRASH_DESTROY_BUTTON"] = "Видалити назавжди";
+$MESS["DISK_TRASHCAN_TRASH_DELETE_BUTTON"] = "Перемістити в кошик";
+$MESS["DISK_TRASHCAN_TRASH_RESTORE_BUTTON"] = "Відновити";
+$MESS["DISK_TRASHCAN_TRASH_CANCEL_DELETE_BUTTON"] = "Скасування";
+$MESS["DISK_TRASHCAN_TRASH_CANCEL_STOP_BUTTON"] = "Зупинити";
+$MESS["DISK_TRASHCAN_TRASH_COUNT_ELEMENTS"] = "Файлів/папок до видалення:";
+$MESS["DISK_TRASHCAN_COLUMN_DELETE_TIME"] = "Вилучений";
+$MESS["DISK_TRASHCAN_COLUMN_DELETE_USER"] = "Хто видалив";
+?>

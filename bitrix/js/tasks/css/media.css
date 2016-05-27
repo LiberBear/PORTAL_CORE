@@ -1,0 +1,6 @@
+.tasks-icon-help {
+	width: 15px;
+	height: 15px;
+	background: url(images/media.png) no-repeat 0 -179px;
+	cursor: help;
+}

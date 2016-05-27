@@ -1,0 +1,9 @@
+<?
+$MESS["CHAT_ENTITY_ID_FIELD"] = "ID";
+$MESS["CHAT_ENTITY_TITLE_FIELD"] = "Тема чату";
+$MESS["CHAT_ENTITY_AUTHOR_ID_FIELD"] = "ID автора чату";
+$MESS["CHAT_ENTITY_CALL_TYPE_FIELD"] = "Тип дзвінка";
+$MESS["CHAT_ENTITY_CALL_NUMBER_FIELD"] = "Номер для дзвінка";
+$MESS["CHAT_ENTITY_ENTITY_TYPE_FIELD"] = "Сутність";
+$MESS["CHAT_ENTITY_ENTITY_ID_FIELD"] = "ID сутності";
+?>

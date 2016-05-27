@@ -1,0 +1,31 @@
+<?
+$MESS["TASKS_PARENT_SELF"] = "Завдання не може бути підзавданням самого себе";
+$MESS["TASKS_DEPENDS_ON_SELF"] = "Завдання не може залежати само від себе";
+$MESS["TASKS_BAD_TASK_ID_EX"] = "Завдання не знайдене";
+$MESS["TASKS_BAD_PARENT_ID"] = "Завдання, зазначене в полі «Надзавдання», не знайдено";
+$MESS["TASKS_BAD_RESPONSIBLE_ID"] = "Не зазначений відповідальний";
+$MESS["TASKS_BAD_USER_ID"] = "Не вказаний користувач";
+$MESS["TASKS_BAD_NAME"] = "Не зазначений тег";
+$MESS["TASKS_BAD_FILE_ID"] = "Не вказано файл";
+$MESS["TASKS_BAD_TASK_ID"] = "Не вказано завдання";
+$MESS["TASKS_BAD_DEPENDS_ON_ID"] = "Не вказано попереднє завдання";
+$MESS["TASKS_BAD_TITLE"] = "Не зазначена назва завдання";
+$MESS["TASKS_BAD_USER_ID_EX"] = "Користувач не знайдений";
+$MESS["TASKS_BAD_RESPONSIBLE_ID_EX"] = "Користувач, зазначений у полі «Відповідальний», не знайдений";
+$MESS["TASKS_BAD_DEPENDS_ON_ID_EX"] = "Попереднє завдання не знайдено";
+$MESS["TASKS_BAD_FILE_ID_EX"] = "Файл не знайдено";
+$MESS["TASKS_BAD_REMIND_DATE"] = "Не вказана дата нагадування";
+$MESS["TASKS_UNKNOWN_ADD_ERROR"] = "Помилка додавання завдання";
+$MESS["TASKS_UNKNOWN_UPDATE_ERROR"] = "Помилка оновлення завдання";
+$MESS["TASKS_BAD_PLAN_DATES"] = "У плануванні термінів вказана дата закінчення менша дати старту";
+$MESS["TASKS_CHECKLISTITEM_BAD_TITLE"] = "Не вказано назву";
+$MESS["TASKS_CHECKLISTITEM_BAD_COMPLETE_FLAG"] = "Некоректно вказаний прапор завершеності";
+$MESS["TASKS_ACCESS_DENIED"] = "Недостатньо прав для вчинення дії";
+$MESS["TASKS_ACTION_NOT_ALLOWED"] = "Дія над завданням не дозволена";
+$MESS["TASKS_FAILED_TO_DO_ACTION"] = "Не вдалося виконати дію";
+$MESS["TASKS_ERR_GROUP_IN_USE"] = "Група не може бути вилучена, тому що до неї прив'язані завдання";
+$MESS["TASKS_BAD_CREATED_BY"] = "Не вказаний постановник";
+$MESS["TASKS_TASK_CREATE_ACCESS_DENIED"] = "Недостатньо прав для створення завдання";
+$MESS["TASKS_CHECKLISTITEM_UNKNOWN_FIELD"] = "Невідоме поле в масиві-аргументі";
+$MESS["TASKS_CHECKLISTITEM_BAD_SORT_DIRECTION"] = "Некоректний напрямок сортування в масиві сортування";
+?>

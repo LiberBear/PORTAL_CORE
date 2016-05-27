@@ -1,0 +1,30 @@
+<?
+$MESS["IM_ERROR_IMPORT_ID"] = "Вказаний невірний ідентифікатор імпортованого повідомлення";
+$MESS["IM_ERROR_MESSAGE_CREATE"] = "Помилка при створенні повідомлення";
+$MESS["IM_ERROR_MESSAGE_DATE"] = "Зазначений невірний формат часу створення повідомлення";
+$MESS["IM_ERROR_MESSAGE_TYPE"] = "Вказано невірний тип повідомлення";
+$MESS["IM_ERROR_MESSAGE_TO_FROM"] = "Вказаний некоректний одержувач або відправник повідомлення";
+$MESS["IM_ERROR_MESSAGE_TO"] = "Зазначений некоректний одержувач повідомлення";
+$MESS["IM_ERROR_MESSAGE_FROM"] = "Зазначений некоректний відправник повідомлення";
+$MESS["IM_ERROR_MESSAGE_TEXT"] = "Не заданий текст повідомлення";
+$MESS["IM_ERROR_MESSAGE_AUTHOR"] = "Зазначений некоректний автор повідомлення";
+$MESS["IM_ERROR_MESSAGE_CANCELED"] = "Ви не можете відправляти повідомлення зазначеному одержувачу";
+$MESS["IM_ERROR_MESSAGE_PRIVACY"] = "Повідомлення не доставлено: користувач приймає повідомлення тільки від свого списку контактів";
+$MESS["IM_ERROR_MESSAGE_PRIVACY_SELF"] = "Повідомлення не доставлено: користувач не зможе відповісти вам через ваші налаштувань приватності";
+$MESS["IM_ERROR_GROUP_CANCELED"] = "Ви не можете відправляти повідомлення в зазначений чат";
+$MESS["IM_ERROR_NOTIFY_MODULE"] = "Не вказаний модуль-відправник повідомлення";
+$MESS["IM_ERROR_NOTIFY_EVENT"] = "Не зазначено мнемонічне ім'я повідомлення";
+$MESS["IM_ERROR_NOTIFY_TYPE"] = "Вказаний некоректний тип повідомлення";
+$MESS["IM_ERROR_NOTIFY_DATE"] = "Вказаний некоректний формат часу настання події";
+$MESS["IM_ERROR_NOTIFY_BUTTON"] = "Вказаний некоректний набір кнопок";
+$MESS["IM_ERROR_NOTIFY_CANCELED"] = "Ви не можете відправляти повідомлення";
+$MESS["IM_ERROR_BUTTON_ACCEPT"] = "Прийняти";
+$MESS["IM_ERROR_BUTTON_CANCEL"] = "Відмовитися";
+$MESS["IM_SMILE_SET_EMPTY"] = "Набір: #ID#";
+$MESS["IM_MESSAGE_DELETED"] = "Це повідомлення було видалено.";
+$MESS["IM_MESSAGE_DELETED_OUT"] = "Повідомлення від #DATE# було видалено.";
+$MESS["IM_MESSAGE_LIKE"] = "Мені подобається ваше повідомлення \"#MESSAGE#\" в чаті \"#TITLE#\"";
+$MESS["IM_MESSAGE_LIKE_PRIVATE"] = "Мені подобається ваше повідомлення \"#MESSAGE#\" в нашому діалозі.";
+$MESS["IM_MESSAGE_FILE"] = "Файл";
+$MESS["IM_MESSAGE_FILE_DOWN"] = "Завантажити файл:";
+?>

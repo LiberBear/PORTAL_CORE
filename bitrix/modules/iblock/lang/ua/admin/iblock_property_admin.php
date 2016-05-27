@@ -1,0 +1,36 @@
+<?
+$MESS["IBP_ADM_TO_ADD"] = "Додати властивість";
+$MESS["IBP_ADM_TO_ADD_TITLE"] = "Додати нову властивість";
+$MESS["IBP_ADM_ID"] = "ID";
+$MESS["IBP_ADM_NAME"] = "Назва";
+$MESS["IBP_ADM_CODE"] = "Символьний код";
+$MESS["IBP_ADM_SORT"] = "Сортування";
+$MESS["IBP_ADM_ACTIVE"] = "Активність";
+$MESS["IBP_ADM_PROPERTY_TYPE"] = "Тип";
+$MESS["IBP_ADM_MULTIPLE"] = "Множинне";
+$MESS["IBP_ADM_XML_ID"] = "Зовнішній код";
+$MESS["IBP_ADM_WITH_DESCRIPTION"] = "Має опис";
+$MESS["IBP_ADM_SEARCHABLE"] = "Пошук";
+$MESS["IBP_ADM_FILTRABLE"] = "Показувати у фільтрі";
+$MESS["IBP_ADM_IS_REQUIRED"] = "Обов'язкове";
+$MESS["IBP_ADM_HINT"] = "Підказка";
+$MESS["IBP_ADM_CONFIRM_DEL_MESSAGE"] = "Будуть видалені всі значення цієї властивості. Продовжити?";
+$MESS["IBP_ADM_TITLE"] = "#IBLOCK_NAME#: Властивості";
+$MESS["IBP_ADM_DELETE_ERROR"] = "Помилка видалення.";
+$MESS["IBP_ADM_SAVE_ERROR"] = "Помилка збереження запису ##ID#: #ERROR_TEXT#";
+$MESS["IBP_ADM_PAGER"] = "Властивості";
+$MESS["IBLOCK_PROP_S"] = "Рядок";
+$MESS["MAIN_ADMIN_LIST_SELECTED"] = "Обрано:";
+$MESS["IBLOCK_PROP_N"] = "Число";
+$MESS["MAIN_ADMIN_LIST_CHECKED"] = "Позначено:";
+$MESS["IBLOCK_PROP_L"] = "Список";
+$MESS["MAIN_ADMIN_LIST_DELETE"] = "видалити";
+$MESS["IBLOCK_PROP_F"] = "Файл";
+$MESS["MAIN_ADMIN_LIST_ACTIVATE"] = "активувати";
+$MESS["IBLOCK_PROP_G"] = "Прив'язка до розділів";
+$MESS["MAIN_ADMIN_LIST_DEACTIVATE"] = "деактивувати";
+$MESS["IBLOCK_PROP_E"] = "Прив'язка до елементів";
+$MESS["IBLOCK_YES"] = "Так";
+$MESS["IBLOCK_NO"] = "Ні";
+$MESS["IBLOCK_ALL"] = "(будь-який)";
+?>

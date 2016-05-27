@@ -1,0 +1,8 @@
+<?
+$MESS["LIGHT_HEADER_MAIN_LINK"] = "На головну сторінку";
+$MESS["LIGHT_HEADER_SEARCH_EMPLOYEE"] = "Співробітники";
+$MESS["LIGHT_HEADER_SEARCH_DOCS"] = "Документи";
+$MESS["LIGHT_HEADER_SEARCH_GROUPS"] = "Групи";
+$MESS["LIGHT_HEADER_SEARCH_MICROBLOG"] = "Мікроблоги";
+$MESS["LIGHT_HEADER_SEARCH_OTHER"] = "Інше";
+?>

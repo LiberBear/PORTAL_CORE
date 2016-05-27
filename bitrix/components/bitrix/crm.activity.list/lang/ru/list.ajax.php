@@ -1,0 +1,3 @@
+<?
+$MESS["CRM_ACTIVITY_LIST_ROW_COUNT"] = "Всего: #ROW_COUNT#";
+?>

@@ -1,0 +1,5 @@
+<?
+$MESS["CRM_WGT_RATING_NOMINEE_POSITION"] = "Ви зайняли #POSITION# місце";
+$MESS["CRM_WGT_RATING_LEGEND"] = "з результатом #LEGEND#";
+$MESS["CRM_WGT_RATING_POSITION"] = "#POSITION# місце";
+?>

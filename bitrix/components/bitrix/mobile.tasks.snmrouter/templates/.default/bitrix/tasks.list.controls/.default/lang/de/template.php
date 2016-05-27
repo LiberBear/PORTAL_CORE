@@ -1,0 +1,11 @@
+<?
+$MESS["MB_TASKS_PANEL_TAB_ALL"] = "Alle";
+$MESS["MB_TASKS_PANEL_TAB_PROJECTS"] = "Projekte";
+$MESS["MB_TASKS_ROLES_TASK_ADD"] = "Aufgabe erstellen";
+$MESS["MB_TASKS_CONTROLS_TITLE"] = "Aufgabenkategorien";
+$MESS["MB_TASKS_ROLES_VIEW_TASK_CATEGORY_WO_DEADLINE"] = "Ohne Frist<br> (Ich bin verantwortlich)";
+$MESS["MB_TASKS_ROLES_VIEW_TASK_CATEGORY_NEW"] = "Nicht angezeigt";
+$MESS["MB_TASKS_ROLES_VIEW_TASK_CATEGORY_EXPIRED_CANDIDATES"] = "Fast überfällig";
+$MESS["MB_TASKS_ROLES_VIEW_TASK_CATEGORY_EXPIRED"] = "Überfällig";
+$MESS["MB_TASKS_ROLES_VIEW_TASK_CATEGORY_WAIT_CTRL"] = "Muss kontrolliert werden";
+?>

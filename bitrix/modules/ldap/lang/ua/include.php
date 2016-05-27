@@ -1,0 +1,37 @@
+<?
+$MESS["LDAP_ERR_NAME"] = "Назва";
+$MESS["LDAP_ERR_SERVER"] = "Адреса сервера AD/LDAP ";
+$MESS["LDAP_ERR_PORT"] = "Порт сервера AD/LDAP";
+$MESS["LDAP_ERR_BASE_DN"] = "Корінь дерева (Base DN)";
+$MESS["LDAP_ERR_GROUP_FILT"] = "Фільтр для груп користувачів";
+$MESS["LDAP_ERR_GROUP_ATTR"] = "Атрибут ідентифікатора групи";
+$MESS["LDAP_ERR_USER_FILT"] = "Фільтр для користувачів";
+$MESS["LDAP_ERR_USER_ATTR"] = "Атрибут ідентифікатора користувача";
+$MESS["LDAP_ERR_EMPTY"] = "Не заповнено поле:";
+$MESS["LDAP_FIELD_ACTIVE"] = "Активність";
+$MESS["LDAP_FIELD_EMAIIL"] = "E-mail адреса";
+$MESS["LDAP_FIELD_NAME"] = "Ім'я";
+$MESS["LDAP_FIELD_LAST_NAME"] = "Прізвище";
+$MESS["LDAP_FIELD_SECOND_NAME"] = "По-батькові";
+$MESS["LDAP_FIELD_GENDER"] = "Стать";
+$MESS["LDAP_FIELD_BIRTHDAY"] = "Дата народження";
+$MESS["LDAP_FIELD_PROF"] = "Професія";
+$MESS["LDAP_FIELD_WWW"] = "WWW-сторінка";
+$MESS["LDAP_FIELD_PHONE"] = "Телефон";
+$MESS["LDAP_FIELD_FAX"] = "Факс";
+$MESS["LDAP_FIELD_MOB"] = "Мобільний";
+$MESS["LDAP_FIELD_PAGER"] = "Пейджер";
+$MESS["LDAP_FIELD_STREET"] = "Вулиця, будинок";
+$MESS["LDAP_FIELD_MAILBOX"] = "Поштова скринька";
+$MESS["LDAP_FIELD_CITY"] = "Місто";
+$MESS["LDAP_FIELD_STATE"] = "Область / край";
+$MESS["LDAP_FIELD_ZIP"] = "Поштовий індекс";
+$MESS["LDAP_FIELD_COUNTRY"] = "Країна";
+$MESS["LDAP_FIELD_COMPANY"] = "Найменування компанії";
+$MESS["LDAP_FIELD_DEP"] = "Департамент / Відділ";
+$MESS["LDAP_FIELD_POS"] = "Посада";
+$MESS["LDAP_FIELD_WORK_PHONE"] = "Робочий телефон";
+$MESS["LDAP_FIELD_WORK_FAX"] = "Робочий факс";
+$MESS["LDAP_FIELD_WORK_PAGER"] = "Робочий пейджер";
+$MESS["LDAP_FIELD_ADMIN_NOTES"] = "Нотатки адміністратора";
+?>
