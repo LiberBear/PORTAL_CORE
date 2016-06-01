@@ -483,6 +483,9 @@ div.mail-message-unread-spam {background-position:0 2px;}
 .mail-message-notspam.adm-list-mail-icon {margin-top:-2px;}
 
 
+.perfmon_code {color:navy;}
+.perfmon_number {white-space:nowrap;}
+.perfmon_number span {width:4px;display:inline-block;}
 /*Menu icon*/
 #security_menu_icon {background-image:url(icons/security/mnu_security.gif);}
 #security_page_icon {background-image:url(icons/security/title.gif);}
