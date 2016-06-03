@@ -322,15 +322,10 @@
 
 .bx-viewer-file-last-v {
 	color: #979ca3;
-	cursor: pointer;
 	display: block;
 	font-size: 10px;
 	font-weight: bold;
 	line-height: 14px;
-}
-
-.bx-viewer-file-last-v:hover {
-	text-decoration:underline;
 }
 
 .bx-viewer-size {

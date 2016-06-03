@@ -126,8 +126,13 @@ class CSocNetLogDestination
 	public static function GetStucture($arParams = Array())
 	{
 		$bIntranetEnable = false;
-		if(IsModuleInstalled('intranet') && IsModuleInstalled('iblock'))
+		if(
+			IsModuleInstalled('intranet')
+			&& IsModuleInstalled('iblock')
+		)
+		{
 			$bIntranetEnable = true;
+		}
 
 		$result = array(
 			"department" => array(),
@@ -351,6 +356,7 @@ class CSocNetLogDestination
 		global $USER, $CACHE_MANAGER;
 
 		$userId = intval($USER->GetID());
+		$extranetUserIdList = \Bitrix\Socialnetwork\ComponentHelper::getExtranetUserIdList();
 
 		if (
 			isset($arParams['all'])
@@ -566,7 +572,7 @@ class CSocNetLogDestination
 						'name' => $sName,
 						'avatar' => empty($arFileTmp['src'])? '': $arFileTmp['src'],
 						'desc' => $arUser['WORK_POSITION'] ? $arUser['WORK_POSITION'] : ($arUser['PERSONAL_PROFESSION'] ? $arUser['PERSONAL_PROFESSION'] : '&nbsp;'),
-						'isExtranet' => (isset($GLOBALS["arExtranetUserID"]) && is_array($GLOBALS["arExtranetUserID"]) && in_array($arUser["ID"], $GLOBALS["arExtranetUserID"]) ? "Y" : "N"),
+						'isExtranet' => (in_array($arUser["ID"], $extranetUserIdList) ? "Y" : "N"),
 						'isEmail' => ($arUser['EXTERNAL_AUTH_ID'] == 'email' ? 'Y' : 'N')
 					);
 
@@ -1002,17 +1008,12 @@ class CSocNetLogDestination
 			}
 		}
 		
-		if (
+		$siteId = (
 			isset($arParams['site_id'])
 			&& strlen($arParams['site_id']) > 0
-		)
-		{
-			$siteId = $arParams['site_id'];
-		}
-		else
-		{
-			$siteId = SITE_ID;
-		}
+				? $arParams['site_id']
+				: SITE_ID
+		);
 
 		$arFilter = array(
 			"USER_ID" => $userId,
@@ -1063,7 +1064,9 @@ class CSocNetLogDestination
 			$arSocnetGroupsTmp[$arGroupTmp['id']] = $arGroupTmp;
 		}
 		if (isset($arParams['features']) && !empty($arParams['features']))
+		{
 			self::GetSocnetGroupFilteredByFeaturePerms($arSocnetGroupsTmp, $arParams['features']);
+		}
 
 		foreach ($arSocnetGroupsTmp as $value)
 		{
@@ -1649,6 +1652,7 @@ class CSocNetLogDestination
 		);
 
 		$currentUserId = $USER->GetId();
+		$extranetUserIdList = \Bitrix\Socialnetwork\ComponentHelper::getExtranetUserIdList();
 
 		if (!$currentUserId)
 		{
@@ -1815,7 +1819,7 @@ class CSocNetLogDestination
 				'name' => $sName,
 				'avatar' => empty($arFileTmp['src'])? '': $arFileTmp['src'],
 				'desc' => $arUser['WORK_POSITION'] ? $arUser['WORK_POSITION'] : ($arUser['PERSONAL_PROFESSION'] ? $arUser['PERSONAL_PROFESSION'] : '&nbsp;'),
-				'isExtranet' => (isset($GLOBALS["arExtranetUserID"]) && is_array($GLOBALS["arExtranetUserID"]) && in_array($arUser["ID"], $GLOBALS["arExtranetUserID"]) ? "Y" : "N")
+				'isExtranet' => (in_array($arUser["ID"], $extranetUserIdList) ? "Y" : "N")
 			);
 
 			$arUsers['U'.$arUser["ID"]]['checksum'] = md5(serialize($arUsers['U'.$arUser["ID"]]));
@@ -1840,6 +1844,7 @@ class CSocNetLogDestination
 	{
 		static $siteNameFormat = false;
 		static $isIntranetInstalled = false;
+		static $extranetUserIdList = false;
 
 		if ($siteNameFormat === false)
 		{
@@ -1849,6 +1854,11 @@ class CSocNetLogDestination
 		if ($isIntranetInstalled === false)
 		{
 			$isIntranetInstalled = (IsModuleInstalled('intranet') ? 'Y' : 'N');
+		}
+
+		if ($extranetUserIdList === false)
+		{
+			$extranetUserIdList = \Bitrix\Socialnetwork\ComponentHelper::getExtranetUserIdList();
 		}
 
 		$arFileTmp = CFile::ResizeImageGet(
@@ -1886,9 +1896,7 @@ class CSocNetLogDestination
 				)
 			),
 			'isExtranet' => (
-				isset($GLOBALS["arExtranetUserID"])
-				&& is_array($GLOBALS["arExtranetUserID"])
-				&& in_array($arUser["ID"], $GLOBALS["arExtranetUserID"])
+				in_array($arUser["ID"], $extranetUserIdList)
 					? "Y"
 					: "N"
 			),

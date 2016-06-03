@@ -229,6 +229,7 @@ class CVoxImplantHistory
 
 	public static function DownloadAgent($historyID, $recordUrl, $attachToCrm = true)
 	{
+		self::WriteToLog('Downloading record ' . $recordUrl);
 		$historyID = intval($historyID);
 		if (strlen($recordUrl) <= 0 || $historyID <= 0)
 		{
@@ -260,6 +261,13 @@ class CVoxImplantHistory
 
 			IO\Directory::createDirectory(IO\Path::getDirectory($tempPath));
 
+			if(IO\Directory::isDirectoryExists(IO\Path::getDirectory($tempPath)) === false)
+			{
+				self::WriteToLog('Error creating temporary directory ' . $tempPath);
+				return false;
+			}
+
+			self::WriteToLog('Downloading to temporary file ' . $tempPath);
 			$file = new IO\File($tempPath);
 			$handler = $file->open("w+");
 			if($handler === false)

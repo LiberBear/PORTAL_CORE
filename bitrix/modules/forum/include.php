@@ -67,6 +67,8 @@ if(!defined("CACHED_b_forum_user"))
 CModule::AddAutoloadClasses(
 	"forum",
 	array(
+		"bitrix\\forum\\internals\\basetable" => "lib/internals/basetable.php",
+
 		"textParser" => "classes/general/functions.php",
 		"forumTextParser" => "classes/general/functions.php",
 
@@ -2173,17 +2175,17 @@ function ForumSetReadTopic($FID, $TID)
 
 function ForumSetLastVisit($FID = false, $TID = false, $arAddParams = array())
 {
-	global $DB;
+	global $DB, $USER;
 	// For custom components
 	$GLOBALS["FID"] = $FID = ($FID === false && intVal($GLOBALS["FID"]) > 0 ? intVal($GLOBALS["FID"]) : $FID);
 
-	if ($GLOBALS["USER"]->IsAuthorized())
+	if ($USER->isAuthorized())
 	{
 		$GLOBALS["SHOW_FORUM_ICON"] = true; // out-of-date param
-		$USER_ID = $GLOBALS["USER"]->GetID();
+		$USER_ID = $USER->getID();
 		$arUserFields = array("=LAST_VISIT" => $DB->GetNowFunction());
 
-		if (!is_array($_SESSION["FORUM"]["USER"]) || $_SESSION["FORUM"]["USER"]["USER_ID"] != $GLOBALS["USER"]->GetID())
+		if (!is_array($_SESSION["FORUM"]["USER"]) || $_SESSION["FORUM"]["USER"]["USER_ID"] != $USER->getID())
 		{
 			$_SESSION["FORUM"]["USER"] = CForumUser::GetByUSER_ID($USER_ID);
 			if (!$_SESSION["FORUM"]["USER"])
@@ -2201,9 +2203,7 @@ function ForumSetLastVisit($FID = false, $TID = false, $arAddParams = array())
 
 	ForumInitParams();
 
-	if ($_SESSION["SESS_SEARCHER_ID"] > 0 && CModule::IncludeModule("statistic"))
-		return;
-	else
+	if (!($_SESSION["SESS_SEARCHER_ID"] > 0 && CModule::IncludeModule("statistic")))
 		CForumStat::RegisterUSER(array("SITE_ID" => SITE_ID, "FORUM_ID" => $FID, "TOPIC_ID" => $TID));
 	return true;
 }

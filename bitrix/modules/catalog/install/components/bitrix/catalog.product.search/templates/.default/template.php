@@ -40,7 +40,7 @@ function renderTree($sections, $level = 0, $tableId)
 	$content = '';
 	$level = (int)$level;
 
-	foreach ($sections AS $section)
+	foreach ($sections as $section)
 	{
 		$bSubmenu = $section["dynamic"];
 		$bSectionActive = $section["open"];
@@ -68,6 +68,7 @@ function renderTree($sections, $level = 0, $tableId)
 		$content .= '<div class="adm-sub-submenu-block-children">' . ($bSubmenu ? renderTree($section["items"], $level + 1, $tableId) : '') . '</div>';
 		$content .= '</div>';
 	}
+	unset($section);
 	return $content;
 }
 
@@ -527,7 +528,7 @@ else
 				<tr>
 					<td nowrap><?= GetMessage("SPS_CODE") ?>:</td>
 					<td nowrap>
-						<input type="text" name="filter_code" size="50" value="<? echo htmlspecialcharsex($_REQUEST["filter_code"]) ?>">
+						<input type="text" name="filter_code" size="50" value="<? echo htmlspecialcharsbx($_REQUEST["filter_code"]) ?>">
 					</td>
 				</tr>
 				<tr>
@@ -695,7 +696,6 @@ else
 	</script>
 <? endif ?>
 	<script type="text/javascript">
-
 		<?
 		if (sizeof($arResult['IBLOCKS']) > 1):
 			$iblockMenu = array(array(

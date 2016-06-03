@@ -478,7 +478,9 @@ class CComponentUtil
 		}
 
 		if (!array_key_exists("PARAMETERS", $arComponentParameters) || !is_array($arComponentParameters["PARAMETERS"]))
-			return false;
+		{
+			$arComponentParameters["PARAMETERS"] = array();
+		}
 
 		if (!array_key_exists("GROUPS", $arComponentParameters) || !is_array($arComponentParameters["GROUPS"]))
 			$arComponentParameters["GROUPS"] = array();
@@ -792,6 +794,48 @@ class CComponentUtil
 					}
 				}
 			}
+		}
+
+		if (CHTMLPagesCache::isOn())
+		{
+			$arComponentParameters["GROUPS"]["COMPOSITE_SETTINGS"] = array(
+				"NAME" => GetMessage("COMP_GROUP_COMPOSITE_SETTINGS"),
+				"SORT" => 800
+			);
+
+			$arComponentParameters["PARAMETERS"]["COMPOSITE_FRAME_MODE"] = array(
+				"PARENT" => "COMPOSITE_SETTINGS",
+				"NAME" => GetMessage("COMP_PROP_COMPOSITE_FRAME_MODE"),
+				"TYPE" => "LIST",
+				"VALUES" => array(
+					"A" => GetMessage("COMP_PROP_COMPOSITE_FRAME_MODE_AUTO"),
+					"Y" => GetMessage("COMP_PROP_COMPOSITE_FRAME_MODE_PRO"),
+					"N" => GetMessage("COMP_PROP_COMPOSITE_FRAME_MODE_CONTRA")
+				),
+				"DEFAULT" => "A",
+				"REFRESH" => "Y",
+				"ADDITIONAL_VALUES" => "N"
+			);
+
+			if (
+				!isset($arCurrentValues["COMPOSITE_FRAME_MODE"]) ||
+				in_array($arCurrentValues["COMPOSITE_FRAME_MODE"], array("A", "Y")))
+			{
+				$arComponentParameters["PARAMETERS"]["COMPOSITE_FRAME_TYPE"] = array(
+					"PARENT" => "COMPOSITE_SETTINGS",
+					"NAME" => GetMessage("COMP_PROP_COMPOSITE_FRAME_TYPE"),
+					"TYPE" => "LIST",
+					"VALUES" => array(
+						"AUTO" => GetMessage("COMP_PROP_COMPOSITE_FRAME_TYPE_AUTO"),
+						"STATIC" => GetMessage("COMP_PROP_COMPOSITE_FRAME_TYPE_STATIC"),
+						"DYNAMIC_WITH_STUB" => GetMessage("COMP_PROP_COMPOSITE_FRAME_TYPE_DYNAMIC_WITH_STUB"),
+						"DYNAMIC_WITHOUT_STUB" => GetMessage("COMP_PROP_COMPOSITE_FRAME_TYPE_DYNAMIC_WITHOUT_STUB")
+					),
+					"DEFAULT" => "A",
+					"ADDITIONAL_VALUES" => "N"
+				);
+			}
+
 		}
 
 		if(

@@ -140,17 +140,6 @@ window.SBPETabs.prototype = {
 					form.changePostFormTab.value = type;
 				}
 			});
-
-			if (form["UF_BLOG_POST_IMPRTNT"])
-			{
-				BX.addCustomEvent(window, "changePostFormTab", function(type) {
-					if (type != "more")
-					{
-						form["UF_BLOG_POST_IMPRTNT"].value = type == "important" ? 1 : 0;
-					}
-				});
-			}
-
 		}
 	},
 

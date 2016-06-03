@@ -2106,32 +2106,7 @@ if (
 	$arResult["PostToShow"]["FEED_DESTINATION"]['LAST'] = array();
 	CSocNetLogDestination::fillLastDestination($arResult["DEST_SORT"], $arResult["PostToShow"]["FEED_DESTINATION"]['LAST']);
 
-	$cacheTtl = defined("BX_COMP_MANAGED_CACHE") ? 3153600 : 3600*4;
-	$cacheId = 'blog_post_form_dest_'.SITE_ID.'_'.$user_id;
-	$cacheDir = '/blog/form/dest/'.SITE_ID.'/'.$user_id;
-
-	$obCache = new CPHPCache;
-	if($obCache->InitCache($cacheTtl, $cacheId, $cacheDir))
-	{
-		$arResult["PostToShow"]["FEED_DESTINATION"]['SONETGROUPS'] = $obCache->GetVars();
-	}
-	else
-	{
-		$obCache->StartDataCache();
-		$arResult["PostToShow"]["FEED_DESTINATION"]['SONETGROUPS'] = CSocNetLogDestination::GetSocnetGroup(Array('features' => array("blog", array("premoderate_post", "moderate_post", "write_post", "full_post"))));
-		if(defined("BX_COMP_MANAGED_CACHE"))
-		{
-			$GLOBALS["CACHE_MANAGER"]->StartTagCache($cacheDir);
-			foreach($arResult["PostToShow"]["FEED_DESTINATION"]['SONETGROUPS'] as $val)
-			{
-				$GLOBALS["CACHE_MANAGER"]->RegisterTag("sonet_features_G_".$val["entityId"]);
-				$GLOBALS["CACHE_MANAGER"]->RegisterTag("sonet_group_".$val["entityId"]);
-			}
-			$GLOBALS["CACHE_MANAGER"]->RegisterTag("sonet_user2group_U".$user_id);
-			$GLOBALS["CACHE_MANAGER"]->EndTagCache();
-		}
-		$obCache->EndDataCache($arResult["PostToShow"]["FEED_DESTINATION"]['SONETGROUPS']);
-	}
+	$arResult["PostToShow"]["FEED_DESTINATION"]['SONETGROUPS'] = \Bitrix\Socialnetwork\ComponentHelper::getSonetGroupAvailable();
 
 	$arDestUser = Array();
 	$arResult["PostToShow"]["FEED_DESTINATION"]['SELECTED'] = Array();
@@ -2159,7 +2134,6 @@ if (
 			{
 				$arResult["FATAL_MESSAGE"] .= GetMessage("BLOG_SONET_MODULE_NOT_AVAIBLE");
 			}
-
 		}
 		elseif ($bDefaultToAll)
 		{

@@ -1990,13 +1990,11 @@ BX.CViewIframeElement.prototype.load = function(successLoadCallback, errorLoadCa
 					},
 					text: this.title
 				}),
-				BX.create('a', {
+				BX.create('span', {
 					props: {
 						className: 'bx-viewer-file-last-v',
 						title: this.title,
-						alt: this.title,
-						href: this.historyPageUrl,
-						target: '_blank'
+						alt: this.title
 					},
 					text: this.version?
 						BX.message('JS_CORE_VIEWER_THROUGH_VERSION').replace('#NUMBER#', this.version > 0? this.version : ''):
@@ -2095,13 +2093,11 @@ BX.CViewWithoutPreviewEditableElement.prototype.load = function(successLoadCallb
 				},
 				text: this.title
 			}),
-			BX.create('a', {
+			BX.create('span', {
 				props: {
 					className: 'bx-viewer-file-last-v',
 					title: this.title,
-					alt: this.title,
-					href: this.historyPageUrl,
-					target: '_blank'
+					alt: this.title
 				},
 				text: this.version?
 					BX.message('JS_CORE_VIEWER_THROUGH_VERSION').replace('#NUMBER#', this.version > 0? this.version : ''):
@@ -2357,13 +2353,11 @@ BX.CViewErrorIframeElement.prototype.load = function(successLoadCallback)
 				},
 				text: this.title
 			}),
-			BX.create('a', {
+			BX.create('span', {
 				props: {
 					className: 'bx-viewer-file-last-v',
 					title: this.title,
-					alt: this.title,
-					href: this.historyPageUrl,
-					target: '_blank'
+					alt: this.title
 				},
 				text: this.version?
 					BX.message('JS_CORE_VIEWER_THROUGH_VERSION').replace('#NUMBER#', this.version > 0? this.version : ''):
@@ -4316,7 +4310,6 @@ BX.CViewer.prototype.createElementByType = function(element, params)
 
 BX.CViewer.prototype.createErrorIframeElementFromEditable = function(editableElement)
 {
-	console.debug("4299: " + "editableElement", editableElement);
 	var errorElement = new BX.CViewErrorIframeElement({
 		id: editableElement.id,
 		baseElementId: editableElement.baseElementId,

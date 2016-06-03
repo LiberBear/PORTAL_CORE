@@ -1014,7 +1014,7 @@ BX["UI"].FileInput.prototype = {
 			hint +=  '<span class="adm-fileinput-drag-area-popup-param">' + BX.message('JS_CORE_FILE_DESCRIPTION') + ':&nbsp;<span>' + item.description + '</span></span>';
 		var path = (item["file"] ? (item["file"]["real_url"] || item["file"]["tmp_url"]) : '');
 		if (path)
-			hint +=  '<span class="adm-fileinput-drag-area-popup-param">' + BX.message('JS_CORE_FILE_INFO_LINK') + ':&nbsp;<span><a href="' + path + '">' + path + '</a></span></span>';
+			hint +=  '<span class="adm-fileinput-drag-area-popup-param">' + BX.message('JS_CORE_FILE_INFO_LINK') + ':&nbsp;<span><a target="_blank" href="' + path.replace(/[%]/g, "%25") + '">' + path + '</a></span></span>';
 
 		node.hint = new BX.CHint({
 				parent: node,

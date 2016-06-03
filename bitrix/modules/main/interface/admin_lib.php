@@ -307,13 +307,16 @@ var phpVars = {
 			$queryResult = false;
 			if(\Bitrix\Main\Loader::includeModule('socialservices'))
 			{
-				$query = \CBitrix24NetTransport::init();
-				if ($query)
+				if(class_exists('CBitrix24NetTransport'))
 				{
-					$queryResult = $query->call('admin.profile.list', array());
-				}
+					$query = \CBitrix24NetTransport::init();
+					if ($query)
+					{
+						$queryResult = $query->call('admin.profile.list', array());
+					}
 
-				$CACHE_MANAGER->Set("sso_portal_list_".$USER->GetID(), $queryResult);
+					$CACHE_MANAGER->Set("sso_portal_list_".$USER->GetID(), $queryResult);
+				}
 			}
 		}
 
@@ -2062,7 +2065,7 @@ class CAdminContextMenu
 	}
 
 	/**
- 	 * @deprecated
+	 * @deprecated
 	 * @param $items
 	 * @param array $additional_items
 	 */
@@ -3103,8 +3106,8 @@ class CAdminList
 	}
 
 	/**
- 	 * @deprecated
- 	 * @param $table_id
+	 * @deprecated
+	 * @param $table_id
 	 * @param bool $sort
 	 */
 	public function CAdminList($table_id, $sort = false)

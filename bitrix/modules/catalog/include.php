@@ -1166,7 +1166,10 @@ function Add2Basket($PRICE_ID, $QUANTITY = 1, $arRewriteFields = array(), $arPro
 		$APPLICATION->ThrowException(Loc::getMessage('CATALOG_ERR_NO_PRODUCT'), "NO_PRODUCT");
 		return false;
 	}
-	if ($arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_SKU || $arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_EMPTY_SKU)
+	if (
+		($arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_SKU || $arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_EMPTY_SKU)
+		&& (string)Main\Config\Option::get('catalog', 'show_catalog_tab_with_offers') != 'Y'
+	)
 	{
 		$APPLICATION->ThrowException(Loc::getMessage('CATALOG_ERR_CANNOT_ADD_SKU'), "NO_PRODUCT");
 		return false;
@@ -1397,7 +1400,10 @@ function Add2BasketByProductID($PRODUCT_ID, $QUANTITY = 1, $arRewriteFields = ar
 		$APPLICATION->ThrowException(Loc::getMessage('CATALOG_ERR_NO_PRODUCT'), "NO_PRODUCT");
 		return false;
 	}
-	if ($arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_SKU || $arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_EMPTY_SKU)
+	if (
+		($arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_SKU || $arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_EMPTY_SKU)
+		&& (string)Main\Config\Option::get('catalog', 'show_catalog_tab_with_offers') != 'Y'
+	)
 	{
 		$APPLICATION->ThrowException(Loc::getMessage('CATALOG_ERR_CANNOT_ADD_SKU'), "NO_PRODUCT");
 		return false;
@@ -1673,11 +1679,7 @@ function SubscribeProduct($intProductID, $arRewriteFields = array(), $arProductP
 		$APPLICATION->ThrowException(Loc::getMessage('CATALOG_ERR_NO_PRODUCT'), "NO_PRODUCT");
 		return false;
 	}
-	if ($arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_SKU || $arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_EMPTY_SKU)
-	{
-		$APPLICATION->ThrowException(Loc::getMessage('CATALOG_ERR_CANNOT_SUBSCRIBE_SKU'), "NO_PRODUCT");
-		return false;
-	}
+
 	if ($arCatalogProduct['SUBSCRIBE'] == 'N')
 	{
 		$APPLICATION->ThrowException(Loc::getMessage('CATALOG_ERR_NO_SUBSCRIBE'), 'SUBSCRIBE');

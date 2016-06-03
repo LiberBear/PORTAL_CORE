@@ -567,10 +567,10 @@ background: #b2e233 !important;
 	background: transparent;
 }
 
-.popup-window-content {
+/*.popup-window-content {
 	margin: 0;
 	font: 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
+}*/
 
 .popup-window-top-row .popup-window-left-column {
 	border-top-left-radius: 4px;
@@ -5491,18 +5491,20 @@ body .tm-report .tm-report-right-border {
 /*============ MESSAGES SEND TO =============*/
 
 
-.bx-lm-box {
+/*.bx-lm-box {
 	min-width: 480px !important;
 }
 
 .bx-lm-box-tab-content-search .bx-lm-box {
 	min-width: 472px !important;
-}
-
+}*/
+/*
 .bx-finder-box-tabs {
-	height: 72px;
 	border-bottom: none;
 	margin-bottom: 0;
+	padding-left:16px;
+	float:right;
+	width:200px;
 }
 
 .bx-finder-box-tabs-content {
@@ -5588,8 +5590,8 @@ body .tm-report .tm-report-right-border {
 	width: 400px;
 }
 
-
-.bx-finder-box-tab:before {
+*/
+/*.bx-finder-box-tab:before {
 	background: url(images/template_sprite.png?10) no-repeat -5px -364px !important;
 	bottom: -7px;
 	display: none;
@@ -5598,15 +5600,11 @@ body .tm-report .tm-report-right-border {
 	margin-left: -8px;
 	position: absolute;
 	width: 16px;
-}
+}*/
 
-.bx-finder-box-tab-selected:before {
-	display: block;
-}
-
-.bx-finder-box-tab:hover {
-	background: #e1e4e5;
-}
+/*.bx-finder-box-tab-selected:before {display: block;}*/
+/*
+.bx-finder-box-tab:hover {background: #e1e4e5;}
 
 .bx-finder-box-tab-selected,
 .bx-finder-box-tab-selected:hover {
@@ -5618,7 +5616,7 @@ body .tm-report .tm-report-right-border {
 	color: #000;
 	font-size: 13px;
 }
-
+*/
 
 .bx-lm-box-tab-content-sonetgroup {
 	margin-top: 13px;
@@ -5687,17 +5685,17 @@ body .tm-report .tm-report-right-border {
 	padding: 2px;
 }
 
-.bx-lm-box .bx-finder-box-item-t3,
+/*.bx-lm-box .bx-finder-box-item-t3,
 .bx-lm-box .bx-finder-box-item-t5,
 .bx-lm-box .bx-finder-box-item-t7,
 .bx-lm-box-tab-content-department .bx-finder-company-department-employee {
 	border: none;
-	height: 36px;
+	height: 34px;
 	padding: 3px 0;
 
 	-webkit-transition: background-color 0.2s linear;
 	transition: background-color 0.2s linear;
-}
+}*/
 
 .bx-lm-box .bx-finder-box-item-t3:hover,
 .bx-lm-box .bx-finder-box-item-t5:hover,
@@ -5741,36 +5739,35 @@ body .tm-report .tm-report-right-border {
 
 .bx-lm-box .bx-finder-box-item-t3-selected,
 .bx-lm-box .bx-finder-box-item-t5-selected,
-.bx-lm-box .bx-finder-box-item-t7-selected,
+/*.bx-lm-box .bx-finder-box-item-t7-selected,*/
 .bx-lm-box-tab-content-department .bx-finder-company-department-employee-selected,
 .bx-lm-box .bx-finder-box-item-t3-selected:hover,
 .bx-lm-box .bx-finder-box-item-t5-selected:hover,
-.bx-lm-box .bx-finder-box-item-t7-selected:hover,
+/*.bx-lm-box .bx-finder-box-item-t7-selected:hover,*/
 .bx-lm-box-tab-content-department .bx-finder-company-department-employee-selected:hover {
 	background: #d6f1fb;
 	border-radius: 1px;
 }
 
-.bx-lm-box .bx-finder-box-item-t5-avatar,
+.bx-lm-box .bx-finder-box-item-t5-avatar/*,
 .bx-lm-box .bx-finder-box-item-t7-avatar,
-.bx-lm-box-tab-content-department .bx-finder-company-department-employee-avatar {
+.bx-lm-box-tab-content-department .bx-finder-company-department-employee-avatar */ {
 	background: url(images/template_sprite.png?10) no-repeat -177px -1211px #535c6a;
 	border-radius: 50%;
-	height: 30px;
 	left: 2px;
 	top: 3px;
 	width: 30px;
 }
 
-.bx-lm-box .bx-finder-box-item-t7-avatar-img {
+/*.bx-lm-box .bx-finder-box-item-t7-avatar-img {
 	border-radius: 50%;
 	height: 30px;
 	width: 30px;
-}
+}*/
 
-.bx-lm-box .bx-lm-element-groups .bx-finder-box-item-t7-avatar,
+/*.bx-lm-box .bx-lm-element-groups .bx-finder-box-item-t7-avatar,
 .bx-lm-box .bx-lm-element-sonetgroup .bx-finder-box-item-t7-avatar,
-.bx-lm-box .bx-lm-element-department .bx-finder-box-item-t7-avatar,
+.bx-lm-box .bx-lm-element-department .bx-finder-box-item-t7-avatar,*/
 .bx-lm-box .bx-finder-box-item-t3-avatar {
 	background-position:  4px -1082px;
 }
@@ -5842,7 +5839,7 @@ body .tm-report .tm-report-right-border {
 	background-color: #fff
 }
 
-.bx-finder-box-item-t7-info {
+/*.bx-finder-box-item-t7-info {
 	margin-left: 50px;
 }
 
@@ -5853,7 +5850,7 @@ body .tm-report .tm-report-right-border {
 .bx-lm-element-groups .bx-finder-box-item-t7-name {
 	color: #688617;
 	font-weight: bold;
-}
+}*/
 
 .bx-lm-box .bx-finder-company-department-opened .bx-finder-company-department-arrow {
 	background: url(images/template_sprite.png?10) -102px -1286px no-repeat transparent;

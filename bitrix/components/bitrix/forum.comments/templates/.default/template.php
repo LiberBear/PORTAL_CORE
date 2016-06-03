@@ -61,7 +61,8 @@ $arResult["OUTPUT_LIST"] = $APPLICATION->IncludeComponent(
 
 		"IMAGE_SIZE" => $arParams["IMAGE_SIZE"],
 		"BIND_VIEWER" => $arParams["BIND_VIEWER"],
-		"mfi" => $arParams["mfi"]
+		"mfi" => $arParams["mfi"],
+		"bPublicPage" => (isset($arParams["PUBLIC_MODE"]) && $arParams["PUBLIC_MODE"])
 	),
 	$this->__component
 );

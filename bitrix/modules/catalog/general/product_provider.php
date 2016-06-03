@@ -259,7 +259,10 @@ class CCatalogProductProvider implements IBXSaleProductProvider
 
 		if (!empty($arCatalogProduct) && is_array($arCatalogProduct))
 		{
-			if ($arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_SKU || $arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_EMPTY_SKU)
+			if (
+				($arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_SKU || $arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_EMPTY_SKU)
+				&& (string)Main\Config\Option::get('catalog', 'show_catalog_tab_with_offers') != 'Y'
+			)
 			{
 				$APPLICATION->ThrowException(Loc::getMessage("CATALOG_ERR_SKU_PRODUCT"), 'CATALOG_SKU_PRODUCT');
 				return $arResult;
@@ -618,7 +621,10 @@ class CCatalogProductProvider implements IBXSaleProductProvider
 
 		if (!empty($arCatalogProduct) && is_array($arCatalogProduct))
 		{
-			if ($arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_SKU || $arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_EMPTY_SKU)
+			if (
+				($arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_SKU || $arCatalogProduct['TYPE'] == Catalog\ProductTable::TYPE_EMPTY_SKU)
+				&& (string)Main\Config\Option::get('catalog', 'show_catalog_tab_with_offers') != 'Y'
+			)
 				return $arResult;
 
 			$arCatalogProduct["QUANTITY"] = (double)$arCatalogProduct["QUANTITY"];
@@ -842,7 +848,10 @@ class CCatalogProductProvider implements IBXSaleProductProvider
 			return $arRes;
 		}
 
-		if ($arProduct['TYPE'] == Catalog\ProductTable::TYPE_SKU || $arProduct['TYPE'] == Catalog\ProductTable::TYPE_EMPTY_SKU)
+		if (
+			($arProduct['TYPE'] == Catalog\ProductTable::TYPE_SKU || $arProduct['TYPE'] == Catalog\ProductTable::TYPE_EMPTY_SKU)
+			&& (string)Main\Config\Option::get('catalog', 'show_catalog_tab_with_offers') != 'Y'
+		)
 		{
 			$APPLICATION->ThrowException(Loc::getMessage("RSRV_SKU_FOUND", array("#PRODUCT_ID#" => $arParams["PRODUCT_ID"])), "SKU_FOUND");
 			$arRes["RESULT"] = false;
@@ -1066,7 +1075,10 @@ class CCatalogProductProvider implements IBXSaleProductProvider
 
 		if ($arProduct = $rsProducts->Fetch())
 		{
-			if ($arProduct['TYPE'] == Catalog\ProductTable::TYPE_SKU || $arProduct['TYPE'] == Catalog\ProductTable::TYPE_EMPTY_SKU)
+			if (
+				($arProduct['TYPE'] == Catalog\ProductTable::TYPE_SKU || $arProduct['TYPE'] == Catalog\ProductTable::TYPE_EMPTY_SKU)
+				&& (string)Main\Config\Option::get('catalog', 'show_catalog_tab_with_offers') != 'Y'
+			)
 			{
 				$arRes["RESULT"] = false;
 			}
@@ -1618,7 +1630,10 @@ class CCatalogProductProvider implements IBXSaleProductProvider
 			return $result;
 		}
 
-		if ($arProduct['TYPE'] == Catalog\ProductTable::TYPE_SKU || $arProduct['TYPE'] == Catalog\ProductTable::TYPE_EMPTY_SKU)
+		if (
+			($arProduct['TYPE'] == Catalog\ProductTable::TYPE_SKU || $arProduct['TYPE'] == Catalog\ProductTable::TYPE_EMPTY_SKU)
+			&& (string)Main\Config\Option::get('catalog', 'show_catalog_tab_with_offers') != 'Y'
+		)
 			return $result;
 
 		if ($strUseStoreControl == "Y")
@@ -1830,7 +1845,10 @@ class CCatalogProductProvider implements IBXSaleProductProvider
 
 		if ($arProduct = $rsProducts->Fetch())
 		{
-			if ($arProduct['TYPE'] != Catalog\ProductTable::TYPE_SKU && $arProduct['TYPE'] != Catalog\ProductTable::TYPE_EMPTY_SKU)
+			if (
+				($arProduct['TYPE'] != Catalog\ProductTable::TYPE_SKU && $arProduct['TYPE'] != Catalog\ProductTable::TYPE_EMPTY_SKU)
+				|| (string)Main\Config\Option::get('catalog', 'show_catalog_tab_with_offers') == 'Y'
+			)
 			{
 				$fields["QUANTITY_TRACE"] = ($arProduct["QUANTITY_TRACE"] == "Y");
 			}
@@ -2354,7 +2372,10 @@ class CCatalogProductProvider implements IBXSaleProductProvider
 
 		if ($arCatalogProduct = $rsProducts->Fetch())
 		{
-			if ($arCatalogProduct['TYPE'] != Catalog\ProductTable::TYPE_SKU && $arCatalogProduct['TYPE'] != Catalog\ProductTable::TYPE_EMPTY_SKU)
+			if (
+				($arCatalogProduct['TYPE'] != Catalog\ProductTable::TYPE_SKU && $arCatalogProduct['TYPE'] != Catalog\ProductTable::TYPE_EMPTY_SKU)
+				|| (string)Main\Config\Option::get('catalog', 'show_catalog_tab_with_offers') == 'Y'
+			)
 			{
 				return $arCatalogProduct['QUANTITY'];
 			}

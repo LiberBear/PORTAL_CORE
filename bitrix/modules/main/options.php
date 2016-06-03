@@ -176,17 +176,10 @@ $arAllOptions = array(
 	),
 );
 
-if(CTimeZone::Possible())
-{
-	$aZones = CTimeZone::GetZones();
-	$arAllOptions["main"][] = array("use_time_zones", GetMessage("MAIN_OPT_USE_TIMEZONES"), "N", array("checkbox", "Y", 'onclick="this.form.default_time_zone.disabled = this.form.auto_time_zone.disabled = !this.checked;"'));
-	$arAllOptions["main"][] = array("default_time_zone", GetMessage("MAIN_OPT_TIME_ZONE_DEF"), "", array("selectbox", $aZones));
-	$arAllOptions["main"][] = array("auto_time_zone", GetMessage("MAIN_OPT_TIME_ZONE_AUTO"), "N", array("checkbox", "Y"));
-}
-else
-{
-	$arAllOptions["main"][] = array('note'=>GetMessage("MAIN_OPT_TIME_ZONE_NOTE"));
-}
+$aZones = CTimeZone::GetZones();
+$arAllOptions["main"][] = array("use_time_zones", GetMessage("MAIN_OPT_USE_TIMEZONES"), "N", array("checkbox", "Y", 'onclick="this.form.default_time_zone.disabled = this.form.auto_time_zone.disabled = !this.checked;"'));
+$arAllOptions["main"][] = array("default_time_zone", GetMessage("MAIN_OPT_TIME_ZONE_DEF"), "", array("selectbox", $aZones));
+$arAllOptions["main"][] = array("auto_time_zone", GetMessage("MAIN_OPT_TIME_ZONE_AUTO"), "N", array("checkbox", "Y"));
 
 if (\Bitrix\Main\Analytics\SiteSpeed::isLicenseAccepted())
 {

@@ -317,12 +317,21 @@ BXBlockEditorDialogFileInput.prototype =
 			this.semaphoreOnQueueIsChanged = false;
 		}, this));
 
+
 		this.onFileIsCreated = function(id, item)
 		{
 			this.semaphoreOnQueueIsChanged = true;
 			if(item.file['tmp_url'])
 			{
 				this.fileList[id] = item.file['tmp_url'];
+			}
+
+			if(BX.util.in_array(item['type'], ['image/filedialog', 'image/medialib']))
+			{
+				BX.addCustomEvent(this.fileInput.agent, "onFileIsInited", BX.delegate(function()
+				{
+					this.onAgentChange(ctrlImage);
+				}, this));
 			}
 
 			BX.addCustomEvent(item, 'onUploadDone', BX.delegate(function(item, data)

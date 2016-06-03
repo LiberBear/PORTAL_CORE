@@ -5,7 +5,7 @@ if (!$this->__component->__parent || empty($this->__component->__parent->__name)
 	$GLOBALS['APPLICATION']->SetAdditionalCSS('/bitrix/components/bitrix/blog/templates/.default/themes/blue/style.css');
 endif;
 ?>
-<?CUtil::InitJSCore(array("image"));?>
+<?CUtil::InitJSCore(array("image", "ajax"));?>
 <script>
 BX.viewImageBind(
 	'blg-comment-<?=$arParams["ID"]?>',
@@ -22,23 +22,18 @@ else
 {
 	$APPLICATION->RestartBuffer();
 	?><script>window.BX = top.BX;
-		<?if($arResult["use_captcha"]===true)
+		<?
+		if($arResult["use_captcha"]===true)
 		{
 			?>
-				var cc;
-				if(document.cookie.indexOf('<?echo session_name()?>'+'=') == -1)
-					cc = Math.random();
-				else
-					cc ='<?=$arResult["CaptchaCode"]?>';
-
-				BX('captcha').src='/bitrix/tools/captcha.php?captcha_code='+cc;
-				BX('captcha_code').value = cc;
+				BX('captcha').src='/bitrix/tools/captcha.php?captcha_code=' + '<?=$arResult["CaptchaCode"]?>';
+				BX('captcha_code').value = '<?=$arResult["CaptchaCode"]?>';
 				BX('captcha_word').value = "";
 			<?
 		}
 	?>
 	if(!top.arImages)
-		top.arImages = [];	
+		top.arImages = [];
 	if(!top.arImagesId)
 		top.arImagesId = [];
 	<?
@@ -191,10 +186,14 @@ else
 						<div class="blog-comment-field blog-comment-field-captcha">
 							<div class="blog-comment-field-captcha-label">
 								<label for=""><?=GetMessage("B_B_MS_CAPTCHA_SYM")?></label><span class="blog-required-field">*</span><br>
-								<input type="hidden" name="captcha_code" id="captcha_code" value="<?=$arResult["CaptchaCode"]?>">
+								<input type="hidden" name="captcha_code" id="captcha_code" value="">
 								<input type="text" size="30" name="captcha_word" id="captcha_word" value=""  tabindex="7">
+							</div>
+							<div class="blog-comment-field-captcha-image">
+								<div id="div_captcha">
+									<img src="" width="180" height="40" id="captcha" style="display:none;">
 								</div>
-							<div class="blog-comment-field-captcha-image"><div id="div_captcha"></div></div>
+							</div>
 						</div>
 						<?
 					}
@@ -211,25 +210,6 @@ else
 			</div>
 			</div>
 			<?
-			if($arResult["use_captcha"]===true)
-			{
-				?>
-				<div id="captcha_del">
-				<script data-skip-moving="true">
-					<!--
-					var cc;
-					if(document.cookie.indexOf('<?echo session_name()?>'+'=') == -1)
-						cc = Math.random();
-					else
-						cc ='<?=$arResult["CaptchaCode"]?>';
-
-					document.write('<img src="/bitrix/tools/captcha.php?captcha_code='+cc+'" width="180" height="40" id="captcha" style="display:none;">');
-					document.getElementById('captcha_code').value = cc;
-					//-->
-				</script>
-				</div>
-				<?
-			}
 		}
 
 		$prevTab = 0;

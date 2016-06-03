@@ -6,7 +6,8 @@ function addNewRow(tableID, regexp)
 	var oCell = oRow.insertCell(0);
 	var html = tbl.rows[cnt-2].cells[0].innerHTML;
 	var reName = /\[(\d+)\]/gi;
-	var foundName = html.match(reName)[0].replace(/\[|\]/g, "");
+	var reNameMatch = html.match(reName);
+	var foundName = reNameMatch[reNameMatch.length - 1].replace(/\[|\]/g, "");
 	var regExpName = new RegExp('(' + regexp + ')\\[(\\d*)\\]', 'gi');
 	var regExpId = new RegExp('(' + regexp + ')_(\\d*)_', 'gi');
 

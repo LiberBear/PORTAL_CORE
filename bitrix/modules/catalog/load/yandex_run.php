@@ -368,7 +368,7 @@ if (empty($arCatalog))
 }
 else
 {
-	$arOffers = CCatalogSKU::GetInfoByProductIBlock($IBLOCK_ID);
+	$arOffers = CCatalogSku::GetInfoByProductIBlock($IBLOCK_ID);
 	if (!empty($arOffers['IBLOCK_ID']))
 	{
 		$intOfferIBlockID = $arOffers['IBLOCK_ID'];
@@ -610,7 +610,7 @@ if (empty($arRunErrors))
 	else
 	{
 		$currencyIterator = Currency\CurrencyTable::getList(array(
-			'select' => array('CURRENCY'),
+			'select' => array('CURRENCY', 'SORT'),
 			'filter' => array('@CURRENCY' => $arCurrencyAllowed),
 			'order' => array('SORT' => 'ASC', 'CURRENCY' => 'ASC')
 		));
@@ -712,7 +712,7 @@ if (empty($arRunErrors))
 	CCatalogProduct::setUsedCurrency($BASE_CURRENCY);
 	CCatalogProduct::setUseDiscount(true);
 
-	if ($arCatalog['CATALOG_TYPE'] == CCatalogSKU::TYPE_CATALOG || $arCatalog['CATALOG_TYPE'] == CCatalogSKU::TYPE_OFFERS)
+	if ($arCatalog['CATALOG_TYPE'] == CCatalogSku::TYPE_CATALOG || $arCatalog['CATALOG_TYPE'] == CCatalogSku::TYPE_OFFERS)
 	{
 		$arSelect = array(
 			"ID", "LID", "IBLOCK_ID", "IBLOCK_SECTION_ID", "NAME",
@@ -774,9 +774,6 @@ if (empty($arRunErrors))
 						array()
 					))
 					{
-/*						$minPrice = $arOptimalPrice['DISCOUNT_PRICE'];
-						$minPriceCurrency = $BASE_CURRENCY;
-						$minPriceRUR = CCurrencyRates::ConvertCurrency($minPrice, $BASE_CURRENCY, $RUR); */
 						$minPrice = $arOptimalPrice['RESULT_PRICE']['DISCOUNT_PRICE'];
 						$fullPrice = $arOptimalPrice['RESULT_PRICE']['BASE_PRICE'];
 						$minPriceCurrency = $arOptimalPrice['RESULT_PRICE']['CURRENCY'];
@@ -800,9 +797,6 @@ if (empty($arRunErrors))
 					array()
 				))
 				{
-/*					$minPrice = $arPrice['DISCOUNT_PRICE'];
-					$minPriceCurrency = $BASE_CURRENCY;
-					$minPriceRUR = CCurrencyRates::ConvertCurrency($minPrice, $BASE_CURRENCY, $RUR); */
 					$minPrice = $arPrice['RESULT_PRICE']['DISCOUNT_PRICE'];
 					$fullPrice = $arPrice['RESULT_PRICE']['BASE_PRICE'];
 					$minPriceCurrency = $arPrice['RESULT_PRICE']['CURRENCY'];
@@ -971,7 +965,7 @@ if (empty($arRunErrors))
 			}
 		}
 	}
-	elseif ($arCatalog['CATALOG_TYPE'] == CCatalogSKU::TYPE_PRODUCT || $arCatalog['CATALOG_TYPE'] == CCatalogSKU::TYPE_FULL)
+	elseif ($arCatalog['CATALOG_TYPE'] == CCatalogSku::TYPE_PRODUCT || $arCatalog['CATALOG_TYPE'] == CCatalogSku::TYPE_FULL)
 	{
 		$arOfferSelect = array(
 			"ID", "LID", "IBLOCK_ID", "NAME",
@@ -1145,9 +1139,6 @@ if (empty($arRunErrors))
 								)
 								)
 								{
-									/*								$minPrice = $arOptimalPrice['DISCOUNT_PRICE'];
-																	$minPriceCurrency = $BASE_CURRENCY;
-																	$minPriceRUR = CCurrencyRates::ConvertCurrency($minPrice, $BASE_CURRENCY, $RUR); */
 									$minPrice = $arOptimalPrice['RESULT_PRICE']['DISCOUNT_PRICE'];
 									$fullPrice = $arOptimalPrice['RESULT_PRICE']['BASE_PRICE'];
 									$minPriceCurrency = $arOptimalPrice['RESULT_PRICE']['CURRENCY'];
@@ -1172,9 +1163,6 @@ if (empty($arRunErrors))
 							)
 							)
 							{
-								/*							$minPrice = $arPrice['DISCOUNT_PRICE'];
-															$minPriceCurrency = $BASE_CURRENCY;
-															$minPriceRUR = CCurrencyRates::ConvertCurrency($minPrice, $BASE_CURRENCY, $RUR); */
 								$minPrice = $arPrice['RESULT_PRICE']['DISCOUNT_PRICE'];
 								$fullPrice = $arPrice['RESULT_PRICE']['BASE_PRICE'];
 								$minPriceCurrency = $arPrice['RESULT_PRICE']['CURRENCY'];
@@ -1427,9 +1415,6 @@ if (empty($arRunErrors))
 								)
 								)
 								{
-									/*								$minPrice = $arOptimalPrice['DISCOUNT_PRICE'];
-																	$minPriceCurrency = $BASE_CURRENCY;
-																	$minPriceRUR = CCurrencyRates::ConvertCurrency($minPrice, $BASE_CURRENCY, $RUR); */
 									$minPrice = $arOptimalPrice['RESULT_PRICE']['DISCOUNT_PRICE'];
 									$fullPrice = $arOptimalPrice['RESULT_PRICE']['BASE_PRICE'];
 									$minPriceCurrency = $arOptimalPrice['RESULT_PRICE']['CURRENCY'];
@@ -1455,9 +1440,6 @@ if (empty($arRunErrors))
 							)
 							)
 							{
-								/*							$minPrice = $arPrice['DISCOUNT_PRICE'];
-															$minPriceCurrency = $BASE_CURRENCY;
-															$minPriceRUR = CCurrencyRates::ConvertCurrency($minPrice, $BASE_CURRENCY, $RUR); */
 								$minPrice = $arPrice['RESULT_PRICE']['DISCOUNT_PRICE'];
 								$fullPrice = $arPrice['RESULT_PRICE']['BASE_PRICE'];
 								$minPriceCurrency = $arPrice['RESULT_PRICE']['CURRENCY'];
@@ -1606,7 +1588,7 @@ if (empty($arRunErrors))
 					}
 				}
 			}
-			elseif ($arCatalog['CATALOG_TYPE'] == CCatalogSKU::TYPE_FULL && $arItem['CATALOG_TYPE'] == Catalog\ProductTable::TYPE_PRODUCT)
+			elseif ($arCatalog['CATALOG_TYPE'] == CCatalogSku::TYPE_FULL && $arItem['CATALOG_TYPE'] == Catalog\ProductTable::TYPE_PRODUCT)
 			{
 				$str_AVAILABLE = ' available="'.($arItem['CATALOG_AVAILABLE'] == 'Y' ? 'true' : 'false').'"';
 
@@ -1639,9 +1621,6 @@ if (empty($arRunErrors))
 							array()
 						))
 						{
-/*							$minPrice = $arOptimalPrice['DISCOUNT_PRICE'];
-							$minPriceCurrency = $BASE_CURRENCY;
-							$minPriceRUR = CCurrencyRates::ConvertCurrency($minPrice, $BASE_CURRENCY, $RUR); */
 							$minPrice = $arOptimalPrice['RESULT_PRICE']['DISCOUNT_PRICE'];
 							$fullPrice = $arOptimalPrice['RESULT_PRICE']['BASE_PRICE'];
 							$minPriceCurrency = $arOptimalPrice['RESULT_PRICE']['CURRENCY'];
@@ -1665,9 +1644,6 @@ if (empty($arRunErrors))
 						array()
 					))
 					{
-/*						$minPrice = $arPrice['DISCOUNT_PRICE'];
-						$minPriceCurrency = $BASE_CURRENCY;
-						$minPriceRUR = CCurrencyRates::ConvertCurrency($minPrice, $BASE_CURRENCY, $RUR); */
 						$minPrice = $arPrice['RESULT_PRICE']['DISCOUNT_PRICE'];
 						$fullPrice = $arPrice['RESULT_PRICE']['BASE_PRICE'];
 						$minPriceCurrency = $arPrice['RESULT_PRICE']['CURRENCY'];
@@ -1788,7 +1764,6 @@ if (empty($arRunErrors))
 					// no break here
 
 					default:
-						//if (is_array($XML_DATA) && is_array($XML_DATA['XML_DATA']) && $XML_DATA['XML_DATA'][$key])
 						if (isset($XML_DATA['XML_DATA'][$key]))
 						{
 							$strValue = yandex_get_value($arItem, $key, $XML_DATA['XML_DATA'][$key], $arProperties, $arUserTypeFormat, $usedProtocol);

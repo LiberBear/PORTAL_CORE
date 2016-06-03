@@ -699,7 +699,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && !empty($_POST['Update']) && !$bReadO
 						);
 
 						$languageIterator = Main\Localization\LanguageTable::getList(array(
-							'select' => array('ID'),
+							'select' => array('ID', 'SORT'),
 							'filter' => array('=ACTIVE' => 'Y'),
 							'order' => array('SORT' => 'ASC')
 						));
@@ -1645,7 +1645,7 @@ if ($strVal != '')
 }
 ?><select name="allowed_currencies[]" multiple size="5"><?
 $currencyIterator = Currency\CurrencyTable::getList(array(
-	'select' => array('CURRENCY', 'FULL_NAME' => 'RT_LANG.FULL_NAME'),
+	'select' => array('CURRENCY', 'FULL_NAME' => 'RT_LANG.FULL_NAME', 'SORT'),
 	'order' => array('SORT' => 'ASC', 'CURRENCY' => 'ASC'),
 	'runtime' => array(
 		'RT_LANG' => array(

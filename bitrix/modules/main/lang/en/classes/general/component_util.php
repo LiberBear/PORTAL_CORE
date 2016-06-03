@@ -63,4 +63,14 @@ $MESS["COMP_PARAM_DATE_FORMAT_SITE"] = "Site date format";
 $MESS["COMP_PARAM_DATETIME_FORMAT_SITE"] = "Site date-time format";
 $MESS["COMP_PARAM_NAME_FORMAT_SITE"] = "Website format";
 $MESS["COMP_PARAM_SEF_RULE"] = "SEF path template";
+$MESS["COMP_GROUP_COMPOSITE_SETTINGS"] = "Composite Site";
+$MESS["COMP_PROP_COMPOSITE_FRAME_MODE"] = "Default component template vote";
+$MESS["COMP_PROP_COMPOSITE_FRAME_MODE_AUTO"] = "Auto";
+$MESS["COMP_PROP_COMPOSITE_FRAME_MODE_PRO"] = "Enable";
+$MESS["COMP_PROP_COMPOSITE_FRAME_MODE_CONTRA"] = "Disable (requires manual configuration)";
+$MESS["COMP_PROP_COMPOSITE_FRAME_TYPE"] = "Component content";
+$MESS["COMP_PROP_COMPOSITE_FRAME_TYPE_AUTO"] = "Auto";
+$MESS["COMP_PROP_COMPOSITE_FRAME_TYPE_STATIC"] = "Static";
+$MESS["COMP_PROP_COMPOSITE_FRAME_TYPE_DYNAMIC_WITH_STUB"] = "Dynamic content with stub";
+$MESS["COMP_PROP_COMPOSITE_FRAME_TYPE_DYNAMIC_WITHOUT_STUB"] = "Dynamic content without stub";
 ?>

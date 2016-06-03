@@ -1874,7 +1874,7 @@ class CAllUserTypeManager
 							),
 						)
 					).'</td></tr>';
-					$html .= '<tr><td><input type="button" value="'.GetMessage("USER_TYPE_PROP_ADD").'" onClick="addNewRow(\'table_'.$arUserField["FIELD_NAME"].'_'.$row->id.'\', \'FIELDS\['.$row->id.'\]\['.$arUserField["FIELD_NAME"].'\]\')"></td></tr>'.
+					$html .= '<tr><td><input type="button" value="'.GetMessage("USER_TYPE_PROP_ADD").'" onClick="addNewRow(\'table_'.$arUserField["FIELD_NAME"].'_'.$row->id.'\', \'FIELDS\\\\['.$row->id.'\\\\]\\\\['.$arUserField["FIELD_NAME"].'\\\\]\')"></td></tr>'.
 					'</table>';
 					$row->AddEditField($arUserField["FIELD_NAME"], $html.$js.CAdminCalendar::ShowScript());
 				}

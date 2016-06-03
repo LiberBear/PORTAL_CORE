@@ -1,9 +1,9 @@
 __logOnDateChange = function(sel)
 {
-	var bShowFrom=false, bShowTo=false, bShowHellip=false, bShowDays=false, bShowBr=false;
+	var bShowFrom=false, bShowTo=false, bShowHellip=false, bShowDays=false;
 
 	if(sel.value == 'interval')
-		bShowBr = bShowFrom = bShowTo = bShowHellip = true;
+		bShowFrom = bShowTo = bShowHellip = true;
 	else if(sel.value == 'before')
 		bShowTo = true;
 	else if(sel.value == 'after' || sel.value == 'exact')
@@ -14,269 +14,262 @@ __logOnDateChange = function(sel)
 	BX('flt_date_from_span').style.display = (bShowFrom? '':'none');
 	BX('flt_date_to_span').style.display = (bShowTo? '':'none');
 	BX('flt_date_hellip_span').style.display = (bShowHellip? '':'none');
-	BX('flt_date_day_span').style.display = (bShowDays? '':'none');
-}
+	BX('flt_date_day_span').style.display = (bShowDays? 'inline-block':'none');
+	BX('flt_date_day_text_span').style.display = (bShowDays? 'inline-block':'none');
+};
 
-function onFilterGroupSelect(arGroups)
+function __logOnReload(log_counter)
 {
-	if (arGroups[0])
+	if (BX("menu-popup-lenta-sort-popup"))
 	{
-		BX('filter-field-user').value = '';
-		document.forms["log_filter"]["flt_to_user_id"].value = 0;
-		document.forms["log_filter"]["flt_group_id"].value = arGroups[0].id;
-		BX.removeClass(BX("filter-field-group").parentNode.parentNode, "webform-field-textbox-empty");
+		var arMenuItems = BX.findChildren(BX("menu-popup-lenta-sort-popup"), { className: 'lenta-sort-item' }, true);
+
+		if (!BX.hasClass(arMenuItems[0], 'lenta-sort-item-selected'))
+		{
+			for (var i = 0; i < arMenuItems.length; i++)
+			{
+				if (i == 0)
+					BX.addClass(arMenuItems[i], 'lenta-sort-item-selected');
+				else if (i != (arMenuItems.length-1))
+					BX.removeClass(arMenuItems[i], 'lenta-sort-item-selected');
+			}
+		}
+	}
+
+	if (BX("lenta-sort-button"))
+	{
+		var menuButtonText = BX.findChild(BX("lenta-sort-button"), { className: 'lenta-sort-button-text-internal' }, true, false);
+		if (menuButtonText)
+			menuButtonText.innerHTML = BX.message('sonetLFAllMessages');
+	}
+
+	var counter_cont = BX("sonet_log_counter_preset", true);
+	if (counter_cont)
+	{
+		if (parseInt(log_counter) > 0)
+		{
+			counter_cont.style.display = "inline-block";
+			counter_cont.innerHTML = log_counter;
+		}
+		else
+		{
+			counter_cont.innerHTML = '';
+			counter_cont.style.display = "none";
+		}
 	}
 }
 
-function onFilterCreatedBySelect(arUser)
+BitrixLFFilter = function ()
 {
-	if (arUser.id)
-	{
-		document.forms["log_filter"]["flt_created_by_id"].value = arUser.id;
-		document.forms["log_filter"]["filter-field-created-by"].value = arUser.name;
-		BX.removeClass(BX("filter-field-created-by").parentNode.parentNode, "webform-field-textbox-empty");
-		if (BX("flt_comments_cont"))
-			BX("flt_comments_cont").style.display = "block";
-	}
-	else if(
-		arUser
-		&& typeof arUser === "object"
-		&& arUser.type != undefined
-		&& arUser.type === "change"
+	this.filterPopup = false;
+	this.currentName = null;
+
+	this.obInputName = {};
+	this.obSearchInput = {};
+
+	this.obInputContainerName = {};
+	this.obContainerInput = {};
+};
+
+BitrixLFFilter.prototype.initFilter = function(params)
+{
+	__logOnDateChange(document.forms['log_filter'].flt_date_datesel);
+	BX('flt_date_from_span').onclick = function(){
+		BX.calendar({node: this, field: BX('flt_date_from'), bTime: false});
+	};
+	BX('flt_date_to_span').onclick = function(){
+		BX.calendar({node: this, field: BX('flt_date_to'), bTime: false});
+	};
+};
+
+BitrixLFFilter.prototype.initDestination = function(params)
+{
+	this.obInputName[params.name] = params.inputName;
+	this.obSearchInput[params.name] = BX(params.inputName);
+	this.obInputContainerName[params.name] = params.inputContainerName;
+	this.obContainerInput[params.name] = BX(params.inputContainerName);
+
+	if (
+		typeof params.items != 'undefined'
+		&& typeof params.items.department != 'undefined'
 	)
 	{
-		if (BX("flt_comments_cont"))
-			BX("flt_comments_cont").style.display = "block";
+		if (typeof params.items.extranetRoot != 'undefined')
+		{
+			for(var key in params.items.extranetRoot)
+			{
+				if (params.items.extranetRoot.hasOwnProperty(key))
+				{
+					params.items.department[key] = params.items.extranetRoot[key];
+				}
+			}
+		}
+
+		if (!params.items.departmentRelation)
+		{
+			params.items.departmentRelation = BX.SocNetLogDestination.buildDepartmentRelation(params.items.department);
+		}
 	}
-	else if (BX("flt_comments_cont"))
+
+	BX.SocNetLogDestination.init({
+		name : params.name,
+		searchInput : this.obSearchInput[params.name],
+		extranetUser : !!params.extranetUser,
+		departmentSelectDisable : !!params.departmentSelectDisable,
+		bindMainPopup : {
+			node: params.bindNode,
+			offsetTop: '5px',
+			offsetLeft: '15px'
+		},
+		bindSearchPopup : {
+			node: params.bindNode,
+			offsetTop : '5px',
+			offsetLeft: '15px'
+		},
+		callback : {
+			select : BX.proxy(this.onSelectDestination, {
+				name: params.name,
+				containerInput: BX(params.inputContainerName),
+				inputContainerName: params.inputContainerName,
+				inputName: params.inputName,
+				searchInput: BX(params.inputName),
+				resultFieldName: params.resultFieldName
+			}),
+			unSelect : BX.proxy(this.onUnSelectDestination, {
+				name: params.name,
+				inputContainerName: params.inputContainerName,
+				inputName: params.inputName,
+				searchInput: BX(params.inputName)
+			})
+		},
+		items : params.items,
+		itemsLast : params.itemsLast,
+		itemsSelected : params.itemsSelected,
+		isCrmFeed : false,
+		useClientDatabase: true,
+		destSort: params.destSort,
+		allowAddUser: false,
+		allowSearchEmailUsers: !params.extranetUser,
+		userNameTemplate: params.userNameTemplate
+	});
+	BX.bind(this.obSearchInput[params.name], 'click', function(e) {
+		oLFFilter.currentName = params.name;
+		BX.SocNetLogDestination.openDialog(params.name);
+		return BX.PreventDefault(e);
+	});
+	BX.bind(this.obSearchInput[params.name], 'keyup', BX.delegate(BX.SocNetLogDestination.BXfpSearch, {
+		formName: params.name,
+		inputName: oLFFilter.obInputName[params.name]
+	}));
+	BX.bind(this.obSearchInput[params.name], 'keydown', BX.delegate(BX.SocNetLogDestination.BXfpSearchBefore, {
+		formName: params.name,
+		inputName: oLFFilter.obInputName[params.name]
+	}));
+
+};
+
+BitrixLFFilter.prototype.clearInput = function()
+{
+	if (this.obContainerInput[this.currentName])
+	{
+		var arItems = BX.findChildren(this.obContainerInput[this.currentName], { className: 'feed-add-post-destination' }, false);
+		for (var i = 0; i < arItems.length; i++)
+		{
+			BX.SocNetLogDestination.deleteItem(arItems[i].attributes['data-id'].value, arItems[i].attributes['data-type'].value, this.currentName);
+		}
+	}
+};
+
+BitrixLFFilter.prototype.onSelectDestination = function(item, type, search, bUndeleted)
+{
+	oLFFilter.clearInput();
+
+	BX.SocNetLogDestination.BXfpSelectCallback({
+		formName: this.name,
+		item: item,
+		type: type,
+		search: search,
+		bUndeleted: bUndeleted,
+		containerInput: this.containerInput,
+		valueInput: this.searchInput,
+		varName: this.resultFieldName
+	});
+
+	this.searchInput.style.display = "none";
+	if (
+		this.name == 'feed-filter-created-by'
+		&& BX("flt_comments_cont")
+	)
+	{
+		BX("flt_comments_cont").style.display = "block";
+	}
+
+	BX.SocNetLogDestination.closeDialog();
+	BX.SocNetLogDestination.closeSearch();
+};
+
+BitrixLFFilter.prototype.onUnSelectDestination = function(item)
+{
+	var elements = BX.findChildren(BX(this.inputContainerName), {attribute: {'data-id': '' + item.id + ''}}, true);
+	if (elements !== null)
+	{
+		for (var j = 0; j < elements.length; j++)
+		{
+			BX.remove(elements[j]);
+		}
+	}
+	BX(this.inputName).value = '';
+
+	this.searchInput.style.display = "inline-block";
+	if (
+		this.name == 'feed-filter-created-by'
+		&& BX("flt_comments_cont")
+	)
+	{
 		BX("flt_comments_cont").style.display = "none";
+	}
+};
 
-	if (filterCreatedByPopup && typeof filterCreatedByPopup === "object")
-		filterCreatedByPopup.close();
-}
-
-function onFilterUserSelect(arUser)
+BitrixLFFilter.prototype.ShowFilterPopup = function(bindElement)
 {
-	if (arUser.id)
+	if (!oLFFilter.filterPopup)
 	{
-		BX('filter-field-group').value = '';
-		document.forms["log_filter"]["flt_group_id"].value = 0;
-		document.forms["log_filter"]["flt_to_user_id"].value = arUser.id;
-		document.forms["log_filter"]["filter-field-user"].value = arUser.name;
-		BX.removeClass(BX("filter-field-user").parentNode.parentNode, "webform-field-textbox-empty");
-	}
-
-	filterUserPopup.close();
-}
-
-function onFilterDestChangeTab(type)
-{
-	var type_hide;
-	if (type != 'group')
-	{
-		type = 'user';
-		type_hide = 'group';
-		if (
-			filterGroupsPopup !== undefined 
-			&& filterGroupsPopup.popupWindow !== undefined
-		)
-		{
-			filterGroupsPopup.popupWindow.close();
-		}
-	}
-	else
-	{
-		type_hide = 'user';
-		if (typeof filterUserPopup != 'undefined')
-		{
-			filterUserPopup.close();
-		}
-	}
-
-	BX.removeClass(BX('filter-dest-' + type + '-tab'), 'webform-field-action-link');
-	BX.addClass(BX('filter-dest-' + type_hide + '-tab'), 'webform-field-action-link');
-
-	BX('filter-dest-' + type + '-block').style.display = 'inline-block';
-	BX('filter-dest-' + type_hide + '-block').style.display = 'none';
-
-	if (type != 'group')
-	{
-		BX("filter-field-user").focus();
-		__SLFShowUseropup(BX("filter-field-user"));
-	}
-	else
-	{
-		BX("filter-field-group").focus();
-		__SLFShowGroupsPopup();
-	}
-}
-
-var filterPopup = false;
-
-function ShowFilterPopup(bindElement, bIntranet)
-{
-
-	if (!filterPopup)
-	{
-		//BX.showWait(bindElement);
-		BX.ajax.get(BX.message('sonetLFAjaxPath'), function(data) 
+		BX.ajax.get(BX.message('sonetLFAjaxPath'), function(data)
 		{
 			BX.closeWait(bindElement);
 
-			filterPopup = new BX.PopupWindow(
+			oLFFilter.filterPopup = new BX.PopupWindow(
 				'bx_log_filter_popup',
 				bindElement,
 				{
-					closeIcon : true,
+					closeIcon : false,
 					offsetTop: 5,
-					autoHide: (!!bIntranet),
+					autoHide: true,
 					zIndex : -100,
+					//angle : { offset : 59},
 					className : 'sonet-log-filter-popup-window',
-					events : { }
+					events : {
+						onPopupClose: function() {
+							if (!BX.hasClass(this.bindElement, "pagetitle-menu-filter-set"))
+								BX.removeClass(this.bindElement, "pagetitle-menu-filter-selected")
+						},
+						onPopupShow: function() { BX.addClass(this.bindElement, "pagetitle-menu-filter-selected")}
+					}
 				}
 			);
 
 			var filter_block = BX.create('DIV', {html: BX.util.trim(data)});
-			filterPopup.setContent(filter_block.firstChild);
-			filterPopup.show();
-
-			if (!!bIntranet)
-			{
-				BX.bind(BX("filter-field-created-by"), "click", function(e) {
-
-					if(!e) e = window.event;
-
-					filterCreatedByPopup = BX.PopupWindowManager.create("filter-created-by-popup", this.parentNode, {
-						offsetTop : 1,
-						autoHide : true,
-						content : BX("FILTER_CREATEDBY_selector_content"),
-						zIndex : 1200,
-						buttons : [
-							new BX.PopupWindowButton({
-								text : BX.message("sonetLDialogClose"),
-								className : "popup-window-button-accept",
-								events : {
-									click : function() {
-										this.popupWindow.close();
-									}
-								}
-							})
-						]
-					});
-
-					if (filterCreatedByPopup.popupContainer.style.display != "block")
-						filterCreatedByPopup.show();
-
-					return BX.PreventDefault(e);
-				});
-			}			
-
-			BX.bind(BX.findNextSibling(BX("filter-field-created-by"), {tagName : "a"}), "click", function(e){
-				if(!e) e = window.event;
-
-				BX("filter-field-created-by").value = "";
-				BX("filter_field_createdby_hidden").value = "0";
-				BX.addClass(BX("filter-field-created-by").parentNode.parentNode, "webform-field-textbox-empty");
-				if (BX("flt_comments_cont"))
-					BX("flt_comments_cont").style.display = "none";
-				return BX.PreventDefault(e);
-			});
-
-			if (BX("filter-field-group"))
-			{
-				BX.bind(BX("filter-field-group"), "click", function(e) {
-					if(!e) e = window.event;
-					filterGroupsPopup.show();
-					return BX.PreventDefault(e);
-				});
-
-				BX.bind(BX.findNextSibling(BX("filter-field-group"), {tagName : "a"}), "click", function(e){
-					if(!e) e = window.event;
-
-					filterGroupsPopup.deselect(BX("filter_field_group_hidden").value.value);
-					BX("filter_field_group_hidden").value = "0";
-					BX.addClass(BX("filter-field-group").parentNode.parentNode, "webform-field-textbox-empty");
-					return BX.PreventDefault(e);
-				});
-			}
-
-			if (BX("filter-field-user"))
-			{
-				BX.bind(BX("filter-field-user"), "click", function(e) {
-					if(!e) e = window.event;
-					filterUserPopup.show();
-					return BX.PreventDefault(e);
-				});
-
-				BX.bind(BX.findNextSibling(BX("filter-field-user"), {tagName : "a"}), "click", function(e){
-					if(!e) e = window.event;
-					BX("filter_field_user_hidden").value = "0";
-					BX("filter-field-user").value = "";
-					BX.addClass(BX("filter-field-user").parentNode.parentNode, "webform-field-textbox-empty");
-					return BX.PreventDefault(e);
-				});
-			}
+			oLFFilter.filterPopup.setContent(filter_block.firstChild);
+			oLFFilter.filterPopup.show();
 		});
 	}
 	else
 	{
-		filterPopup.show();	
+		oLFFilter.filterPopup.show();
 	}
+};
 
-}
-
-function __SLFShowGroupsPopup()
-{
-	BX('filter-field-user').value = '';
-	BX('filter_field_user_hidden').value = "0";
-
-	filterGroupsPopup.show();
-}
-
-function __SLFShowUseropup(obj)
-{
-	filterUserPopup = BX.PopupWindowManager.create("filter-user-popup", obj.parentNode, {
-		offsetTop : 1,
-		autoHide : true,
-		content : BX("FILTER_USER_selector_content"),
-		zIndex : 1200,
-		buttons : [
-			new BX.PopupWindowButton({
-				text : BX.message("sonetLDialogClose"),
-				className : "popup-window-button-accept",
-				events : {
-					click : function() {
-						this.popupWindow.close();
-					}
-				}
-			})
-		]
-	});
-
-	if (filterUserPopup.popupContainer.style.display != "block")
-	{
-		filterUserPopup.show();
-	}
-}
-
-function __logOnReload(log_counter)
-{
-	if (BX("sonet_log_counter_preset"))
-	{
-		if (parseInt(log_counter) > 0)
-		{
-			BX("sonet_log_counter_preset").style.display = "inline-block";
-			BX("sonet_log_counter_preset").innerHTML = log_counter;
-		}
-		else
-		{
-			BX("sonet_log_counter_preset").innerHTML = '';
-			BX("sonet_log_counter_preset").style.display = "none";
-		}
-	}
-}
-
-function __SLFShowExpertModePopup(bindObj)
+BitrixLFFilter.prototype.__SLFShowExpertModePopup = function(bindObj)
 {
 	var modalWindow = new BX.PopupWindow('setExpertModePopup', bindObj, {
 		closeByEsc: false,
@@ -371,7 +364,7 @@ function __SLFShowExpertModePopup(bindObj)
 									props: {
 										className: 'popup-window-button-text'
 									},
-									text: BX.message('sonetLFDialogClose')
+									text: BX.message('sonetLFDialogRead')
 								}),
 								BX.create('SPAN', {
 									props: {
@@ -386,4 +379,7 @@ function __SLFShowExpertModePopup(bindObj)
 		})
 	});
 	modalWindow.show();
-}
+};
+
+oLFFilter = new BitrixLFFilter;
+window.oLFFilter = oLFFilter;

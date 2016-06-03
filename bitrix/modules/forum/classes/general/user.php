@@ -262,51 +262,74 @@ class CAllForumUser
 		return True;
 	}
 
-	public static function Add($arFields, $strUploadDir = false)
+	public static function Add($fields, $strUploadDir = false)
 	{
-		global $DB;
-		$arBinds = Array();
+		global $DB, $CACHE_MANAGER;
 		$strUploadDir = ($strUploadDir === false ? "forum/avatar" : $strUploadDir);
 
-		if (!CForumUser::CheckFields("ADD", $arFields))
+		if (!CForumUser::CheckFields("ADD", $fields))
 			return false;
 /***************** Event onBeforeUserAdd ***************************/
 		foreach (GetModuleEvents("forum", "onBeforeUserAdd", true) as $arEvent)
-			ExecuteModuleEventEx($arEvent, array(&$arFields));
+			ExecuteModuleEventEx($arEvent, array(&$fields));
 /***************** /Event ******************************************/
-		if (empty($arFields))
+		if (empty($fields))
 			return false;
 /***************** Cleaning cache **********************************/
-		if (is_set($arFields, "ALLOW_POST") && $arFields["ALLOW_POST"] != "Y")
+		if (is_set($fields, "ALLOW_POST") && $fields["ALLOW_POST"] != "Y")
 		{
 			unset($GLOBALS["FORUM_CACHE"]["LOCKED_USERS"]);
 			if (CACHED_b_forum_user !== false)
-			$GLOBALS["CACHE_MANAGER"]->CleanDir("b_forum_user");
+				$CACHE_MANAGER->cleanDir("b_forum_user");
 		}
 /***************** Cleaning cache/**********************************/
-		if (!is_set($arFields, "LAST_VISIT"))
-			$arFields["~LAST_VISIT"] = $DB->GetNowFunction();
-		if (!is_set($arFields, "DATE_REG"))
-			$arFields["~DATE_REG"] = $DB->GetNowFunction();
-		if (is_set($arFields, "INTERESTS"))
-			$arBinds["INTERESTS"] = $arFields["INTERESTS"];
-
 		if (
-			array_key_exists("AVATAR", $arFields)
-			&& is_array($arFields["AVATAR"])
+			array_key_exists("AVATAR", $fields)
+			&& is_array($fields["AVATAR"])
 			&& (
-				!array_key_exists("MODULE_ID", $arFields["AVATAR"])
-				|| strlen($arFields["AVATAR"]["MODULE_ID"]) <= 0
+				!array_key_exists("MODULE_ID", $fields["AVATAR"])
+				|| strlen($fields["AVATAR"]["MODULE_ID"]) <= 0
 			)
 		)
-			$arFields["AVATAR"]["MODULE_ID"] = "forum";
+			$fields["AVATAR"]["MODULE_ID"] = "forum";
 
-		CFile::SaveForDB($arFields, "AVATAR", $strUploadDir);
+		CFile::SaveForDB($fields, "AVATAR", $strUploadDir);
+		$ID = false;
+		if (!array_key_exists("INTERESTS", $fields) || $DB->type != "oracle")
+		{
+			static $connection = false;
+			static $helper = false;
+			if (!$connection)
+			{
+				$connection = \Bitrix\Main\Application::getConnection();
+				$helper = $connection->getSqlHelper();
+			}
 
-		$ID = $DB->Add("b_forum_user", $arFields, $arBinds);
+			$fields["LAST_VISIT"] = new \Bitrix\Main\DB\SqlExpression($helper->getCurrentDateTimeFunction());
+			$fields["DATE_REG"] = new \Bitrix\Main\DB\SqlExpression($helper->getCurrentDateTimeFunction());
+			$fields2 = array_diff_key($fields, array("USER_ID" => null, "DATE_REG" => null));
+
+			$merge = $helper->prepareMerge("b_forum_user", array("USER_ID"), $fields, $fields2);
+			if ($merge[0] != "")
+			{
+				$connection->query($merge[0]);
+				$ID = $connection->getInsertedId();
+				if (!$ID)
+					$ID = (($res = $DB->query("SELECT ID FROM b_forum_user where USER_ID=".intval($fields["USER_ID"]))->fetch()) ? $res["ID"] : false);
+			}
+		}
+		else
+		{
+			if (!is_set($fields, "LAST_VISIT"))
+				$fields["~LAST_VISIT"] = $DB->GetNowFunction();
+			if (!is_set($fields, "DATE_REG"))
+				$fields["~DATE_REG"] = $DB->GetNowFunction();
+			$ID = $DB->Add("b_forum_user", $fields, array("INTERESTS" => $fields["INTERESTS"]));
+		}
+
 /***************** Event onAfterUserAdd ****************************/
 		foreach (GetModuleEvents("forum", "onAfterUserAdd", true) as $arEvent)
-			ExecuteModuleEventEx($arEvent, array($ID, $arFields));
+			ExecuteModuleEventEx($arEvent, array($ID, $fields));
 /***************** /Event ******************************************/
 		return $ID;
 	}

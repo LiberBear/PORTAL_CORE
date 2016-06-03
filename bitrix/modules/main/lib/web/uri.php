@@ -240,7 +240,7 @@ class Uri
 			parse_str($this->query, $currentParams);
 		}
 
-		$currentParams = array_merge($currentParams, $params);
+		$currentParams = array_replace($currentParams, $params);
 
 		$this->query = http_build_query($currentParams, "", "&");
 

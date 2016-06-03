@@ -1071,6 +1071,15 @@ abstract class CAllMain
 		return end($this->__componentStack);
 	}
 
+	/**
+	 * Returns a current component stack.
+	 * @return array
+	 */
+	public function getComponentStack()
+	{
+		return $this->__componentStack;
+	}
+
 	public function AddViewContent($view, $content, $pos = 500)
 	{
 		if(!is_array($this->__view[$view]))

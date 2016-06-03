@@ -39,7 +39,7 @@ $arSitesShop = array();
 $arSitesTmp = array();
 
 $siteIterator = SiteTable::getList(array(
-	'select' => array('LID', 'NAME'),
+	'select' => array('LID', 'NAME', 'SORT'),
 	'filter' => array('=ACTIVE' => 'Y'),
 	'order' => array('SORT' => 'ASC', 'LID' => 'ASC')
 ));

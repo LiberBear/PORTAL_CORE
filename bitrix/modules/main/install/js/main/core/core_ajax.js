@@ -364,6 +364,8 @@ BX.ajax.__runOnload = function()
 
 BX.ajax.__run = function(config, data)
 {
+	BX.debugEnable(true);
+
 	if (!config.processData)
 	{
 		if (config.onsuccess)
@@ -377,6 +379,8 @@ BX.ajax.__run = function(config, data)
 	{
 		data = BX.ajax.processRequestData(data, config);
 	}
+
+	BX.debugEnable(false);
 };
 
 

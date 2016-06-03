@@ -196,7 +196,7 @@ class CCatalogCondCtrlBasketProductFields extends CGlobalCondCtrlComplex
 	public static function GetControls($strControlID = false)
 	{
 		$vatList = array();
-		$vatIterator = Catalog\VatTable::getList(array('select' => array('ID', 'NAME'), 'order' => array('SORT' => 'ASC')));
+		$vatIterator = Catalog\VatTable::getList(array('select' => array('ID', 'NAME', 'SORT'), 'order' => array('SORT' => 'ASC')));
 		while ($vat = $vatIterator->fetch())
 		{
 			$vat['ID'] = (int)$vat['ID'];
@@ -1013,7 +1013,7 @@ class CCatalogCondCtrlCatalogSettings extends CGlobalCondCtrlComplex
 			-1 => Loc::getMessage('BX_COND_CATALOG_PRICE_TYPE_ALL')
 		);
 		$priceTypeIterator = Catalog\GroupTable::getList(array(
-			'select' => array('ID', 'NAME', 'LANG_NAME' => 'CURRENT_LANG.NAME'),
+			'select' => array('ID', 'NAME', 'SORT', 'LANG_NAME' => 'CURRENT_LANG.NAME'),
 			'order' => array('SORT' => 'ASC', 'ID' => 'ASC')
 		));
 		while ($priceType = $priceTypeIterator->fetch())

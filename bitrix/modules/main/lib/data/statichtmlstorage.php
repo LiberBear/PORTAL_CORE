@@ -71,4 +71,16 @@ abstract class StaticHtmlStorage
 	 * @return bool
 	 */
 	abstract public function shouldCountQuota();
+
+	/**
+	 * Returns the time the cache was last modified
+	 * @return int|false
+	 */
+	abstract public function getLastModified();
+
+	/**
+	 * Returns cache size
+	 * @return int|false
+	 */
+	abstract public function getSize();
 }

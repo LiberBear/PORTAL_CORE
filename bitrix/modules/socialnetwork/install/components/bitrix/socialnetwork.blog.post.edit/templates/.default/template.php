@@ -164,11 +164,6 @@ else
 			$activeTab = "grat";
 		}
 	}
-	if (array_key_exists("UF_BLOG_POST_IMPRTNT", $arResult["POST_PROPERTIES"]["DATA"]))
-	{
-		if (!$bVarsFromForm && !!$arResult["POST_PROPERTIES"]["DATA"]["UF_BLOG_POST_IMPRTNT"]["VALUE"])
-			$activeTab = "important";
-	}
 
 	ob_start();
 
@@ -212,11 +207,6 @@ else
 			"NAME" => GetMessage("BLOG_TAB_GRAT")
 		);
 	}
-
-	$arTabs[] = array(
-		"ID" => "important",
-		"NAME" => GetMessage("SBPE_IMPORTANT_MESSAGE")
-	);
 
 	if($bLists)
 	{
@@ -387,7 +377,8 @@ HTML;
 						(($arResult["allowVideo"] == "Y") ? "InputVideo" : ""),
 						"Quote",
 						"MentionUser",
-						"InputTag"
+						"InputTag",
+						"Important"
 					),
 					"ADDITIONAL" => array(
 						"<span title=\"".GetMessage("BLOG_TITLE")."\" ".
@@ -437,6 +428,9 @@ HTML;
 						"VALUE" => explode(",", trim($arResult["PostToShow"]["CategoryText"])),
 						"USE_SEARCH" => "Y",
 						"FILTER" => "blog",
+					),
+					"IMPORTANT" => Array(
+						"INPUT_NAME" => "UF_BLOG_POST_IMPRTNT"
 					),
 					"SMILES" => array("VALUE" => $arSmiles),
 					"NAME_TEMPLATE" => $arParams["NAME_TEMPLATE"],

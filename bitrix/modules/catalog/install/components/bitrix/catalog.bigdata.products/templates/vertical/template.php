@@ -3,6 +3,7 @@
 /** @var array $arParams */
 /** @var array $arResult */
 /** @global CDatabase $DB */
+/** @global CMain $APPLICATION */
 
 $frame = $this->createFrame()->begin("");
 
@@ -11,25 +12,11 @@ $templateData = array(
 	'TEMPLATE_CLASS' => 'bx_' . $arParams['TEMPLATE_THEME']
 );
 
-$injectId = 'bigdata_recommeded_products_'.rand();
-
-?>
-
-<script type="application/javascript">
-	BX.cookie_prefix = '<?=CUtil::JSEscape(COption::GetOptionString("main", "cookie_name", "BITRIX_SM"))?>';
-	BX.cookie_domain = '<?=$APPLICATION->GetCookieDomain()?>';
-	BX.current_server_time = '<?=time()?>';
-
-	BX.ready(function(){
-		bx_rcm_recommendation_event_attaching(BX('<?=$injectId?>_items'));
-	});
-
-</script>
-
-<?
+$injectId = $arParams['UNIQ_COMPONENT_ID'];
 
 if (isset($arResult['REQUEST_ITEMS']))
 {
+	// code to receive recommendations from the cloud
 	CJSCore::Init(array('ajax'));
 
 	// component parameters
@@ -42,7 +29,7 @@ if (isset($arResult['REQUEST_ITEMS']))
 
 	?>
 
-	<span id="<?=$injectId?>" class="bigdata_recommended_products_container"></span>
+	<span id="<?=$injectId?>"></span>
 
 	<script type="application/javascript">
 		BX.ready(function(){
@@ -58,24 +45,31 @@ if (isset($arResult['REQUEST_ITEMS']))
 			);
 		});
 	</script>
-
 	<?
 	$frame->end();
 	return;
+
+	// \ end of the code to receive recommendations from the cloud
 }
+
+
+// regular template then
+// if customized template, for better js performance don't forget to frame content with <span id="{$injectId}_items">...</span> 
 
 if (!empty($arResult['ITEMS']))
 {
-	?><script type="text/javascript">
+	?>
+
+	<span id="<?=$injectId?>_items">
+
+	<script type="text/javascript">
 	BX.message({
 		CBD_MESS_BTN_BUY: '<? echo ('' != $arParams['MESS_BTN_BUY'] ? CUtil::JSEscape($arParams['MESS_BTN_BUY']) : GetMessageJS('CVP_TPL_MESS_BTN_BUY')); ?>',
 		CBD_MESS_BTN_ADD_TO_BASKET: '<? echo ('' != $arParams['MESS_BTN_ADD_TO_BASKET'] ? CUtil::JSEscape($arParams['MESS_BTN_ADD_TO_BASKET']) : GetMessageJS('CVP_TPL_MESS_BTN_ADD_TO_BASKET')); ?>',
-
 		CBD_MESS_BTN_DETAIL: '<? echo ('' != $arParams['MESS_BTN_DETAIL'] ? CUtil::JSEscape($arParams['MESS_BTN_DETAIL']) : GetMessageJS('CVP_TPL_MESS_BTN_DETAIL')); ?>',
-
 		CBD_MESS_NOT_AVAILABLE: '<? echo ('' != $arParams['MESS_BTN_DETAIL'] ? CUtil::JSEscape($arParams['MESS_BTN_DETAIL']) : GetMessageJS('CVP_TPL_MESS_BTN_DETAIL')); ?>',
 		CBD_BTN_MESSAGE_BASKET_REDIRECT: '<? echo GetMessageJS('CVP_CATALOG_BTN_MESSAGE_BASKET_REDIRECT'); ?>',
-		BASKET_URL: '<? echo $arParams["BASKET_URL"]; ?>',
+		CBD_BASKET_URL: '<? echo $arParams["BASKET_URL"]; ?>',
 		CBD_ADD_TO_BASKET_OK: '<? echo GetMessageJS('CVP_ADD_TO_BASKET_OK'); ?>',
 		CBD_TITLE_ERROR: '<? echo GetMessageJS('CVP_CATALOG_TITLE_ERROR') ?>',
 		CBD_TITLE_BASKET_PROPS: '<? echo GetMessageJS('CVP_CATALOG_TITLE_BASKET_PROPS') ?>',
@@ -85,8 +79,6 @@ if (!empty($arResult['ITEMS']))
 		CBD_BTN_MESSAGE_CLOSE: '<? echo GetMessageJS('CVP_CATALOG_BTN_MESSAGE_CLOSE') ?>'
 	});
 	</script>
-	<span id="<?=$injectId?>_items" class="bigdata_recommended_products_items">
-	<input type="hidden" name="bigdata_recommendation_id" value="<?=htmlspecialcharsbx($arResult['RID'])?>">
 	<?
 
 	$arSkuTemplate = array();
@@ -244,8 +236,7 @@ if (!empty($arResult['ITEMS']))
 	<div class="bx_catalog_item_container <? echo $showImgClass; ?>">
 	<a id="<? echo $arItemIDs['PICT']; ?>"
 		href="<? echo $arItem['DETAIL_PAGE_URL']; ?>"
-		class="bx_catalog_item_images bx_rcm_view_link"
-		data-product-id="<?=$arItem['ID']?>"
+		class="bx_catalog_item_images"
 		<? if ($arParams['SHOW_IMAGE'] == "Y")
 		{
 			?>
@@ -277,8 +268,7 @@ if (!empty($arResult['ITEMS']))
 	{
 		?><a id="<? echo $arItemIDs['SECOND_PICT']; ?>"
 		href="<? echo $arItem['DETAIL_PAGE_URL']; ?>"
-		class="bx_catalog_item_images_double bx_rcm_view_link"
-		data-product-id="<?=$arItem['ID']?>"
+		class="bx_catalog_item_images_double"
 		<? if ($arParams['SHOW_IMAGE'] == "Y")
 	{
 		?>
@@ -316,7 +306,7 @@ if (!empty($arResult['ITEMS']))
 	{
 		?>
 		<div class="bx_catalog_item_title"><a href="<? echo $arItem['DETAIL_PAGE_URL']; ?>"
-				title="<? echo $arItem['NAME']; ?>" class="bx_rcm_view_link" data-product-id="<?=$arItem['ID']?>"><? echo $arItem['NAME']; ?></a></div>
+				title="<? echo $arItem['NAME']; ?>"><? echo $arItem['NAME']; ?></a></div>
 	<?
 	}?>
 	<div class="bx_catalog_item_price">
@@ -389,7 +379,7 @@ if (!empty($arResult['ITEMS']))
 			{
 				?>
 				<div class="bx_catalog_item_controls_blockone">
-				<a class="bx_medium bx_bt_button_type_2 bx_rcm_view_link" data-product-id="<?=$arItem['ID']?>" href="<? echo $arItem['DETAIL_PAGE_URL']; ?>" rel="nofollow">
+				<a class="bx_medium bx_bt_button_type_2" href="<? echo $arItem['DETAIL_PAGE_URL']; ?>" rel="nofollow">
 					<? echo('' != $arParams['MESS_BTN_DETAIL'] ? $arParams['MESS_BTN_DETAIL'] : GetMessage('CVP_TPL_MESS_BTN_DETAIL')); ?>
 				</a>
 				</div><?
@@ -583,7 +573,7 @@ if (!empty($arResult['ITEMS']))
 		</div>
 
 		<div class="bx_catalog_item_controls touch">
-			<a class="bx_bt_button_type_2 bx_medium bx_rcm_view_link" data-product-id="<?=$arItem['ID']?>" href="<? echo $arItem['DETAIL_PAGE_URL']; ?>"><?
+			<a class="bx_bt_button_type_2 bx_medium" href="<? echo $arItem['DETAIL_PAGE_URL']; ?>"><?
 				echo('' != $arParams['MESS_BTN_DETAIL'] ? $arParams['MESS_BTN_DETAIL'] : GetMessage('CVP_TPL_MESS_BTN_DETAIL'));
 				?></a>
 		</div>

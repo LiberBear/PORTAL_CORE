@@ -12,6 +12,9 @@
 /** @global string $USE_TRANSLIT */
 /** @global string $TRANSLIT_LANG */
 /** @global string $PATH2IMAGE_FILES */
+/** @global string $outFileAction */
+
+use Bitrix\Catalog;
 
 IncludeModuleLangFile($_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/catalog/import_setup_templ.php');
 $startImportExecTime = getmicrotime();
@@ -919,7 +922,8 @@ if ('' == $strImportErrorMessage)
 			if ('' == $strErrorR && $bIBlockIsCatalog)
 			{
 				$arLoadOfferArray = array(
-					"ID" => $PRODUCT_ID
+					'ID' => $PRODUCT_ID,
+					'TMP_ID' => $tmpid
 				);
 				foreach ($arAvailPriceFields_names as $key => $value)
 				{
@@ -1177,10 +1181,7 @@ if ('' == $strImportErrorMessage)
 			{
 				CIBlockSection::Delete($arr["ID"]);
 			}
-			elseif ($outFileAction=="F")
-			{
-			}
-			else // H or M
+			elseif ($outFileAction == 'H' || $outFileAction == 'M') // H or M
 			{
 				$bDeactivationStarted = true;
 				$bs->Update($arr["ID"], array("NAME"=>$arr["NAME"], "ACTIVE" => "N", "TMP_ID" => $tmpid));
@@ -1193,43 +1194,50 @@ if ('' == $strImportErrorMessage)
 	// update or delete 'not-in-file' elements
 	if ($bAllLinesLoaded && $outFileAction != "F")
 	{
-		$arProductArray = array(
-			'QUANTITY' => 0,
-			'QUANTITY_TRACE' => 'Y',
-			'CAN_BUY_ZERO' => 'N',
-			'NEGATIVE_AMOUNT_TRACE' => 'N'
-		);
-		$res = CIBlockElement::GetList(
-			array(),
-			array("IBLOCK_ID" => $IBLOCK_ID, "!TMP_ID" => $tmpid),
-			false,
-			false,
-			array('ID')
-		);
-		while($arr = $res->Fetch())
+		if ($bIBlockIsCatalog && $outFileAction=="M")
 		{
-			if ($outFileAction=="D")
-			{
-				CIBlockElement::Delete($arr["ID"]);
-				$killed_lines++;
-			}
-			elseif ($outFileAction=="F")
-			{
-
-			}
-			elseif ($bIBlockIsCatalog && $outFileAction=="M")
+			$arProductArray = Catalog\ProductTable::getDefaultAvailableSettings();
+			$arProductArray['TMP_ID'] = $tmpid;
+			$res = Catalog\ProductTable::getList(array(
+				'select' => array('ID'),
+				'filter' => array('=IBLOCK_ELEMENT.IBLOCK_ID' => $IBLOCK_ID, '!=TMP_ID' => $tmpid),
+				'order' => array('ID' => 'ASC')
+			));
+			while($arr = $res->fetch())
 			{
 				CCatalogProduct::Update($arr['ID'], $arProductArray);
 				$killed_lines++;
-			}
-			else // H
-			{
-				$bDeactivationStarted = true;
-				$el->Update($arr["ID"], array("ACTIVE" => "N", "TMP_ID" => $tmpid));
-				$killed_lines++;
-			}
 
-			if (!($bAllLinesLoaded = CSVCheckTimeout($max_execution_time))) break;
+				if (!($bAllLinesLoaded = CSVCheckTimeout($max_execution_time))) break;
+			}
+			unset($arr, $res);
+		}
+		else
+		{
+			$res = CIBlockElement::GetList(
+				array('ID' => 'ASC'),
+				array("IBLOCK_ID" => $IBLOCK_ID, "!TMP_ID" => $tmpid),
+				false,
+				false,
+				array('ID')
+			);
+			while($arr = $res->Fetch())
+			{
+				if ($outFileAction == "D")
+				{
+					CIBlockElement::Delete($arr["ID"]);
+					$killed_lines++;
+				}
+				elseif ($outFileAction == "H") // H
+				{
+					$bDeactivationStarted = true;
+					$el->Update($arr["ID"], array("ACTIVE" => "N", "TMP_ID" => $tmpid));
+					$killed_lines++;
+				}
+
+				if (!($bAllLinesLoaded = CSVCheckTimeout($max_execution_time))) break;
+			}
+			unset($arr, $res);
 		}
 	}
 

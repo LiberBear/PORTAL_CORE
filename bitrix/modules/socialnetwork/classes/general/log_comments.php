@@ -738,7 +738,7 @@ class CAllSocNetLogComments
 			if(!empty($arMention))
 			{
 				$arMention = $arMention[1];
-				$arExcludeUsers = array();
+				$arExcludeUsers = array($arCommentFields["USER_ID"]);
 
 				if (!empty($arCommentFields["LOG_ID"]))
 				{
@@ -766,7 +766,14 @@ class CAllSocNetLogComments
 
 				foreach ($arMention as $mentionUserID)
 				{
-					$bHaveRights = CSocNetLogRights::CheckForUserOnly($arCommentFields["LOG_ID"], $mentionUserID);
+					$bHaveRights = (
+						$arTitleRes["IS_CRM"] != "Y"
+						|| COption::GetOptionString("crm", "enable_livefeed_merge", "N") == "Y"
+							? CSocNetLogRights::CheckForUserOnly($arCommentFields["LOG_ID"], $mentionUserID)
+							: false
+					);
+					$bHaveCrmRights = false;
+
 					if (
 						!$bHaveRights
 						&& $arTitleRes["IS_CRM"] == "Y"
@@ -816,7 +823,7 @@ class CAllSocNetLogComments
 
 						if (
 							$arTitleRes["IS_CRM"] == "Y" 
-							&& !$bHaveRights 
+							&& $bHaveCrmRights
 							&& !empty($arTmp["URLS"]["CRM_URL"])
 						)
 						{

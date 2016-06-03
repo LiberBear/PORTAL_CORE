@@ -301,7 +301,7 @@ $arSiteLinkList = array();
 if ($arSelectFieldsMap['SITE_ID'])
 {
 	$siteIterator = Main\SiteTable::getList(array(
-		'select' => array('LID'),
+		'select' => array('LID', 'SORT'),
 		'order' => array('SORT' => 'ASC')
 	));
 	while ($oneSite = $siteIterator->fetch())

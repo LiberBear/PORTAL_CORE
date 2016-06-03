@@ -540,7 +540,7 @@ $tabControl->AddViewField("DATE_REGISTER", GetMessage("USER_EDIT_DATE_REGISTER")
 $tabControl->AddViewField("LAST_UPDATE", GetMessage('LAST_UPDATE'), ($ID>0 && $COPY_ID<=0? $str_TIMESTAMP_X:''));
 $tabControl->AddViewField("LAST_LOGIN", GetMessage('LAST_LOGIN'), ($ID>0 && $COPY_ID<=0? $str_LAST_LOGIN:''));
 
-if(($ID!='1' || $COPY_ID>0) && ($USER->CanDoOperation('view_all_users') || $USER->CanDoOperation('view_own_profile'))):
+if($ID <> 1 || $COPY_ID > 0):
 	$tabControl->BeginCustomField("ACTIVE", GetMessage('ACTIVE'));
 ?>
 	<tr>

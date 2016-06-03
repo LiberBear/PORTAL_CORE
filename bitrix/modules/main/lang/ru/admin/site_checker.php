@@ -457,6 +457,7 @@ $MESS["MAIN_PERF_MID"] = "Средняя";
 $MESS["MAIN_PERF_HIGH"] = "Высокая";
 $MESS["MAIN_PAGES_PER_SECOND"] = "страниц в секунду";
 $MESS["MAIN_BX_CRONTAB_DEFINED"] = "Определена константа BX_CRONTAB, она может определяться только в скриптах, работающих на cron.";
+$MESS["MAIN_CRON_NO_START"] = "Не настроен запуск cron_events.php на cron, последний агент отработал больше суток назад.";
 $MESS["MAIN_AGENTS_HITS"] = "Агенты выполняются на хитах, рекомендуется перевести выполнение агентов на cron";
 $MESS["SC_GR_EXTENDED"] = "Дополнительные функции";
 $MESS["SC_GR_MYSQL"] = "Тестирование базы данных";

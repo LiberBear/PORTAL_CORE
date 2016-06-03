@@ -790,6 +790,12 @@
 
 		OnCreateIframe: function()
 		{
+			if (!document.body.contains(this.dom.iframeCont))
+			{
+				//do not create frame if DOM doesn't contain editor's html structure (autocomposite).
+				return;
+			}
+
 			this.On('OnCreateIframeBefore');
 			this.iframeView.OnCreateIframe();
 			this.selection = new BXEditorSelection(this);

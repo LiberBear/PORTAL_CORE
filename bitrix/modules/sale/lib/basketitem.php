@@ -1192,7 +1192,7 @@ class BasketItem
 
 			if ($cloneEntity->contains($bundleCollection))
 			{
-				$this->bundleCollection = $cloneEntity[$bundleCollection];
+				$basketItemClone->bundleCollection = $cloneEntity[$bundleCollection];
 			}
 		}
 		

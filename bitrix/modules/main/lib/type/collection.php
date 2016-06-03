@@ -92,7 +92,7 @@ class Collection
 	/**
 	 * Takes all arguments by pairs..
 	 * Odd arguments are arrays.
-	 * Even arguments ere keys to lookup in these arrays.
+	 * Even arguments are keys to lookup in these arrays.
 	 * Keys may be arrays. In this case function will try to dig deeper.
 	 * Returns first not empty element of a[k] pair.
 	 *

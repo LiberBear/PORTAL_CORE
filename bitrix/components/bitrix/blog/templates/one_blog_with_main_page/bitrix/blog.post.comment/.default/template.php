@@ -1,5 +1,7 @@
-<?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
-<?
+<?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+
+CUtil::InitJSCore(array("ajax"));
+
 include($_SERVER["DOCUMENT_ROOT"].$templateFolder."/script.php");
 if(strlen($arResult["MESSAGE"])>0)
 {
@@ -22,18 +24,6 @@ if(strlen($arResult["FATAL_MESSAGE"])>0)
 else
 {
 	?>
-	<script>
-	<!--
-	if(document.attachEvent && !(navigator.userAgent.toLowerCase().indexOf('opera') != -1))
-		var imgLoaded = false;
-	else
-		var imgLoaded = true;
-	function imageLoaded()
-	{
-		imgLoaded = true;
-	}
-	//-->
-	</script>
 
 	<div id="form_comment_" style="display:none;">
 		<div id="form_c_del">
@@ -110,12 +100,16 @@ else
 						?>
 						<tr valign="top">
 							<td>&nbsp;</td>
-							<td><div id="div_captcha"></div></td>
+							<td>
+								<div id="div_captcha">
+									<img src="" width="180" height="40" id="captcha" style="display:none;">
+								</div>
+							</td>
 						</tr>
 						<tr>
 							<td class="padding" align="left" nowrap><?=GetMessage("B_B_MS_CAPTCHA_SYM")?></td>
 							<td>
-								<input type="hidden" name="captcha_code" id="captcha_code" value="<?=$arResult["CaptchaCode"]?>">
+								<input type="hidden" name="captcha_code" id="captcha_code" value="">
 								<input type="text" size="10" name="captcha_word" id="captcha_word" value="">
 							</td>
 						</tr>
@@ -133,51 +127,25 @@ else
 		</form>
 		</div>
 	</div>
-	<?
-	if($arResult["use_captcha"]===true)
-	{
-		?>
-		<div id="captcha_del">
-		<script data-skip-moving="true">
-			<!--
-			var cc;
-			if(document.cookie.indexOf('<?echo session_name()?>'+'=') == -1)
-				cc = Math.random();
-			else
-				cc ='<?=$arResult["CaptchaCode"]?>';
-
-			document.write('<img src="/bitrix/tools/captcha.php?captcha_code='+cc+'" width="180" height="40" id="captcha" style="display:none;" onload="imageLoaded()">');
-			document.getElementById('captcha_code').value = cc;
-			//-->
-		</script>
-		</div>
-		<?
-	}
-	?>
 	<script>
 	<!--
 	var last_div = '';
 	function showComment(key, subject, error, comment, userName, userEmail)
 	{
-		if(!imgLoaded)
-		{
-			comment = comment.replace(/\n/g, '\\n');
-			comment = comment.replace(/'/g, "\\'");
-			comment = comment.replace(/"/g, '\\"');
-			setTimeout("showComment('"+key+"', '"+subject+"', '"+error+"', '"+comment+"', '"+userName+"', '"+userEmail+"')", 500);
-		}
-		else
-		{
-
 		<?
-		if($arResult["use_captcha"]===true)
+		if ($arResult["use_captcha"]===true)
 		{
 			?>
-			var im = document.getElementById('captcha');
-			document.getElementById('captcha_del').appendChild(im);
+			BX.ajax.getCaptcha(function(data) {
+				BX("captcha_word").value = "";
+				BX("captcha_code").value = data["captcha_sid"];
+				BX("captcha").src = '/bitrix/tools/captcha.php?captcha_code=' + data["captcha_sid"];
+				BX("captcha").style.display = "";
+			});
 			<?
 		}
 		?>
+
 		var cl = document.getElementById('form_c_del').cloneNode(true);
 		var ld = document.getElementById('form_c_del');
 		ld.parentNode.removeChild(ld);
@@ -185,17 +153,6 @@ else
 		document.getElementById('form_c_del').style.display = "block";
 		document.form_comment.parentId.value = key;
 		document.form_comment.action = document.form_comment.action+"#"+key;
-
-		<?
-		if($arResult["use_captcha"]===true)
-		{
-			?>
-			var im = document.getElementById('captcha');
-			document.getElementById('div_captcha').appendChild(im);
-			im.style.display = "block";
-			<?
-		}
-		?>
 
 		if(subject.length>0)
 			document.form_comment.subject.value = subject;
@@ -210,7 +167,7 @@ else
 				document.form_comment.user_email.value = userEmail;
 		}
 		last_div = key;
-		}
+
 		//document.form_comment.comment.focus();
 		return false;
 	}

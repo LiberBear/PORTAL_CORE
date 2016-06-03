@@ -150,6 +150,7 @@ class ProductSearchComponent extends \CBitrixComponent
 		if (isset($params['CHECK_PERMISSIONS']) && $params['CHECK_PERMISSIONS'] == 'N')
 			$this->checkPermissions = false;
 
+		/** @noinspection PhpMethodOrClassCallIsNotCaseSensitiveInspection */
 		$userOptions = \CUserOptions::getOption('catalog', self::TABLE_ID_PREFIX . '_' . $params['caller'], false, $this->getUserId());
 		if (is_array($userOptions))
 		{
@@ -399,7 +400,7 @@ class ProductSearchComponent extends \CBitrixComponent
 				$select[] = 'PREVIEW_PICTURE';
 			if (in_array('DETAIL_PICTURE', $visible))
 				$select[] = 'DETAIL_PICTURE';
-			$this->offers = \CCatalogSKU::getOffersList($productIds,$this->getIblockId(), array(), $select,	$propFilter);
+			$this->offers = \CCatalogSku::getOffersList($productIds,$this->getIblockId(), array(), $select,	$propFilter);
 			if (!empty($this->offers))
 			{
 				$offersIds = array();
@@ -566,7 +567,7 @@ class ProductSearchComponent extends \CBitrixComponent
 				$arItemsResult[$arCatalogProduct['ID']]['PRODUCT'] = $arCatalogProduct;
 			}
 
-			$offersExistsIds = \CCatalogSKU::getExistOffers($arProductIds, $this->getIblockId());
+			$offersExistsIds = \CCatalogSku::getExistOffers($arProductIds, $this->getIblockId());
 			$noOffersIds = array();
 
 			if (empty($offersExistsIds))
@@ -881,9 +882,8 @@ class ProductSearchComponent extends \CBitrixComponent
 	protected function getOffersCatalog()
 	{
 		if ($this->offersCatalog === null)
-		{
-			$this->offersCatalog = \CCatalogSKU::GetInfoByProductIBlock($this->getIblockId());
-		}
+			$this->offersCatalog = \CCatalogSku::GetInfoByProductIBlock($this->getIblockId());
+
 		return $this->offersCatalog;
 	}
 
@@ -982,7 +982,7 @@ class ProductSearchComponent extends \CBitrixComponent
 				{
 					$this->arHeaders[] = array(
 						"id" => "PRICE".$price["ID"],
-						"content" => htmlspecialcharsex(!empty($price["NAME_LANG"]) ? $price["NAME_LANG"] : $price["NAME"]),
+						"content" => htmlspecialcharsEx(!empty($price["NAME_LANG"]) ? $price["NAME_LANG"] : $price["NAME"]),
 						"default" => ($price["BASE"] == 'Y') ? true : false
 					);
 				}
@@ -1110,6 +1110,7 @@ class ProductSearchComponent extends \CBitrixComponent
 			unset($arProp);
 		}
 
+		$arCatalog = array();
 		$arSubQuery = array();
 		if ($arSKUProps = $this->getSkuProps())
 		{
@@ -1166,7 +1167,7 @@ class ProductSearchComponent extends \CBitrixComponent
 					$rsBarCode = \CCatalogStoreBarCode::getList(array(), array("BARCODE" => $barcode), false, false, array('PRODUCT_ID'));
 					while ($res = $rsBarCode->Fetch())
 					{
-						$res2 = \CCatalogSKU::GetProductInfo($res["PRODUCT_ID"]);
+						$res2 = \CCatalogSku::GetProductInfo($res["PRODUCT_ID"]);
 						$arSearchedIds[] = $res2 ? $res2['ID'] : $res['PRODUCT_ID'];
 					}
 				}
@@ -1266,8 +1267,8 @@ class ProductSearchComponent extends \CBitrixComponent
 		while ($arSection = $rsSections->Fetch())
 		{
 			$arSectionTmp = array(
-				"text" => htmlspecialcharsex($arSection["NAME"]),
-				"title" => htmlspecialcharsex($arSection["NAME"]),
+				"text" => htmlspecialcharsEx($arSection["NAME"]),
+				"title" => htmlspecialcharsEx($arSection["NAME"]),
 				"icon" => "iblock_menu_icon_sections",
 				"dynamic" => (($arSection["RIGHT_MARGIN"] - $arSection["LEFT_MARGIN"]) > 1),
 				"items" => array(),

@@ -127,7 +127,7 @@ if ($strExportErrorMessage == '')
 	$allowedCurrency = array('RUR', 'RUB', 'USD', 'EUR', 'UAH', 'BYR', 'KZT');
 	$strTmp = "<currencies>\n";
 	$currencyIterator = Currency\CurrencyTable::getList(array(
-		'select' => array('CURRENCY'),
+		'select' => array('CURRENCY', 'SORT'),
 		'filter' => array('@CURRENCY' => $allowedCurrency),
 		'order' => array('SORT' => 'ASC', 'CURRENCY' => 'ASC')
 	));
@@ -142,7 +142,10 @@ if ($strExportErrorMessage == '')
 
 	//*****************************************//
 
-	$arSelect = array("ID", "IBLOCK_ID", "IBLOCK_SECTION_ID", "NAME", "PREVIEW_PICTURE", "PREVIEW_TEXT", "PREVIEW_TEXT_TYPE", "DETAIL_PICTURE", "DETAIL_PAGE_URL", 'CATALOG_AVAILABLE');
+	$arSelect = array(
+		"ID", "IBLOCK_ID", "IBLOCK_SECTION_ID", "NAME", "PREVIEW_PICTURE", "PREVIEW_TEXT", "PREVIEW_TEXT_TYPE",
+		"DETAIL_PICTURE", "DETAIL_PAGE_URL", 'CATALOG_AVAILABLE'
+	);
 	$db_res = CCatalogGroup::GetGroupsList(array("GROUP_ID" => 2));
 	$arPTypes = array();
 	while ($ar_res = $db_res->Fetch())

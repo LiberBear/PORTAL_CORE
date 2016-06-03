@@ -9,6 +9,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
 /** @global CDatabase $DB */
 /** @global CUser $USER */
 /** @global CMain $APPLICATION */
+/** @global CCacheManager $CACHE_MANAGER */
 
 require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/components/bitrix/socialnetwork.log.ex/include.php");
 
@@ -151,16 +152,65 @@ if ($arParams["LOG_ID"] > 0)
 $arParams["GROUP_ID"] = IntVal($arParams["GROUP_ID"]);
 if ($arParams["GROUP_ID"] <= 0)
 {
-	$arParams["GROUP_ID"] = IntVal($_REQUEST["flt_group_id"]);
+	if (
+		!empty($_REQUEST["TO_CODE"])
+		&& !empty($_REQUEST["TO_CODE"]["SG"])
+		&& is_array($_REQUEST["TO_CODE"]["SG"])
+	)
+	{
+		preg_match('/^SG(\d+)$/', $_REQUEST["TO_CODE"]["SG"][0], $matches);
+		if (!empty($matches))
+		{
+			$arParams["GROUP_ID"] = $matches[1];
+		}
+	}
+	else
+	{
+		$arParams["GROUP_ID"] = IntVal($_REQUEST["flt_group_id"]);
+	}
 }
-	
+
+if (empty($arParams["DESTINATION"]))
+{
+	$arParams["DESTINATION"] = array();
+	if (
+		!empty($_REQUEST["TO_CODE"])
+		&& !empty($_REQUEST["TO_CODE"])
+		&& is_array($_REQUEST["TO_CODE"])
+	)
+	{
+		foreach($_REQUEST["TO_CODE"] as $codeGroup => $arCode)
+		{
+			foreach($arCode as $key => $code)
+			{
+				$arParams["DESTINATION"][] = $code;
+			}
+		}
+	}
+}
+
 if ($arParams["GROUP_ID"] > 0)
 {
 	$arParams["ENTITY_TYPE"] = SONET_ENTITY_GROUP;
 }
 else
 {
-	$arParams["TO_USER_ID"] = IntVal($_REQUEST["flt_to_user_id"]);
+	if (
+		!empty($_REQUEST["TO_CODE"])
+		&& !empty($_REQUEST["TO_CODE"]["U"])
+		&& is_array($_REQUEST["TO_CODE"]["U"])
+	)
+	{
+		preg_match('/^U(\d+)$/', $_REQUEST["TO_CODE"]["U"][0], $matches);
+		if (!empty($matches))
+		{
+			$arParams["TO_USER_ID"] = $matches[1];
+		}
+	}
+	else
+	{
+		$arParams["TO_USER_ID"] = IntVal($_REQUEST["flt_to_user_id"]);
+	}
 }
 
 $arParams["USER_ID"] = IntVal($arParams["USER_ID"]);
@@ -169,17 +219,41 @@ if ($arParams["USER_ID"] <= 0)
 	$arParams["USER_ID"] = IntVal($_REQUEST["flt_user_id"]);
 }
 
-if (is_array($_REQUEST["flt_created_by_id"]))
-	$_REQUEST["flt_created_by_id"] = $_REQUEST["flt_created_by_id"][0];
-
-preg_match('/^(\d+)$/', $_REQUEST["flt_created_by_id"], $matches);
-if (count($matches) > 0)
-	$arParams["CREATED_BY_ID"] = $_REQUEST["flt_created_by_id"];
+if (
+	!empty($_REQUEST["CREATED_BY_CODE"])
+	&& !empty($_REQUEST["CREATED_BY_CODE"]["U"])
+	&& is_array($_REQUEST["CREATED_BY_CODE"]["U"])
+)
+{
+	preg_match('/^U(\d+)$/', $_REQUEST["CREATED_BY_CODE"]["U"][0], $matches);
+	if (!empty($matches))
+	{
+		$arParams["CREATED_BY_ID"] = $matches[1];
+	}
+}
 else
 {
-	$arFoundUsers = CSocNetUser::SearchUser($_REQUEST["flt_created_by_id"], false);
-	if (is_array($arFoundUsers) && count($arFoundUsers) > 0)
-		$arParams["CREATED_BY_ID"] = key($arFoundUsers);
+	if (is_array($_REQUEST["flt_created_by_id"]))
+	{
+		$_REQUEST["flt_created_by_id"] = $_REQUEST["flt_created_by_id"][0];
+	}
+
+	preg_match('/^(\d+)$/', $_REQUEST["flt_created_by_id"], $matches);
+	if (count($matches) > 0)
+	{
+		$arParams["CREATED_BY_ID"] = $_REQUEST["flt_created_by_id"];
+	}
+	else
+	{
+		$arFoundUsers = CSocNetUser::SearchUser($_REQUEST["flt_created_by_id"], false);
+		if (
+			is_array($arFoundUsers)
+			&& count($arFoundUsers) > 0
+		)
+		{
+			$arParams["CREATED_BY_ID"] = key($arFoundUsers);
+		}
+	}
 }
 
 $arParams["NAME_TEMPLATE"] = $arParams["NAME_TEMPLATE"] ? $arParams["NAME_TEMPLATE"] : CSite::GetNameFormat();
@@ -720,11 +794,11 @@ if (
 		}
 	}
 
-	if ($arParams["DESTINATION"] > 0)
+	if (!empty($arParams["DESTINATION"]))
 	{
 		$arFilter["LOG_RIGHTS"] = $arParams["DESTINATION"];
 	}
-	elseif ($arParams["GROUP_ID"] > 0)
+	elseif (intval($arParams["GROUP_ID"]) > 0)
 	{
 		$ENTITY_TYPE = SONET_ENTITY_GROUP;
 		$ENTITY_ID = $arParams["GROUP_ID"];
@@ -733,7 +807,7 @@ if (
 		$arParams["SET_LOG_PAGE_CACHE"] = "Y";
 		$arParams["USE_FOLLOW"] = "N";
 	}
-	elseif ($arParams["TO_USER_ID"] > 0)
+	elseif (intval($arParams["TO_USER_ID"]) > 0)
 	{
 		$arFilter["LOG_RIGHTS"] = "U".$arParams["TO_USER_ID"];
 		$arFilter["!USER_ID"] = $arParams["TO_USER_ID"];
@@ -1272,7 +1346,7 @@ if (
 		"SONET_LOG" => array()
 	);
 
-	__SLLogGetIds(
+	$dbEventsID = __SLLogGetIds(
 		$arOrder, $arFilter, $arNavStartParams, $arSelectFields, $arListParams, $bFirstPage,
 		$arResult, $arActivity2Log, $arDiskUFEntity, $arTmpEventsNew
 	);
@@ -1285,7 +1359,7 @@ if (
 		unset($dateLastPageStart);
 		unset($arFilter[">=LOG_UPDATE"]);
 
-		__SLLogGetIds(
+		$dbEventsID = __SLLogGetIds(
 			$arOrder, $arFilter, $arNavStartParams, $arSelectFields, $arListParams, $bFirstPage,
 			$arResult, $arActivity2Log, $arDiskUFEntity, $arTmpEventsNew
 		);
@@ -1633,9 +1707,9 @@ if (!isset($arResult["FatalError"]))
 	}
 	else
 	{
-		if($GLOBALS["CACHE_MANAGER"]->Read(604800, "b_sonet_smile_".LANGUAGE_ID))
+		if($CACHE_MANAGER->Read(604800, "b_sonet_smile_".LANGUAGE_ID))
 		{
-			$arResult["Smiles"] = $GLOBALS["CACHE_MANAGER"]->Get("b_sonet_smile_".LANGUAGE_ID);
+			$arResult["Smiles"] = $CACHE_MANAGER->Get("b_sonet_smile_".LANGUAGE_ID);
 		}
 		else
 		{
@@ -1659,7 +1733,7 @@ if (!isset($arResult["FatalError"]))
 				$arResult["Smiles"][] = $arSmile;
 			}
 
-			$GLOBALS["CACHE_MANAGER"]->Set("b_sonet_smile_".LANGUAGE_ID, $arResult["Smiles"]);
+			$CACHE_MANAGER->Set("b_sonet_smile_".LANGUAGE_ID, $arResult["Smiles"]);
 		}
 	}
 }

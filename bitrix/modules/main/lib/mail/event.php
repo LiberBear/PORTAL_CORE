@@ -36,7 +36,9 @@ class Event
 	}
 
 	/**
-	 * @param array $data
+	 * Send mail event
+	 *
+	 * @param array $data Params of event
 	 * @return Main\Entity\AddResult
 	 */
 	public static function send(array $data)
@@ -47,11 +49,11 @@ class Event
 			$manageCache->clean('events');
 		}
 
-		$arFiles = array();
+		$fileList = array();
 		if(isset($data['FILE']))
 		{
 			if(is_array($data['FILE']))
-				$arFiles = $data['FILE'];
+				$fileList = $data['FILE'];
 
 			unset($data['FILE']);
 		}
@@ -60,15 +62,24 @@ class Event
 		if ($result->isSuccess())
 		{
 			$id = $result->getId();
-			foreach($arFiles as $file)
+			foreach($fileList as $file)
 			{
-				$arFile = \CFile::MakeFileArray($file);
-				$arFile["MODULE_ID"] = "main";
-				$fid = \CFile::SaveFile($arFile, "main");
 				$dataAttachment = array(
 					'EVENT_ID' => $id,
-					'FILE_ID' => $fid,
+					'FILE_ID' => null,
+					'IS_FILE_COPIED' => 'Y',
 				);
+				if(is_numeric($file) && \CFile::GetFileArray($file))
+				{
+					$dataAttachment['FILE_ID'] = $file;
+					$dataAttachment['IS_FILE_COPIED'] = 'N';
+				}
+				else
+				{
+					$fileArray = \CFile::MakeFileArray($file);
+					$fileArray["MODULE_ID"] = "main";
+					$dataAttachment['FILE_ID'] = \CFile::SaveFile($fileArray, "main");
+				}
 
 				MailInternal\EventAttachmentTable::add($dataAttachment);
 			}

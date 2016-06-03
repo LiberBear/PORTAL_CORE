@@ -9,7 +9,6 @@ $MESS["SONET_C30_T_SUBMIT"] = "Select";
 $MESS["SONET_C30_T_RESET"] = "Reset";
 $MESS["SONET_C30_PRESET_FILTER_ALL"] = "All events";
 $MESS["SONET_C30_SMART_FOLLOW"] = "Enable smart follow mode";
-$MESS["SONET_C30_SMART_FILTER_MYGROUPS"] = "My groups only";
 $MESS["SONET_C30_SMART_EXPERT_MODE"] = "Hide tasks";
 $MESS["SONET_C30_F_EXPERT_MODE_IMAGENAME"] = "en";
 $MESS["SONET_C30_F_EXPERT_MODE_POPUP_TITLE"] = "Hide tasks mode";
@@ -19,4 +18,5 @@ $MESS["SONET_C30_SMART_FOLLOW_HINT"] = "Smart follow mode is on. Only the posts 
 $MESS["SONET_C30_T_FILTER_COMMENTS"] = "Also search comments";
 $MESS["SONET_C30_F_DIALOG_CLOSE_BUTTON"] = "Close";
 $MESS["SONET_C30_EXPERT_MODE_HINT"] = "\"Hide tasks\" mode is now enabled. Your tasks will not be visible in Activity Stream; rather, you will access them in the Tasks section directly.<br /><br />You will still receive task notifications in the instant messenger.";
+$MESS["SONET_C30_EXTRANET_ROOT"] = "Extranet";
 ?>

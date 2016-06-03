@@ -109,6 +109,8 @@ if (!function_exists('__SLLogGetIds'))
 				$arDiskUFEntity["SONET_LOG"][] = $arEventsID["ID"];
 			}
 		}
+
+		return $dbEventsID;
 	}
 }
 ?>

@@ -17,7 +17,7 @@ class CCatalogIBlockParameters
 		$useId = ($useId === true);
 		$result = array();
 		$priceTypeIterator = Catalog\GroupTable::getList(array(
-			'select' => array('ID', 'NAME', 'NAME_LANG' => 'CURRENT_LANG.NAME'),
+			'select' => array('ID', 'NAME', 'SORT', 'NAME_LANG' => 'CURRENT_LANG.NAME'),
 			'order' => array('SORT' => 'ASC', 'ID' => 'ASC')
 		));
 		while ($priceType = $priceTypeIterator->fetch())

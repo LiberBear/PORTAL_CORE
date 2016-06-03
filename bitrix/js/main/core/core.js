@@ -236,8 +236,6 @@ BX.debugEnable = function(flag)
 {
 	flag = typeof (flag) == 'boolean'? flag: true;
 	BX.debugEnableFlag = flag;
-
-	console.info('Debug mode is '+(BX.debugEnableFlag? 'ON': 'OFF'))
 };
 
 BX.debugStatus = function()
@@ -4788,7 +4786,7 @@ function runReady()
 
 		BX.isReady = true;
 
-
+		BX.debugEnable(true);
 		if (readyList && readyList.length > 0)
 		{
 			var fn, i = 0;
@@ -4804,6 +4802,8 @@ function runReady()
 
 			readyList = null;
 		}
+		BX.debugEnable(false);
+
 		// TODO: check ready handlers binded some other way;
 	}
 	return null;

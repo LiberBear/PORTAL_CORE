@@ -283,8 +283,8 @@ class Signer
 			if ($pos === false)
 				throw new BadSignatureException('Separator not found in value');
 
-			$result[] = \CUtil::binSubstr($value, $pos + 1);
-			$value = \CUtil::binSubstr($value, 0, $pos);
+			$result[] = substr($value, $pos + 1);
+			$value = substr($value, 0, $pos);
 		}
 		$result[] = $value;
 

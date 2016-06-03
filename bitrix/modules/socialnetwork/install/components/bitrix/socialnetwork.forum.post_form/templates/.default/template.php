@@ -13,7 +13,7 @@ BX.message({
 	vote_drop_question_confirm : '<?=GetMessageJS("F_VOTE_DROP_QUESTION_CONFIRM")?>',
 	MPL_HAVE_WRITTEN : '<?=GetMessageJS('MPL_HAVE_WRITTEN')?>'
 });
-BX.Forum.Init('<?=$id?>', {
+BX.Forum.Init({
 	formID : '<?=$arParams["FORM_ID"]?>',
 	captcha : '<?=($arParams["FORUM"]["USE_CAPTCHA"]=="Y" && !$USER->IsAuthorized() ? "Y" : "N")?>',
 	bVarsFromForm : '<?=$arParams["bVarsFromForm"]?>',

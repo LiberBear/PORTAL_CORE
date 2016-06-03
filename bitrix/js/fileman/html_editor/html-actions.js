@@ -4165,22 +4165,23 @@
 
 							// Bug in Chrome - when you press enter but it put carret on the prev string
 							// Chrome 43.0.2357 in Mac puts visible space instead of invisible
-							if (BX.browser.IsMac() && BX.browser.IsChrome())
-							{
-								var tmpId = "bx-editor-temp-" + Math.round(Math.random() * 1000000);
-								_this.editor.InsertHtml('<blockquote id="' + quoteId + '" class="bxhtmled-quote">' + sel + '</blockquote>' + '<span><span id="' + tmpId + '">' + _this.editor.INVISIBLE_SPACE + '</span></span>', range);
-
-								setTimeout(function()
-								{
-									var tmpElement = _this.editor.GetIframeElement(tmpId);
-									if (tmpElement)
-									{
-										_this.editor.selection.SetAfter(tmpElement.parentNode);
-										BX.remove(tmpElement);
-									}
-								}, 0);
-							}
-							else
+							// Commented to solve mantis:73977
+							//if (BX.browser.IsMac() && BX.browser.IsChrome() && false)
+							//{
+							//	var tmpId = "bx-editor-temp-" + Math.round(Math.random() * 1000000);
+							//	_this.editor.InsertHtml('<blockquote id="' + quoteId + '" class="bxhtmled-quote">' + sel + '</blockquote>' + '<span><span id="' + tmpId + '">' + _this.editor.INVISIBLE_SPACE + '</span></span>', range);
+							//
+							//	setTimeout(function()
+							//	{
+							//		var tmpElement = _this.editor.GetIframeElement(tmpId);
+							//		if (tmpElement)
+							//		{
+							//			_this.editor.selection.SetAfter(tmpElement.parentNode);
+							//			BX.remove(tmpElement);
+							//		}
+							//	}, 10);
+							//}
+							//else
 							{
 								_this.editor.InsertHtml('<blockquote id="' + quoteId + '" class="bxhtmled-quote">' + sel + '</blockquote>' + _this.editor.INVISIBLE_SPACE, range);
 							}

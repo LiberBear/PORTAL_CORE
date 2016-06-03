@@ -233,6 +233,11 @@ class UserFieldTable extends Entity\DataManager
 		{
 			Entity\Base::destroy($utsNamespace."\\".$utsClass);
 			$entity = Entity\Base::getInstance($utsNamespace."\\".$utsClass);
+
+			foreach ($fieldsMap as $fieldName => $field)
+			{
+				$entity->addField($field, $fieldName);
+			}
 		}
 		else
 		{
@@ -336,7 +341,7 @@ class UserFieldTable extends Entity\DataManager
 		// get table name
 		$utmTable = static::getUtmEntityTableNameBySrcEntity($srcEntity);
 
-		// coolect fields
+		// collect fields
 		$fieldsMap = array(
 			'ID' => array(
 				'data_type' => 'integer',
@@ -377,6 +382,11 @@ class UserFieldTable extends Entity\DataManager
 		{
 			Entity\Base::destroy($utmNamespace."\\".$utmClass);
 			$entity = Entity\Base::getInstance($utmNamespace."\\".$utmClass);
+
+			foreach ($fieldsMap as $fieldName => $field)
+			{
+				$entity->addField($field, $fieldName);
+			}
 		}
 		else
 		{

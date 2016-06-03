@@ -17,10 +17,12 @@
  */
 
 if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
-?>
-<div class="fields integer" id="main_<?=$arParams["arUserField"]["FIELD_NAME"]?>"><?
+
 $index = 0;
 $fIndex = $arResult["RANDOM"];
+?>
+<div id="date_container_<?=$fIndex?>">
+<?
 foreach ($arResult["VALUE"] as $res):
 
 	if($index == 0 && $arParams["arUserField"]["ENTITY_VALUE_ID"]<1 && $arParams["arUserField"]["SETTINGS"]["DEFAULT_VALUE"]["TYPE"]!="NONE")
@@ -58,18 +60,21 @@ foreach ($arResult["VALUE"] as $res):
 ?></div><?
 $index++;
 endforeach;
-?></div><?
+?></div>
 
+<?if ($arParams["arUserField"]["EDIT_IN_LIST"] == "Y" && $arParams["arUserField"]["MULTIPLE"] == "Y" && $arParams["SHOW_BUTTON"] <> "N"):?>
+<script type="text/javascript">
+if(!window.bxDateInputs)
+{
+	var bxDateInputs = {};
+}
+bxDateInputs['<?=$fIndex?>'] = {
+	'fieldName': '<?=$arParams["arUserField"]["~FIELD_NAME"]?>',
+	'index': '<?=$index?>'
+};
+</script>
 
-if ($arParams["arUserField"]["MULTIPLE"] == "Y" && $arParams["SHOW_BUTTON"] != "N"):
-?><input type="button" value="<?=GetMessage("USER_TYPE_PROP_ADD")?>"<?
-	if ($arParams["arUserField"]["EDIT_IN_LIST"]!="Y"):
-		?> readonly="readonly"<?
-	else:
-		?> onClick="addStr<?=$fIndex?>();"<?
-	endif;
-?>><?
-if ($arParams["arUserField"]["EDIT_IN_LIST"] =="Y"):?>
+<input type="button" value="<?=GetMessage("USER_TYPE_PROP_ADD")?>" onclick="addElementDate(bxDateInputs, '<?=$fIndex?>');">
 
 <div id="hidden_<?=$fIndex?>" style="display:none;">
 	<div class="fields datetime">
@@ -91,27 +96,4 @@ if ($arParams["arUserField"]["EDIT_IN_LIST"] =="Y"):?>
 		array("HIDE_ICONS" => "Y"));
 ?></div>
 </div>
-<script language="JavaScript">
-var index<?=$fIndex?> = '<?=$index?>';
-var search = new Array(/\#FIELD_NAME\#/gi);
-var replaceText = '<?=$arParams["arUserField"]["~FIELD_NAME"]?>';
-var patternText = '';
-if (document.getElementById('hidden_<?=$fIndex?>'))
-	patternText = document.getElementById('hidden_<?=$fIndex?>').innerHTML;
-
-function addStr<?=$fIndex?>()
-{
-	var element = document.getElementById('main_<?=$arParams["arUserField"]["FIELD_NAME"]?>');
-	var text = patternText;
-	if (element && text)
-	{
-		text = text.replace(/[#]FIELD_NAME[#]/g, replaceText+'['+index<?=$fIndex?>+']');
-		text = text.replace(/[\%]23FIELD_NAME[\%]23/g, escape(replaceText+'['+index<?=$fIndex?>+']'));
-		var div = element.appendChild(document.createElement('DIV'));
-		div.innerHTML += text;
-		index<?=$fIndex?>++;
-	}
-}
-</script>
-<?endif;
-endif;?>
+<?endif;?>

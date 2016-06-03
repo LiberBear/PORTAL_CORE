@@ -553,10 +553,10 @@
 	font-size: 17px;
 	white-space: nowrap;
 	border: 1px solid;
-	-moz-border-image: url(images/borderg.png) 2 0 0 repeat;
-	-webkit-border-image: url(images/borderg.png) 2 0 0 repeat;
-	-o-border-image: url(images/borderg.png) 2 0 0 repeat;
-	border-image: url(images/borderg.png) 2 0 0 0 repeat;
+	-moz-border-image: url(images/borderg.png) 0 0 2  repeat;
+	-webkit-border-image: url(images/borderg.png) 0 0 2 repeat;
+	-o-border-image: url(images/borderg.png) 0 0 2 repeat;
+	border-image: url(images/borderg.png) 0 0 2 repeat;
 }
 .mobile-grid-field-custom-item:first-child {
 	border: none;

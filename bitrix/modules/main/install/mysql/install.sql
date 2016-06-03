@@ -103,6 +103,7 @@ CREATE TABLE b_event_attachment
 (
   EVENT_ID int(18) not null,
   FILE_ID int(18) not null,
+  IS_FILE_COPIED char(1) not null default 'Y',
   PRIMARY KEY (EVENT_ID, FILE_ID)
 );
 
@@ -358,7 +359,7 @@ CREATE TABLE b_site_template
 	SITE_ID char(2) not null,
 	`CONDITION` varchar(255),
 	SORT int not null default '500',
-	TEMPLATE varchar(50) not null,
+	TEMPLATE varchar(255) not null,
 	PRIMARY KEY (ID)
 );
 ALTER TABLE b_site_template ADD UNIQUE INDEX UX_B_SITE_TEMPLATE(SITE_ID, `CONDITION`, TEMPLATE);
@@ -373,13 +374,13 @@ CREATE TABLE b_event_message_site
 CREATE TABLE b_user_option
 (
 	ID int not null auto_increment,
-	USER_ID int null,
+	USER_ID int not null,
 	CATEGORY varchar(50) not null,
 	NAME varchar(255) not null,
 	VALUE mediumtext null,
 	COMMON char(1) not null default 'N',
 	PRIMARY KEY (ID),
-	INDEX ix_user_option_user(USER_ID, CATEGORY)
+	UNIQUE INDEX ux_user_category_name(USER_ID, CATEGORY, NAME)
 );
 
 CREATE TABLE b_captcha
@@ -618,9 +619,9 @@ CREATE TABLE b_rating_rule
 	CONDITION_MODULE varchar(50),
 	CONDITION_CLASS varchar(255) not null,
 	CONDITION_METHOD varchar(255) not null,
-	CONDITION_CONFIG text not null,
+	CONDITION_CONFIG text,
 	ACTION_NAME varchar(200) not null,
-	ACTION_CONFIG text not null,
+	ACTION_CONFIG text,
 	ACTIVATE char(1) not null default 'N',
 	ACTIVATE_CLASS varchar(255) not null,
 	ACTIVATE_METHOD varchar(255) not null,
@@ -723,7 +724,7 @@ CREATE TABLE b_user_hit_auth
 	HASH varchar(32) not null,
 	URL varchar(255) not null,
 	SITE_ID char(2),
-	TIMESTAMP_X datetime,
+	TIMESTAMP_X timestamp,
 	PRIMARY KEY (ID),
 	INDEX IX_USER_HIT_AUTH_1(HASH),
 	INDEX IX_USER_HIT_AUTH_2(USER_ID),
@@ -753,7 +754,7 @@ CREATE TABLE b_checklist
 (
 	ID int(11) not null AUTO_INCREMENT,
 	DATE_CREATE varchar(255),
-	TESTER varchar(50),
+	TESTER varchar(255),
 	COMPANY_NAME varchar(255),
 	PICTURE int(11),
 	TOTAL int(11),

@@ -35,6 +35,11 @@ foreach($arParams["BUTTONS"] as $val)
 		case "Quote":
 			$arButtonsHTML[] = '<span class="feed-add-post-form-but-cnt" id="bx-b-quote-'.$arParams["FORM_ID"].'"></span>';
 			break;
+		case "Important":
+			$arButtonsHTML[] = '<span class="feed-add-post-form-but feed-add-important" id="bx-b-important-'.$arParams["FORM_ID"].'" '.
+				'title="'.GetMessage("MPF_IMPORTANT_TITLE").'"></span>'.
+				'<span id="bx-b-important-'.$arParams["FORM_ID"].'-active" class="feed-add-important-active-block" style="display: none;"><span class="feed-add-post-form-but feed-add-important-active"></span><span class="feed-add-important-text">'.GetMessage('MPF_IMPORTANT_TITLE').'</span></span>';
+			break;
 		default:
 			if (isset($arParams["~BUTTONS_HTML"]) && is_array($arParams["~BUTTONS_HTML"]) && is_array($arParams["~BUTTONS_HTML"]) && array_key_exists($val, $arParams["~BUTTONS_HTML"]))
 				$arButtonsHTML[] = $arParams["~BUTTONS_HTML"][$val];
@@ -211,7 +216,8 @@ else
 }?>
 </div>
 <script type="text/javascript">
-var BXPostFormTags_<?=$arParams["FORM_ID"]?> = new BXPostFormTags("<?=$arParams["FORM_ID"]?>", "bx-b-tag-input-<?=$arParams["FORM_ID"]?>");
+	var BXPostFormTags_<?=$arParams["FORM_ID"]?> = new BXPostFormTags("<?=$arParams["FORM_ID"]?>", "bx-b-tag-input-<?=$arParams["FORM_ID"]?>");
+	var BXPostFormImportant_<?=$arParams["FORM_ID"]?> = new BXPostFormImportant("<?=$arParams["FORM_ID"]?>", "bx-b-important-<?=$arParams["FORM_ID"]?>", <?=(isset($arParams["IMPORTANT"]) && isset($arParams["IMPORTANT"]["INPUT_NAME"]) ? '"'.$arParams["IMPORTANT"]["INPUT_NAME"].'"' : 'false')?>);
 </script>
 </li>
 <?

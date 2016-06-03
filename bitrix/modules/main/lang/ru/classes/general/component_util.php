@@ -63,4 +63,15 @@ $MESS["COMP_PARAM_DATE_FORMAT_SITE"] = "Формат сайта";
 $MESS["COMP_PARAM_DATETIME_FORMAT_SITE"] = "Формат сайта (включая время)";
 $MESS["COMP_PARAM_NAME_FORMAT_SITE"] = "Формат сайта";
 $MESS["COMP_PARAM_SEF_RULE"] = "Правило для обработки";
+$MESS["COMP_GROUP_COMPOSITE_SETTINGS"] = "Композитный сайт";
+$MESS["COMP_PROP_COMPOSITE_FRAME_MODE"] = "Голосование шаблона компонента по умолчанию";
+$MESS["COMP_PROP_COMPOSITE_FRAME_MODE_AUTO"] = "Авто";
+$MESS["COMP_PROP_COMPOSITE_FRAME_MODE_PRO"] = "За";
+$MESS["COMP_PROP_COMPOSITE_FRAME_MODE_CONTRA"] = "Против (требуется ручная адаптация)";
+
+$MESS["COMP_PROP_COMPOSITE_FRAME_TYPE"] = "Содержимое компонента";
+$MESS["COMP_PROP_COMPOSITE_FRAME_TYPE_AUTO"] = " Авто";
+$MESS["COMP_PROP_COMPOSITE_FRAME_TYPE_STATIC"] = "Статическая область";
+$MESS["COMP_PROP_COMPOSITE_FRAME_TYPE_DYNAMIC_WITH_STUB"] = "Динамическая область с заглушкой";
+$MESS["COMP_PROP_COMPOSITE_FRAME_TYPE_DYNAMIC_WITHOUT_STUB"] = "Динамическая область без заглушки";
 ?>

@@ -242,7 +242,12 @@ class CLightHTMLEditor // LHE
 				try{<?= $scripts?>}
 				catch(e){alert('Errors in customization scripts! ' + e);}
 				<?endif;?>
-				if(<?= ($this->bRecreate ? 'true' : 'false')?> || JCLightHTMLEditor.items['<?= $this->Id?>'] == undefined)
+
+				if (
+					<?= ($this->bRecreate ? 'true' : 'false')?> || 
+					JCLightHTMLEditor.items['<?= $this->Id?>'] == undefined ||
+					!document.body.contains(JCLightHTMLEditor.items['<?= $this->Id?>'].pFrame)
+				)
 				{
 					top.<?=$this->jsObjName?> = window.<?=$this->jsObjName?> = new window.JCLightHTMLEditor(<?=CUtil::PhpToJSObject($this->JSConfig)?>);
 					BX.onCustomEvent(window, 'LHE_ConstructorInited', [window.<?=$this->jsObjName?>]);

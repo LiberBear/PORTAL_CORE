@@ -3364,12 +3364,6 @@ a.sidebar-anybox {
 	display: none;
 	padding: 0 5px 5px;
 }
-.sonet-log-filter-title {
-	font-size: 11px !important;
-	margin-bottom: 0 !important;
-	padding-bottom: 0 !important;
-	text-align: right;
-}
 .sonet-log-filter-checkbox {
 	display: inline;
 	padding-right: 30px;

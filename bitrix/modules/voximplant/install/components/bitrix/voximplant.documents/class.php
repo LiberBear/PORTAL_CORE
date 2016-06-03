@@ -30,17 +30,17 @@ class CVoxImplantComponentDocuments extends CBitrixComponent
 		if(is_array($this->arResult['DOCUMENTS']) && count($this->arResult['DOCUMENTS']) > 0)
 		{
 			$this->showTemplate = true;
-			foreach($this->arResult['DOCUMENTS'] as &$verification)
+			foreach($this->arResult['DOCUMENTS'] as $key => $verification)
 			{
-				$verification['COUNTRY_CODE'] = $verification['REGION'];
-				$verification['COUNTRY'] = $verification['REGION_NAME'];
-				$verification['ADDRESS'] = $verification['COUNTRY'];
-				$verification['UPLOAD_IFRAME_URL'] = $documents->GetUploadUrl($verification['REGION']);
-				unset($verification['REGION']);
-				unset($verification['REGION_NAME']);
+				$this->arResult['DOCUMENTS'][$key]['COUNTRY_CODE'] = $this->arResult['DOCUMENTS'][$key]['REGION'];
+				$this->arResult['DOCUMENTS'][$key]['COUNTRY'] = $this->arResult['DOCUMENTS'][$key]['REGION_NAME'];
+				$this->arResult['DOCUMENTS'][$key]['ADDRESS'] = $this->arResult['DOCUMENTS'][$key]['COUNTRY'];
+				$this->arResult['DOCUMENTS'][$key]['UPLOAD_IFRAME_URL'] = $documents->GetUploadUrl($this->arResult['DOCUMENTS'][$key]['REGION']);
+				unset($this->arResult['DOCUMENTS'][$key]['REGION']);
+				unset($this->arResult['DOCUMENTS'][$key]['REGION_NAME']);
 			}
 		}
-		unset($verification);
+
 		$documents->setFilledByUser($this->getCurrentUserId());
 
 		$addressVerification = new \Bitrix\VoxImplant\AddressVerification();
@@ -69,36 +69,51 @@ class CVoxImplantComponentDocuments extends CBitrixComponent
 				$this->arResult['DOCUMENTS'] = array();
 
 			$verificationFound = false;
-			foreach($this->arResult['DOCUMENTS'] as &$verification)
+			foreach($this->arResult['DOCUMENTS'] as $key => $verification)
 			{
 				if($verification['COUNTRY_CODE'] === $request['UPLOAD_COUNTRY_CODE'])
 				{
 					$verificationFound = true;
+					$this->arResult['DOCUMENTS'][$key]['SHOW_UPLOAD_IFRAME'] = true;
+					if(!isset($this->arResult['DOCUMENTS'][$key]['UPLOAD_IFRAME_URL']))
+					{
+						$iframeUrl = $documents->GetUploadUrl($request['UPLOAD_COUNTRY_CODE'], $request['UPLOAD_ADDRESS_TYPE'], $request['UPLOAD_PHONE_CATEGORY'], $request['UPLOAD_REGION_CODE']);
+						if($iframeUrl === false)
+						{
+							$this->arResult['DOCUMENTS'][$key]['SHOW_UPLOAD_IFRAME'] = false;
+							$this->arResult['DOCUMENTS'][$key]['STATUS'] = 'ERROR';
+						}
+						else
+						{
+							$this->arResult['DOCUMENTS'][$key]['UPLOAD_IFRAME_URL'] = $iframeUrl;
+						}
+					}
+
 					break;
 				}
 			}
-			unset($verification);
 
 			if(!$verificationFound)
+			{
 				$verification = $this->createVerification($request['UPLOAD_COUNTRY_CODE'], CVoxImplantDocuments::STATUS_REQUIRED);
 
-			$verification['SHOW_UPLOAD_IFRAME'] = true;
-			if(!isset($verification['UPLOAD_IFRAME_URL']))
-			{
-				$iframeUrl = $documents->GetUploadUrl($request['UPLOAD_COUNTRY_CODE'], $request['UPLOAD_ADDRESS_TYPE'], $request['UPLOAD_PHONE_CATEGORY'], $request['UPLOAD_REGION_CODE']);
-				if($iframeUrl === false)
+				$verification['SHOW_UPLOAD_IFRAME'] = true;
+				if(!isset($verification['UPLOAD_IFRAME_URL']))
 				{
-					$verification['SHOW_UPLOAD_IFRAME'] = false;
-					$verification['STATUS'] = 'ERROR';
+					$iframeUrl = $documents->GetUploadUrl($request['UPLOAD_COUNTRY_CODE'], $request['UPLOAD_ADDRESS_TYPE'], $request['UPLOAD_PHONE_CATEGORY'], $request['UPLOAD_REGION_CODE']);
+					if($iframeUrl === false)
+					{
+						$verification['SHOW_UPLOAD_IFRAME'] = false;
+						$verification['STATUS'] = 'ERROR';
+					}
+					else
+					{
+						$verification['UPLOAD_IFRAME_URL'] = $iframeUrl;
+					}
 				}
-				else
-				{
-					$verification['UPLOAD_IFRAME_URL'] = $iframeUrl;
-				}
-			}
 
-			if(!$verificationFound)
 				$this->arResult['DOCUMENTS'][] = $verification;
+			}
 		}
 	}
 

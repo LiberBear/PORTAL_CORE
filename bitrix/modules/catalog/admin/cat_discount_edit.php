@@ -597,7 +597,7 @@ $tabControl->BeginNextFormTab();
 			<select name="GROUP_IDS[]" multiple size="8">
 			<?
 			$groupIterator = Main\GroupTable::getList(array(
-				'select' => array('ID', 'NAME'),
+				'select' => array('ID', 'NAME', 'C_SORT'),
 				'order' => array('C_SORT' => 'ASC', 'ID' => 'ASC')
 			));
 			while ($group = $groupIterator->fetch())

@@ -21,6 +21,7 @@ class CSiteCheckerTest
 		$this->strResult = '';
 		$this->fix_mode = intval($fix_mode);
 		$this->cafile = $_SERVER['DOCUMENT_ROOT'].'/bitrix/tmp/cacert.pem';
+		$this->force_repair = defined('SITE_CHECKER_FORCE_REPAIR') && SITE_CHECKER_FORCE_REPAIR === true;
 
 		$this->host = $_REQUEST['HTTP_HOST'] ? $_REQUEST['HTTP_HOST'] : 'localhost';
 		if (!$fix_mode) // no need to know the host in fix mode
@@ -385,6 +386,25 @@ class CSiteCheckerTest
 		elseif($suffix == "b")
 			$res = self::Unformat(self::substr($str,0,-1));
 		return $res;
+	}
+
+	function TableFieldCanBeAltered($f, $f_tmp)
+	{
+		if ($f['Type'] == str_replace(array('long','medium'), '', $f_tmp['Type']) || $this->force_repair)
+			return true;
+		if (
+			preg_match('#^([a-z]+)\(([0-9]+)\)(.*)$#i',$f['Type'],$regs)
+			&&
+			preg_match('#^([a-z]+)\(([0-9]+)\)(.*)$#i',$f_tmp['Type'],$regs_tmp)
+			&&
+			str_replace('varchar','char',strtolower($regs[1])) == str_replace('varchar','char',strtolower($regs_tmp[1]))
+			&&
+			$regs[2] <= $regs_tmp[2]
+			&&
+			$regs[3] == $regs_tmp[3] // signed || unsigned
+		)
+			return true;
+		return false;
 	}
 
 	###### TESTS #######
@@ -1705,7 +1725,11 @@ class CSiteCheckerTest
 
 		$bCron = COption::GetOptionString("main", "agents_use_crontab", "N") == 'Y' || defined('BX_CRONTAB_SUPPORT') && BX_CRONTAB_SUPPORT === true || COption::GetOptionString("main", "check_agents", "Y") != 'Y';
 		if ($bCron)
+		{
+			if (!$GLOBALS['DB']->Query('SELECT LAST_EXEC FROM b_agent WHERE LAST_EXEC > NOW() - INTERVAL 1 DAY LIMIT 1')->Fetch())
+				return $this->Result(false, GetMessage("MAIN_CRON_NO_START"));
 			return true;
+		}
 		return $this->Result(null, GetMessage("MAIN_AGENTS_HITS"));
 	}
 
@@ -2008,6 +2032,13 @@ class CSiteCheckerTest
 				{
 					$strError .= GetMessage('SC_DB_MISC_CHARSET',array('#TABLE#' => $table,'#VAL1#' => $t_charset,'#VAL0#'=>$charset)) . "<br>";
 					$this->arTestVars['iError']++;
+					if ($this->force_repair)
+						$this->arTestVars['iErrorAutoFix']++;
+				}
+				elseif ($this->force_repair && !$DB->Query($sql = 'ALTER TABLE `' . $table . '` CHARACTER SET ' . $charset, true))
+				{
+					$strError .= $sql . ' [' . $DB->db_Error . ']';
+					break;
 				}
 			}
 			elseif ($t_collation != $collation)
@@ -2042,7 +2073,12 @@ class CSiteCheckerTest
 					{
 						$strError .= GetMessage('SC_TABLE_CHARSET_WARN',array('#TABLE#' => $table, '#VAL0#' => $charset, '#VAL1#' => $f_charset, '#FIELD#' => $f0['Field'])) . "<br>";
 						$this->arTestVars['iError']++;
+						if ($this->force_repair)
+							$this->arTestVars['iErrorAutoFix']++;
 					}
+					elseif ($this->force_repair)
+						$arFix[] = ' MODIFY `'.$f0['Field'].'` '.$f0['Type'].' CHARACTER SET '.$charset.($f0['Null'] == 'YES' ? ' NULL' : ' NOT NULL').
+							($f0['Default'] === NULL ? ($f0['Null'] == 'YES' ? ' DEFAULT NULL ' : '') : ' DEFAULT '.($f0['Type'] == 'timestamp' && $f0['Default'] == 'CURRENT_TIMESTAMP' ? $f0['Default'] : '"'.$DB->ForSQL($f0['Default']).'"')).' '.$f0['Extra'];
 				}
 				elseif ($collation != $f_collation)
 				{
@@ -2272,7 +2308,7 @@ class CSiteCheckerTest
 								$sql = 'ALTER TABLE `'.$table.'` MODIFY `'.$f_tmp['Field'].'` '.$tmp;
 								if ($this->fix_mode)
 								{
-									if (TableFieldCanBeAltered($f, $f_tmp))
+									if ($this->TableFieldCanBeAltered($f, $f_tmp))
 									{
 										if (!$DB->Query($sql, true))
 											return $this->Result(false, 'Mysql Query Error: '.$sql.' ['.$DB->db_Error.']');
@@ -2285,7 +2321,7 @@ class CSiteCheckerTest
 									$_SESSION['FixQueryList'][] = $sql;
 									$strError .= GetMessage('SC_ERR_FIELD_DIFFERS', array('#TABLE#' => $table, '#FIELD#' => $f['Field'], '#CUR#' => $cur, '#NEW#' => $tmp))."<br>";
 									$this->arTestVars['iError']++;
-									if (TableFieldCanBeAltered($f, $f_tmp))
+									if ($this->TableFieldCanBeAltered($f, $f_tmp))
 										$this->arTestVars['iErrorAutoFix']++;
 									$this->arTestVars['cntDiffFields']++;
 								}
@@ -2720,25 +2756,6 @@ function TableFieldConstruct($f0)
 {
 	global $DB;
 	return $f0['Type'].($f0['Null'] == 'YES' ? ' NULL' : ' NOT NULL').($f0['Default'] === NULL ? ($f0['Null'] == 'YES' ? ' DEFAULT NULL ' : '') : ' DEFAULT '.($f0['Type'] == 'timestamp' && $f0['Default'] == 'CURRENT_TIMESTAMP' ? $f0['Default'] : '"'.$DB->ForSQL($f0['Default']).'"')).' '.$f0['Extra'];
-}
-
-function TableFieldCanBeAltered($f, $f_tmp)
-{
-	if ($f['Type'] == str_replace(array('long','medium'), '', $f_tmp['Type']) || defined('SITE_CHECKER_FORCE_REPAIR') && SITE_CHECKER_FORCE_REPAIR === true)
-		return true;
-	if (
-		preg_match('#^([a-z]+)\(([0-9]+)\)(.*)$#i',$f['Type'],$regs)
-		&&
-		preg_match('#^([a-z]+)\(([0-9]+)\)(.*)$#i',$f_tmp['Type'],$regs_tmp)
-		&&
-		str_replace('varchar','char',strtolower($regs[1])) == str_replace('varchar','char',strtolower($regs_tmp[1]))
-		&&
-		$regs[2] <= $regs_tmp[2]
-		&&
-		$regs[3] == $regs_tmp[3] // signed || unsigned
-	)
-		return true;
-	return false;
 }
 
 function fix_link($mode = 2)

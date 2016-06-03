@@ -9,6 +9,7 @@ namespace Bitrix\Main\Web;
 
 use Bitrix\Main\Text\BinaryString;
 use Bitrix\Main\IO;
+use Bitrix\Main\Config\Configuration;
 
 class HttpClient
 {
@@ -80,7 +81,18 @@ class HttpClient
 		$this->requestCookies = new HttpCookies();
 		$this->responseCookies = new HttpCookies();
 
-		if($options !== null)
+		if($options === null)
+		{
+			$options = array();
+		}
+
+		$defaultOptions = Configuration::getValue("http_client_options");
+		if($defaultOptions !== null)
+		{
+			$options += $defaultOptions;
+		}
+
+		if(!empty($options))
 		{
 			if(isset($options["redirect"]))
 			{

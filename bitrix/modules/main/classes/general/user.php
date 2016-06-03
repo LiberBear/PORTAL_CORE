@@ -454,7 +454,7 @@ abstract class CAllUser extends CDBResult
 				'SITE_ID' => $DB->ForSQL(trim($site_id), 2),
 				'~TIMESTAMP_X'=>$DB->CurrentTimeFunction()
 			);
-			CDatabase::Add("b_user_hit_auth", $arFields);
+			$DB->Add("b_user_hit_auth", $arFields);
 		}
 
 		return $hash;
@@ -628,14 +628,14 @@ abstract class CAllUser extends CDBResult
 					else
 					{
 						$arFields = array(
-								'USER_ID'=>$arUser["ID"],
-								'~DATE_REG'=>$DB->CurrentTimeFunction(),
-								'~LAST_AUTH'=>$DB->CurrentTimeFunction(),
-								'TEMP_HASH'=>($bSave?"N":"Y"),
-								'~IP_ADDR'=>sprintf("%u", ip2long($_SERVER["REMOTE_ADDR"])),
-								'STORED_HASH'=>$hash
-							);
-						$stored_id = CDatabase::Add("b_user_stored_auth", $arFields);
+							'USER_ID'=>$arUser["ID"],
+							'~DATE_REG'=>$DB->CurrentTimeFunction(),
+							'~LAST_AUTH'=>$DB->CurrentTimeFunction(),
+							'TEMP_HASH'=>($bSave?"N":"Y"),
+							'~IP_ADDR'=>sprintf("%u", ip2long($_SERVER["REMOTE_ADDR"])),
+							'STORED_HASH'=>$hash
+						);
+						$stored_id = $DB->Add("b_user_stored_auth", $arFields);
 					}
 					$_SESSION["SESS_AUTH"]["STORED_AUTH_ID"] = $stored_id;
 				}
@@ -3873,7 +3873,7 @@ class CAllTask
 
 	public static function Add($arFields)
 	{
-		global $CACHE_MANAGER;
+		global $CACHE_MANAGER, $DB;
 
 		if(!CTask::CheckFields($arFields))
 			return false;
@@ -3881,7 +3881,7 @@ class CAllTask
 		if(CACHED_b_task !== false)
 			$CACHE_MANAGER->CleanDir("b_task");
 
-		$ID = CDatabase::Add("b_task", $arFields);
+		$ID = $DB->Add("b_task", $arFields);
 		return $ID;
 	}
 

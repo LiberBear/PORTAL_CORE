@@ -320,7 +320,7 @@ class BXInstallServices
 		return $arTypes;
 	}
 
-	public static function CheckDirPath($path)
+	public static function CheckDirPath($path, $dirPermissions = 0755)
 	{
 		$badDirs = Array();
 		$path = str_replace("\\", "/", $path);
@@ -341,7 +341,7 @@ class BXInstallServices
 			if (file_exists($path) && is_dir($path))
 			{
 				if (!is_writable($path))
-					@chmod($path, BX_DIR_PERMISSIONS);
+					@chmod($path, $dirPermissions);
 				break;
 			}
 			$badDirs[] = substr($path, $p+1);
@@ -352,7 +352,7 @@ class BXInstallServices
 		for ($i = count($badDirs)-1; $i>=0; $i--)
 		{
 			$path = $path."/".$badDirs[$i];
-			$success = @mkdir($path, BX_DIR_PERMISSIONS);
+			$success = @mkdir($path, $dirPermissions);
 			if (!$success)
 				return false;
 		}

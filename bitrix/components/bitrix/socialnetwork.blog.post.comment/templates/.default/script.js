@@ -79,10 +79,16 @@ window.__blogOnUCFormAfterShow = function(obj, text, data){
 	obj.form.action = SBPC.actionUrl.replace(/#source_post_id#/, post_data['comment_post_id']);
 
 	var im = BX('captcha');
-	if (!!im) {
-		BX('captcha_del').appendChild(im);
-		im.style.display = "block";
+	if (!!im)
+	{
+		BX.ajax.getCaptcha(function(data) {
+			BX("captcha_word").value = "";
+			BX("captcha_code").value = data["captcha_sid"];
+			BX("captcha").src = '/bitrix/tools/captcha.php?captcha_code=' + data["captcha_sid"];
+			BX("captcha").style.display = "";
+		});
 	}
+
 	onLightEditorShow(text, data);
 };
 

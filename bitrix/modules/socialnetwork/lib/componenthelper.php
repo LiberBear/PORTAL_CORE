@@ -1115,47 +1115,64 @@ class ComponentHelper
 
 	public static function getExtranetUserIdList()
 	{
-		$result = array();
+		static $result = false;
+		global $CACHE_MANAGER;
 
-		$ttl = (defined("BX_COMP_MANAGED_CACHE") ? 2592000 : 600);
-		$cacheId = 'sonet_ex_userid';
-		$cache = new \CPHPCache;
-		$cacheDir = '/bitrix/sonet/user_ex';
-
-		if($cache->initCache($ttl, $cacheId, $cacheDir))
+		if ($result === false)
 		{
-			$tmpVal = $cache->getVars();
-			$result = $tmpVal['EX_USER_ID'];
-			unset($tmpVal);
-		}
-		elseif (ModuleManager::isModuleInstalled('extranet'))
-		{
-			$filter = array(
-				'UF_DEPARTMENT' => false
-			);
+			$result = array();
 
-			$externalAuthIdList = self::checkPredefinedAuthIdList(array('replica', 'bot', 'email'));
-			if (!empty($externalAuthIdList))
+			$ttl = (defined("BX_COMP_MANAGED_CACHE") ? 2592000 : 600);
+			$cacheId = 'sonet_ex_userid';
+			$cache = new \CPHPCache;
+			$cacheDir = '/bitrix/sonet/user_ex';
+
+			if($cache->initCache($ttl, $cacheId, $cacheDir))
 			{
-				$filter['!=EXTERNAL_AUTH_ID'] = $externalAuthIdList;
+				$tmpVal = $cache->getVars();
+				$result = $tmpVal['EX_USER_ID'];
+				unset($tmpVal);
 			}
-
-			$res = \Bitrix\Main\UserTable::getList(array(
-				'order' => array(),
-				'filter' => $filter,
-				'select' => array('ID')
-			));
-
-			while($user = $res->fetch())
+			elseif (ModuleManager::isModuleInstalled('extranet'))
 			{
-				$result[] = $user["ID"];
-			}
+				if (defined("BX_COMP_MANAGED_CACHE"))
+				{
+					$CACHE_MANAGER->startTagCache($cacheDir);
+				}
 
-			if($cache->startDataCache())
-			{
-				$cache->endDataCache(array(
-					'EX_USER_ID' => $result
+				$filter = array(
+					'UF_DEPARTMENT' => false
+				);
+
+				$externalAuthIdList = self::checkPredefinedAuthIdList(array('replica', 'bot', 'email', 'imconnector'));
+				if (!empty($externalAuthIdList))
+				{
+					$filter['!=EXTERNAL_AUTH_ID'] = $externalAuthIdList;
+				}
+
+				$res = \Bitrix\Main\UserTable::getList(array(
+					'order' => array(),
+					'filter' => $filter,
+					'select' => array('ID')
 				));
+
+				while($user = $res->fetch())
+				{
+					$result[] = $user["ID"];
+				}
+
+				if (defined("BX_COMP_MANAGED_CACHE"))
+				{
+					$CACHE_MANAGER->registerTag('sonet_user2group');
+					$CACHE_MANAGER->endTagCache();
+				}
+
+				if($cache->startDataCache())
+				{
+					$cache->endDataCache(array(
+						'EX_USER_ID' => $result
+					));
+				}
 			}
 		}
 
@@ -1164,6 +1181,8 @@ class ComponentHelper
 
 	public static function getEmailUserIdList()
 	{
+		global $CACHE_MANAGER;
+
 		$result = array();
 
 		$ttl = (defined("BX_COMP_MANAGED_CACHE") ? 2592000 : 600);
@@ -1179,6 +1198,11 @@ class ComponentHelper
 		}
 		elseif (ModuleManager::isModuleInstalled('mail'))
 		{
+			if (defined("BX_COMP_MANAGED_CACHE"))
+			{
+				$CACHE_MANAGER->startTagCache($cacheDir);
+			}
+
 			$res = \Bitrix\Main\UserTable::getList(array(
 				'order' => array(),
 				'filter' => array(
@@ -1190,6 +1214,12 @@ class ComponentHelper
 			while($user = $res->fetch())
 			{
 				$result[] = $user["ID"];
+			}
+
+			if (defined("BX_COMP_MANAGED_CACHE"))
+			{
+				$CACHE_MANAGER->registerTag('USER_CARD');
+				$CACHE_MANAGER->endTagCache();
 			}
 
 			if($cache->startDataCache())
@@ -1812,5 +1842,47 @@ class ComponentHelper
 		}
 
 		return true;
+	}
+
+	public static function getSonetGroupAvailable()
+	{
+		global $USER;
+
+		$currentUserId = $USER->getId();
+
+		$currentCache = \Bitrix\Main\Data\Cache::createInstance();
+
+		$cacheTtl = defined("BX_COMP_MANAGED_CACHE") ? 3153600 : 3600*4;
+		$cacheId = 'dest_group_'.SITE_ID.'_'.$USER->getID();
+		$cacheDir = '/sonet/dest_sonet_groups/'.SITE_ID.'/'.$USER->getID();
+
+		if($currentCache->startDataCache($cacheTtl, $cacheId, $cacheDir))
+		{
+			global $CACHE_MANAGER;
+
+			$groupList = \CSocNetLogDestination::getSocnetGroup(array(
+				'features' => array("blog", array("premoderate_post", "moderate_post", "write_post", "full_post"))
+			));
+
+			if(defined("BX_COMP_MANAGED_CACHE"))
+			{
+				$CACHE_MANAGER->StartTagCache($cacheDir);
+				foreach($groupList as $group)
+				{
+					$CACHE_MANAGER->RegisterTag("sonet_features_G_".$group["entityId"]);
+					$CACHE_MANAGER->RegisterTag("sonet_group_".$group["entityId"]);
+				}
+				$CACHE_MANAGER->RegisterTag("sonet_user2group_U".$currentUserId);
+				$CACHE_MANAGER->EndTagCache();
+			}
+			$currentCache->EndDataCache($groupList);
+
+		}
+		else
+		{
+			$groupList = $currentCache->GetVars();
+		}
+
+		return $groupList;
 	}
 }

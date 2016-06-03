@@ -169,6 +169,76 @@ class CUpdateClientPartner
 			return True;
 	}
 
+
+	public static function loadModule4Wizard($moduleId, $lang = false)
+	{
+		$errorMessage = "";
+		$arUpdateDescription = array();
+
+		$loadResult = CUpdateClientPartner::LoadModulesUpdates($errorMessage, $arUpdateDescription, $lang, "Y", array($moduleId), true);
+
+		if ($loadResult == "S")
+		{
+			CUpdateClientPartner::AddMessage2Log("loadModule4Wizard-Step", "LM4W01");
+			return "STP";
+		}
+		elseif ($loadResult == "E")
+		{
+			if (strlen($errorMessage) <= 0)
+				$errorMessage = "[LM4W02] ".GetMessage("SUPC_ME_PACK");
+			CUpdateClientPartner::AddMessage2Log($errorMessage, "LM4W02");
+			return "ERR".$errorMessage;
+		}
+		elseif ($loadResult == "F")
+		{
+			CUpdateClientPartner::AddMessage2Log("Finish - NOUPDATES", "LM4W03");
+			return "FIN";
+		}
+
+		$temporaryUpdatesDir = "";
+		if (!CUpdateClientPartner::UnGzipArchive($temporaryUpdatesDir, $errorMessage, true))
+		{
+			$errorMessage .= "[LM4W04] ".GetMessage("SUPC_ME_PACK").". ";
+			CUpdateClientPartner::AddMessage2Log(GetMessage("SUPC_ME_PACK"), "LM4W04");
+			return "ERR".$errorMessage;
+		}
+
+		if (!CUpdateClientPartner::CheckUpdatability($temporaryUpdatesDir, $errorMessage))
+		{
+			$errorMessage .= "[LM4W05] ".GetMessage("SUPC_ME_CHECK").". ";
+			CUpdateClientPartner::AddMessage2Log(GetMessage("SUPC_ME_CHECK"), "LM4W05");
+			return "ERR".$errorMessage;
+		}
+
+		$arStepUpdateInfo = $arUpdateDescription;
+
+		if (isset($arStepUpdateInfo["DATA"]["#"]["ERROR"]))
+		{
+			for ($i = 0, $cnt = count($arStepUpdateInfo["DATA"]["#"]["ERROR"]); $i < $cnt; $i++)
+				$errorMessage .= "[".$arStepUpdateInfo["DATA"]["#"]["ERROR"][$i]["@"]["TYPE"]."] ".$arStepUpdateInfo["DATA"]["#"]["ERROR"][$i]["#"];
+			return "ERR".$errorMessage;
+		}
+
+		if (isset($arStepUpdateInfo["DATA"]["#"]["NOUPDATES"]))
+		{
+			CUpdateClientPartner::ClearUpdateFolder($_SERVER["DOCUMENT_ROOT"]."/bitrix/updates/".$temporaryUpdatesDir);
+			CUpdateClientPartner::AddMessage2Log("Finish - NOUPDATES", "LM4W06");
+			return "FIN";
+		}
+		else
+		{
+			if (!CUpdateClientPartner::UpdateStepModules($temporaryUpdatesDir, $errorMessage))
+			{
+				$errorMessage .= "[LM4W07] ".GetMessage("SUPC_ME_UPDATE").". ";
+				CUpdateClientPartner::AddMessage2Log(GetMessage("SUPC_ME_UPDATE"), "LM4W07");
+				return "ERR".$errorMessage;
+			}
+
+			return "STP";
+		}
+	}
+
+
 	public static function LoadModuleNoDemand($moduleId, &$strError, $stableVersionsOnly = "Y", $lang = false)
 	{
 		$strError_tmp = "";

@@ -1200,7 +1200,10 @@ window.JCCatalogBigdataProducts.prototype.SendToBasket = function()
 	// check recommendation
 	if (this.product && this.product.id)
 	{
-		this.RememberRecommendation(this.obProduct, this.product.id);
+		if (JCCatalogBigdataProducts.productsByRecommendation && JCCatalogBigdataProducts.productsByRecommendation[this.product.id])
+		{
+			this.RememberProductRecommendation(JCCatalogBigdataProducts.productsByRecommendation[this.product.id], this.product.id);
+		}
 	}
 
 	BX.ajax({
@@ -1212,11 +1215,22 @@ window.JCCatalogBigdataProducts.prototype.SendToBasket = function()
 	});
 };
 
+/**
+ * @deprecated
+ * @param obj
+ * @param productId
+ * @constructor
+ */
 window.JCCatalogBigdataProducts.prototype.RememberRecommendation = function(obj, productId)
 {
 	var rcmContainer = BX.findParent(obj, {'className':'bigdata_recommended_products_items'});
 	var rcmId = BX.findChild(rcmContainer, {'attr':{'name':'bigdata_recommendation_id'}}, true).value;
 
+	this.RememberProductRecommendation(rcmId, productId);
+};
+
+window.JCCatalogBigdataProducts.prototype.RememberProductRecommendation = function(recommendationId, productId)
+{
 	// save to RCM_PRODUCT_LOG
 	var plCookieName = BX.cookie_prefix+'_RCM_PRODUCT_LOG';
 	var plCookie = getCookie(plCookieName);
@@ -1242,7 +1256,7 @@ window.JCCatalogBigdataProducts.prototype.RememberRecommendation = function(obj,
 			cItem = cItems[i].split('-');
 
 			// update rcmId and date
-			cItem[1] = rcmId;
+			cItem[1] = recommendationId;
 			cItem[2] = BX.current_server_time;
 
 			cItems[i] = cItem.join('-');
@@ -1260,7 +1274,7 @@ window.JCCatalogBigdataProducts.prototype.RememberRecommendation = function(obj,
 	if (!itemFound)
 	{
 		// add recommendation
-		cItems.push([productId, rcmId, BX.current_server_time].join('-'));
+		cItems.push([productId, recommendationId, BX.current_server_time].join('-'));
 	}
 
 	// serialize
@@ -1358,7 +1372,7 @@ window.JCCatalogBigdataProducts.prototype.BasketResult = function(arResult)
 				text: BX.message("CBD_BTN_MESSAGE_BASKET_REDIRECT"),
 				events: {
 					click: BX.delegate(function(){
-						location.href = (!!this.basketData.basketUrl ? this.basketData.basketUrl : BX.message('BASKET_URL'));
+						location.href = (!!this.basketData.basketUrl ? this.basketData.basketUrl : BX.message('CBD_BASKET_URL'));
 					}, this)
 				}
 			})
@@ -1414,21 +1428,53 @@ function getCookie(name) {
 	return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
+/**
+ * @deprecated see ajax.php
+ * @param rcm_items_cont
+ */
 function bx_rcm_recommendation_event_attaching(rcm_items_cont)
 {
+	return null;
+}
 
-	var detailLinks = BX.findChildren(rcm_items_cont, {'className':'bx_rcm_view_link'}, true);
+function bx_rcm_adaptive_recommendation_event_attaching(items, uniqId)
+{
+	// onclick handler
+	var callback = function (e)  {
 
-	if (detailLinks)
-	{
-		for (i in detailLinks)
+		var link = BX(this), j;
+
+		for (j in items)
 		{
-			BX.bind(detailLinks[i], 'click', function(e){
-				window.JCCatalogBigdataProducts.prototype.RememberRecommendation(
-					BX(this),
-					BX(this).getAttribute('data-product-id')
+			if (items[j].productUrl == link.getAttribute('href'))
+			{
+				window.JCCatalogBigdataProducts.prototype.RememberProductRecommendation(
+					items[j].recommendationId, items[j].productId
 				);
-			});
+
+				break;
+			}
+		}
+	};
+
+	// check if a container was defined is the template
+	var itemsContainer = BX(uniqId);
+
+	if (!itemsContainer)
+	{
+		// then get all the links
+		itemsContainer = document.body;
+	}
+
+	var links = BX.findChildren(itemsContainer, {tag:'a'}, true);
+
+	// bind
+	if (links)
+	{
+		var i;
+		for (i in links)
+		{
+			BX.bind(links[i], 'click', callback);
 		}
 	}
 }
@@ -1441,7 +1487,6 @@ function bx_rcm_get_from_cloud(injectId, rcmParameters, localAjaxData)
 	if (data)
 	{
 		url += (url.indexOf('?') !== -1 ? "&" : "?") + data;
-		data = '';
 	}
 
 	var onready = function(response) {

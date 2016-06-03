@@ -601,7 +601,7 @@ class CTopPanel
 					"TEXT"=>GetMessage("top_panel_cache_comp"),
 					"TITLE"=>GetMessage("top_panel_cache_comp_title"),
 					"ICON"=>"panel-comp-cache",
-					"ACTION"=>"jsComponentUtils.ClearCache('component_name=".CUtil::addslashes(implode(",", $APPLICATION->aCachedComponents))."&site_id=".SITE_ID."');",
+					"ACTION"=>"jsComponentUtils.ClearCache('component_name=".CUtil::addslashes(implode(",", $APPLICATION->aCachedComponents))."&site_id=".SITE_ID."&".bitrix_sessid_get()."');",
 					"HK_ID" => "top_panel_cache_comp",
 				);
 			}

@@ -51,7 +51,7 @@ class CBitrixComponent
 	private static $__classes_map = array();
 	private $classOfComponent = "";
 	private $randomSequence = null;
-	private $frameMode = true;
+	private $frameMode = null;
 
 	/** @var  \Bitrix\Main\HttpRequest */
 	protected $request;
@@ -571,7 +571,6 @@ class CBitrixComponent
 		if ($arParams["CACHE_TYPE"] != "Y" && $arParams["CACHE_TYPE"] != "N")
 			$arParams["CACHE_TYPE"] = "A";
 
-
 		if($this->classOfComponent)
 		{
 			/** @var CBitrixComponent $component  */
@@ -579,17 +578,29 @@ class CBitrixComponent
 			$component->onIncludeComponentLang();
 			$component->arParams = $component->onPrepareComponentParams($arParams);
 			$component->__prepareComponentParams($component->arParams);
+
+			$componentFrame = new Bitrix\Main\Page\FrameComponent($component);
+			$componentFrame->start();
+
 			$result = $component->executeComponent();
 			$this->__arIncludeAreaIcons = $component->__arIncludeAreaIcons;
-			$frameMode = $component->frameMode;
+			$frameMode = $component->getFrameMode();
+
+			$componentFrame->end();
 		}
 		else
 		{
 			$this->includeComponentLang();
 			$this->__prepareComponentParams($arParams);
 			$this->arParams = $arParams;
+
+			$componentFrame = new Bitrix\Main\Page\FrameComponent($this);
+			$componentFrame->start();
+
 			$result = $this->__IncludeComponent();
-			$frameMode = $this->frameMode;
+			$frameMode = $this->getFrameMode();
+
+			$componentFrame->end();
 		}
 
 		if (!$frameMode)
@@ -831,17 +842,27 @@ class CBitrixComponent
 					{
 						foreach($templateCachedData["frames"] as $frameState)
 						{
-							\Bitrix\Main\Page\FrameHelper::applyCachedData($frameState);
+							\Bitrix\Main\Page\FrameStatic::applyCachedData($frameState);
 						}
 					}
 
-					if (array_key_exists("frameMode", $templateCachedData) && $templateCachedData["frameMode"] === false)
+					if (array_key_exists("frameMode", $templateCachedData))
 					{
-						$context = isset($templateCachedData["frameModeCtx"])
-									? "(from component cache) ".$templateCachedData["frameModeCtx"]
-									: $this->__name." - a cached template set frameMode=false";
+						$templateFrameMode = $templateCachedData["frameMode"];
 
-						\Bitrix\Main\Data\StaticHtmlCache::applyComponentFrameMode($context);
+						if ($this->getRealFrameMode() !== false)
+						{
+							$this->setFrameMode($templateFrameMode);
+						}
+
+						if ($this->getRealFrameMode() === false)
+						{
+							$context = isset($templateCachedData["frameModeCtx"])
+								? "(from component cache) ".$templateCachedData["frameModeCtx"]
+								: $this->__name." - a cached template set frameMode=false";
+
+							\Bitrix\Main\Data\StaticHtmlCache::applyComponentFrameMode($context);
+						}
 					}
 
 					if (isset($templateCachedData["externalCss"]))
@@ -1391,6 +1412,46 @@ class CBitrixComponent
 	 */
 	public function setFrameMode($mode)
 	{
-		$this->frameMode = ($mode === true);
+		if (in_array($mode, array(true, false, null), true))
+		{
+			$this->frameMode = $mode;
+		}
+	}
+
+	public function getFrameMode()
+	{
+		if ($this->frameMode !== null)
+		{
+			return $this->frameMode;
+		}
+
+		return true;
+	}
+
+	public function getRealFrameMode()
+	{
+		return $this->frameMode;
+	}
+
+	public function getDefaultFrameMode()
+	{
+		$frameMode = null;
+
+		$compositeOptions = CHTMLPagesCache::getOptions();
+		$componentParams = $this->arParams;
+		
+		if (
+			isset($componentParams["COMPOSITE_FRAME_MODE"]) &&
+			in_array($componentParams["COMPOSITE_FRAME_MODE"], array("Y", "N"))
+		)
+		{
+			$frameMode = $componentParams["COMPOSITE_FRAME_MODE"] === "Y";
+		}
+		else if (isset($compositeOptions["FRAME_MODE"]))
+		{
+			$frameMode = $compositeOptions["FRAME_MODE"] === "Y";
+		}
+		
+		return $frameMode;
 	}
 }

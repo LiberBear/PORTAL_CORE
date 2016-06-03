@@ -144,24 +144,14 @@ if($arResult["use_captcha"]===true)
 	<div class="blog-comment-field blog-comment-field-captcha">
 		<div class="blog-comment-field-captcha-label">
 			<label for="captcha_word"><?=GetMessage("B_B_MS_CAPTCHA_SYM")?></label><span class="blog-required-field">*</span><br>
-			<input type="hidden" name="captcha_code" id="captcha_code" value="<?=$arResult["CaptchaCode"]?>">
+			<input type="hidden" name="captcha_code" id="captcha_code" value="">
 			<input type="text" size="30" name="captcha_word" id="captcha_word" value=""  tabindex="7">
 		</div>
-		<div class="blog-comment-field-captcha-image"><div id="div_captcha"></div></div>
-	</div>
-	<div id="captcha_del">
-	<script data-skip-moving="true">
-		<!--
-		var cc;
-		if(document.cookie.indexOf('<?=session_name()?>=') == -1)
-			cc = Math.random();
-		else
-			cc ='<?=$arResult["CaptchaCode"]?>';
-
-		document.write('<img src="/bitrix/tools/captcha.php?captcha_code='+cc+'" width="180" height="40" id="captcha" style="display:none;">');
-		document.getElementById('captcha_code').value = cc;
-		//-->
-	</script>
+		<div class="blog-comment-field-captcha-image">
+			<div id="div_captcha">
+				<img src="" width="180" height="40" id="captcha" style="display:none;">
+			</div>
+		</div>
 	</div>
 <?
 }
