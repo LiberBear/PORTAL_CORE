@@ -99,6 +99,8 @@ class Notify
 
 		$fields = Array(
 			"ORDER_ID" => $entity->getField("ACCOUNT_NUMBER"),
+			"ORDER_REAL_ID" => $entity->getField("ID"),
+			"ORDER_ACCOUNT_NUMBER_ENCODE" => urlencode(urlencode($entity->getField("ACCOUNT_NUMBER"))),
 			"ORDER_DATE" => $entity->getDateInsert()->toString(),
 			"ORDER_USER" => static::getUserName($entity),
 			"PRICE" => SaleFormatCurrency($entity->getPrice(), $entity->getCurrency()),
@@ -167,6 +169,8 @@ class Notify
 
 		$fields = Array(
 			"ORDER_ID" => $entity->getField("ACCOUNT_NUMBER"),
+			"ORDER_REAL_ID" => $entity->getField("ID"),
+			"ORDER_ACCOUNT_NUMBER_ENCODE" => urlencode(urlencode($entity->getField("ACCOUNT_NUMBER"))),
 			"ORDER_DATE" => $entity->getDateInsert()->toString(),
 			"EMAIL" => static::getUserEmail($entity),
 			"ORDER_CANCEL_DESCRIPTION" => $entity->getField('REASON_CANCELED'),
@@ -230,6 +234,8 @@ class Notify
 
 		$fields = Array(
 			"ORDER_ID" => $entity->getField("ACCOUNT_NUMBER"),
+			"ORDER_REAL_ID" => $entity->getField("ID"),
+			"ORDER_ACCOUNT_NUMBER_ENCODE" => urlencode(urlencode($entity->getField("ACCOUNT_NUMBER"))),
 			"ORDER_DATE" => $entity->getDateInsert()->toString(),
 			"EMAIL" => static::getUserEmail($entity),
 			"SALE_EMAIL" => Main\Config\Option::get("sale", "order_email", "order@".$_SERVER["SERVER_NAME"])
@@ -312,6 +318,8 @@ class Notify
 		{
 			$fields = Array(
 				"ORDER_ID" => $entity->getField("ACCOUNT_NUMBER"),
+				"ORDER_REAL_ID" => $entity->getField("ID"),
+				"ORDER_ACCOUNT_NUMBER_ENCODE" => urlencode(urlencode($entity->getField("ACCOUNT_NUMBER"))),
 				"ORDER_DATE" => $entity->getField("DATE_INSERT")->toString(),
 				"ORDER_STATUS" => $statusData["NAME"],
 				"EMAIL" => static::getUserEmail($entity),
@@ -421,6 +429,8 @@ class Notify
 
 		$emailFields = Array(
 			"ORDER_ID" => $accountNumber,
+			"ORDER_REAL_ID" => $order->getField("ID"),
+			"ORDER_ACCOUNT_NUMBER_ENCODE" => urlencode(urlencode($order->getField("ACCOUNT_NUMBER"))),
 			"ORDER_DATE" => $order->getDateInsert()->toString(),
 			"ORDER_USER" => static::getUserName($order),
 			"ORDER_TRACKING_NUMBER" => $entity->getField('TRACKING_NUMBER'),
@@ -485,6 +495,8 @@ class Notify
 
 		$fields = Array(
 			"ORDER_ID" => $order->getField("ACCOUNT_NUMBER"),
+			"ORDER_REAL_ID" => $order->getField("ID"),
+			"ORDER_ACCOUNT_NUMBER_ENCODE" => urlencode(urlencode($order->getField("ACCOUNT_NUMBER"))),
 			"ORDER_DATE" => $order->getDateInsert()->toString(),
 			"EMAIL" => static::getUserEmail($order),
 			"SALE_EMAIL" => Main\Config\Option::get("sale", "order_email", "order@".$_SERVER["SERVER_NAME"]),

@@ -209,6 +209,10 @@ Class sale extends CModule
 
 		COption::SetOptionString("sale", "expiration_processing_events", 'Y');
 
+		$eventManager->registerEventHandler('sale', 'OnSaleBasketItemEntitySaved', 'sale', '\Bitrix\Sale\Internals\Events', 'onSaleBasketItemEntitySaved');
+		$eventManager->registerEventHandler('sale', 'OnSaleBasketItemDeleted', 'sale', '\Bitrix\Sale\Internals\Events', 'onSaleBasketItemDeleted');
+
+
 		COption::SetOptionString("sale", "p2p_status_list", serialize(array(
 			"N", "P", "F", "F_CANCELED", "F_DELIVERY", "F_PAY", "F_OUT"
 		)));
@@ -249,6 +253,8 @@ Class sale extends CModule
 
 		if (Bitrix\Main\Loader::IncludeModule('sale'))
 		{
+			\Bitrix\Sale\Compatible\EventCompatibility::registerEvents();
+			
 			// install statuses
 			$orderInitialStatus = Bitrix\Sale\OrderStatus::getInitialStatus();
 			$orderFinalStatus   = Bitrix\Sale\OrderStatus::getFinalStatus();
@@ -403,10 +409,14 @@ Class sale extends CModule
 		UnRegisterModuleDependences('sale'      , 'OnOrderAdd'           , 'sale', '\Bitrix\Sale\Internals\ConversionHandlers', 'onOrderAdd'           );
 		UnRegisterModuleDependences('sale'      , 'OnSalePayOrder'       , 'sale', '\Bitrix\Sale\Internals\ConversionHandlers', 'onSalePayOrder'       );
 
+		\Bitrix\Sale\Compatible\EventCompatibility::unRegisterEvents();
+
 		UnRegisterModuleDependences("perfmon", "OnGetTableSchema", "sale", "sale", "OnGetTableSchema");
 
 		$eventManager = \Bitrix\Main\EventManager::getInstance();
 		$eventManager->unRegisterEventHandler('main', 'OnUserLogout', 'sale', '\Bitrix\Sale\DiscountCouponsManager', 'logout');
+		$eventManager->unRegisterEventHandler('sale', 'OnSaleBasketItemEntitySaved', 'sale', '\Bitrix\Sale\Internals\Events', 'onSaleBasketItemEntitySaved');
+		$eventManager->unRegisterEventHandler('sale', 'OnSaleBasketItemDeleted', 'sale', '\Bitrix\Sale\Internals\Events', 'onSaleBasketItemDeleted');
 
 		CAgent::RemoveModuleAgents("sale");
 

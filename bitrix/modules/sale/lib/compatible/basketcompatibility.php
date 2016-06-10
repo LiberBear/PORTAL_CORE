@@ -928,9 +928,10 @@ class BasketCompatibility
 	}
 
 	/**
+	 * @internal 
 	 * @return array
 	 */
-	protected static function getAliasFields()
+	public static function getAliasFields()
 	{
 		return array(
 			'ORDER_STATUS' => 'ORDER.STATUS_ID',

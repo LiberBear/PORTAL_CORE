@@ -86,9 +86,7 @@ if (strlen($_REQUEST["BasketRefresh"]) > 0 || strlen($_REQUEST["BasketOrder"]) >
 
 		foreach ($arRes as $key => $value)
 			$arResult[$key] = $value;
-
-		unset($_SESSION["SALE_BASKET_NUM_PRODUCTS"][SITE_ID]);
-
+		
 		if (!empty($_REQUEST["BasketOrder"]) && empty($arResult["WARNING_MESSAGE"]))
 		{
 			if (!array_key_exists('paypalbutton_x', $_POST) && !array_key_exists('paypalbutton_y', $_POST))

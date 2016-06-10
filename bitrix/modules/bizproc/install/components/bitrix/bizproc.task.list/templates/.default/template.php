@@ -63,19 +63,19 @@ else
 
 	if (is_array($arResult["RECORDS"]))
 	{
-		foreach ($arResult["RECORDS"] as &$record)
+		foreach ($arResult["RECORDS"] as $key => $record)
 		{
 			$popupJs = 'return BX.Bizproc.showTaskPopup('.$record['data']['ID'].', function(){window[\'bxGrid_'.$arResult["GRID_ID"].'\'].Reload()}, '.(int)$arResult['TARGET_USER_ID'].', this)';
 
 			if (strlen($record['data']["DOCUMENT_URL"]) > 0 && strlen($record['data']["DOCUMENT_NAME"]) > 0)
 			{
-				$record['data']['DOCUMENT_NAME'] = '<a href="'.$record['data']["DOCUMENT_URL"].'" class="bp-folder-title-link">'.$record['data']['DOCUMENT_NAME'].'</a>';
+				$arResult["RECORDS"][$key]['data']['DOCUMENT_NAME'] = '<a href="'.$record['data']["DOCUMENT_URL"].'" class="bp-folder-title-link">'.$record['data']['DOCUMENT_NAME'].'</a>';
 			}
-			$record['data']['COMMENTS'] = '<div class="bp-comments"><a onclick="'.$popupJs.'"><span class="bp-comments-icon"></span>'
+			$arResult["RECORDS"][$key]['data']['COMMENTS'] = '<div class="bp-comments"><a onclick="'.$popupJs.'"><span class="bp-comments-icon"></span>'
 				.(!empty($arResult["COMMENTS_COUNT"]['WF_'.$record['data']["WORKFLOW_ID"]]) ? (int) $arResult["COMMENTS_COUNT"]['WF_'.$record['data']["WORKFLOW_ID"]] : '0')
 				.'</a></div>';
 
-			$record['data']["NAME"] = '<span class="bp-task"><a href="#" onclick="'.$popupJs.'" title="'.$record['data']["NAME"].'">'.$record['data']["NAME"].'</a></span>';
+			$arResult["RECORDS"][$key]['data']["NAME"] = '<span class="bp-task"><a href="#" onclick="'.$popupJs.'" title="'.$record['data']["NAME"].'">'.$record['data']["NAME"].'</a></span>';
 			if ($record['data']['IS_MY'])
 			{
 				if ($record['data']['USER_STATUS'] > CBPTaskUserStatus::Waiting)
@@ -83,19 +83,19 @@ else
 					switch($record['data']['USER_STATUS'])
 					{
 						case CBPTaskUserStatus::Yes:
-							$record['data']["NAME"] .= '<span class="bp-status-ready">'.GetMessage('BPATL_USER_STATUS_YES').'</span>';
+							$arResult["RECORDS"][$key]['data']["NAME"] .= '<span class="bp-status-ready">'.GetMessage('BPATL_USER_STATUS_YES').'</span>';
 							break;
 						case CBPTaskUserStatus::No:
 						case CBPTaskUserStatus::Cancel:
-							$record['data']["NAME"] .= '<span class="bp-status-cancel">'.GetMessage('BPATL_USER_STATUS_NO').'</span>';
+							$arResult["RECORDS"][$key]['data']["NAME"] .= '<span class="bp-status-cancel">'.GetMessage('BPATL_USER_STATUS_NO').'</span>';
 							break;
 						default:
-							$record['data']["NAME"] .= '<span class="bp-status-ready">'.GetMessage('BPATL_USER_STATUS_OK').'</span>';
+							$arResult["RECORDS"][$key]['data']["NAME"] .= '<span class="bp-status-ready">'.GetMessage('BPATL_USER_STATUS_OK').'</span>';
 					}
 				}
 				elseif ($record['data']['IS_INLINE'] == 'Y')
 				{
-					$record['data']["NAME"] .= '<div class="bp-btn-panel">';
+					$arResult["RECORDS"][$key]['data']["NAME"] .= '<div class="bp-btn-panel">';
 					$controls = CBPDocument::getTaskControls($record['data']);
 					foreach ($controls['BUTTONS'] as $control)
 					{
@@ -105,11 +105,11 @@ else
 							$control['NAME'] => $control['VALUE']
 						));
 
-						$record['data']["NAME"] .= '<a href="#" onclick="return BX.Bizproc.doInlineTask('
+						$arResult["RECORDS"][$key]['data']["NAME"] .= '<a href="#" onclick="return BX.Bizproc.doInlineTask('
 							.$props.', function(){window[\'bxGrid_'.$arResult["GRID_ID"].'\'].Reload()}, this)" class="bp-button bp-button bp-button-'
 							.$class.'"><span class="bp-button-icon"></span><span class="bp-button-text">'.$control['TEXT'].'</span></a>';
 					}
-					$record['data']["NAME"] .= '</div>';
+					$arResult["RECORDS"][$key]['data']["NAME"] .= '</div>';
 				}
 				else
 				{
@@ -119,13 +119,14 @@ else
 						$anchor = '<a href="'.$record['data']['URL']['TASK'].'" class="bp-button bp-button bp-button-blue">'.GetMessage("BPATL_BEGIN").'</a>';
 					}
 
-					$record['data']["NAME"] .= '<div class="bp-btn-panel">'.$anchor.'</div>';
+					$arResult["RECORDS"][$key]['data']["NAME"] .= '<div class="bp-btn-panel">'.$anchor.'</div>';
 				}
 			}
 			else
 			{
-				$record['data']["NAME"] .= '<span class="bp-status"><span class="bp-status-inner"><span>'.$record['data']["WORKFLOW_STATE"].'</span></span></span>';
+				$arResult["RECORDS"][$key]['data']["NAME"] .= '<span class="bp-status"><span class="bp-status-inner"><span>'.$record['data']["WORKFLOW_STATE"].'</span></span></span>';
 			}
+
 			ob_start();
 			$APPLICATION->IncludeComponent(
 				"bitrix:bizproc.workflow.faces",
@@ -136,8 +137,7 @@ else
 				),
 				$component
 			);
-			$record['data']['WORKFLOW_PROGRESS'] = ob_get_contents();
-			ob_end_clean();
+			$arResult["RECORDS"][$key]['data']['WORKFLOW_PROGRESS'] = ob_get_clean();
 		}
 	}
 

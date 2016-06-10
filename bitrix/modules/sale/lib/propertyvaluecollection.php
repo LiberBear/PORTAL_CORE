@@ -180,11 +180,16 @@ class PropertyValueCollection
 				$itemsFromDb[$itemsFromDbItem["ID"]] = $itemsFromDbItem;
 		}
 
+		$isChanged = false;
+
 		/** @var PropertyValue $property */
 		foreach ($this->collection as $property)
 		{
 			$isNew = (bool)($property->getId() <= 0);
-			$isChanged = $property->isChanged();
+			if (!$isChanged && $property->isChanged())
+			{
+				$isChanged = true;
+			}
 
 			if ($order->getId() > 0 && $isChanged)
 			{
@@ -231,7 +236,7 @@ class PropertyValueCollection
 				unset($itemsFromDb[$property->getId()]);
 		}
 
-		if ($result->isSuccess() && $order->getId() > 0)
+		if ($result->isSuccess() && $order->getId() > 0 && $isChanged)
 		{
 			OrderHistory::addAction(
 				'PROPERTY',

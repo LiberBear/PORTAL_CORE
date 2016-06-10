@@ -1530,6 +1530,8 @@ BX.Sale.Admin.OrderBasketEdit.prototype.productUpdateLight = function(product)
 		for(i in product.SET_ITEMS)
 			if(product.SET_ITEMS.hasOwnProperty(i))
 				this.updateSetQuantity(product.SET_ITEMS[i], basketCode);
+
+	this.canSendUpdateQuantityRequest = true;
 };
 
 BX.Sale.Admin.OrderBasketEdit.prototype.updateSetQuantity = function(product, parentBasketCode)
@@ -1849,11 +1851,19 @@ BX.Sale.Admin.OrderBasketEdit.prototype.setProductPrice = function(basketCode, p
 
 BX.Sale.Admin.OrderBasketEdit.prototype.onProductQuantityChange = function(params)
 {
-	var fieldName = this.getFieldName(params.productId, "QUANTITY");
+	var fieldName = this.getFieldName(params.productId, "QUANTITY"),
+		_this = this,
+		canSendUpdateQuantityRequest = this.canSendUpdateQuantityRequest;
+
 	clearTimeout(this.qantityUpdaterTimeout);
 
 	this.qantityUpdaterTimeout = setTimeout( function(){
+
+			var tmp = _this.canSendUpdateQuantityRequest;
+			_this.canSendUpdateQuantityRequest = canSendUpdateQuantityRequest;
 			BX.Sale.Admin.OrderEditPage.callConcreteFieldUpdater(fieldName, params.productId);
+			_this.canSendUpdateQuantityRequest = tmp;
+
 		},
 		this.qantityUpdaterDelay
 	);
@@ -1878,11 +1888,6 @@ BX.Sale.Admin.OrderBasketEdit.prototype.updateProductQuantity = function(product
 			})
 		);
 	}
-	else
-	{
-		this.canSendUpdateQuantityRequest = true;
-	}
-
 };
 
 BX.Sale.Admin.OrderBasketEdit.prototype.updateProductPrice = function(productId)

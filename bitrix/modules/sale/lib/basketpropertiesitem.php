@@ -108,6 +108,7 @@ class BasketPropertyItem
 		{
 
 			$fields['BASKET_ID'] = $this->getCollection()->getBasketId();
+			$this->setFieldNoDemand('BASKET_ID', $fields['BASKET_ID']);
 
 			$r = Internals\BasketPropertyTable::add($fields);
 			if (!$r->isSuccess())

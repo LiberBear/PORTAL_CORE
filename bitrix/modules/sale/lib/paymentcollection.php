@@ -349,15 +349,16 @@ class PaymentCollection
 					if ($isChanged)
 					{
 						OrderHistory::addLog('PAYMENT', $order->getId(), $isNew ? 'PAYMENT_ADD' : 'PAYMENT_UPDATE', $payment->getId(), $payment, $logFields, OrderHistory::SALE_ORDER_HISTORY_LOG_LEVEL_1);
+						
+						OrderHistory::addAction(
+							'PAYMENT',
+							$order->getId(),
+							"PAYMENT_SAVED",
+							$payment->getId(),
+							$payment
+						);
 					}
 
-					OrderHistory::addAction(
-						'PAYMENT',
-						$order->getId(),
-						"PAYMENT_SAVED",
-						$payment->getId(),
-						$payment
-					);
 				}
 			}
 			else

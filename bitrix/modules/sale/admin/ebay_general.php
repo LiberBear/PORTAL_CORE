@@ -66,7 +66,12 @@ if($ebay->isActive())
 			if(strlen($iblockId) <= 0)
 				unset($_POST["EBAY_SETTINGS"]["IBLOCK_ID"][$key]);
 
-		$settings[$SITE_ID] = array_merge($settings[$SITE_ID], $_POST["EBAY_SETTINGS"]);
+		$site = !empty($_POST["SITE_ID_INITIAL"]) && $SITE_ID == $_POST["SITE_ID_INITIAL"] ? $SITE_ID : $_POST["SITE_ID_INITIAL"];
+
+		if(!is_array($settings[$site]))
+			$settings[$site] = array();
+
+		$settings[$site] = array_merge($settings[$site], $_POST["EBAY_SETTINGS"]);
 		$bSaved = $ebay->saveSettings($settings);
 	}
 
@@ -139,6 +144,7 @@ if($bSaved)
 if($ebay->isActive())
 {
 	?>
+		<input type="hidden" name="SITE_ID_INITIAL" value="<?=$SITE_ID?>">
 		<table width="100%"><tr>
 			<td align="left">
 				<?=Loc::getMessage("SALE_EBAY_SITE")?>: <?=CLang::SelectBox("SITE_ID", $SITE_ID, "", "this.form.submit();")?>

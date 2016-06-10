@@ -580,7 +580,7 @@ class Tax
 				{
 					if ($taxRate["IS_PERCENT"] != "Y")
 					{
-						$taxRate["VALUE"] = Sale\BasketItem::roundPrecision(\CCurrencyRates::convertCurrency($taxRate["VALUE"], $taxRate["CURRENCY"], $order->getCurrency()));
+						$taxRate["VALUE"] = PriceMaths::roundPrecision(\CCurrencyRates::convertCurrency($taxRate["VALUE"], $taxRate["CURRENCY"], $order->getCurrency()));
 						$taxRate["CURRENCY"] = $order->getCurrency();
 					}
 					$availableList[] = $taxRate;

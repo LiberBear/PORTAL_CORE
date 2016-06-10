@@ -343,11 +343,12 @@ class Payment
 		else
 		{
 			$fields['ORDER_ID'] = $this->getParentOrderId();
+			$this->setFieldNoDemand('ORDER_ID', $fields['ORDER_ID']);
 
 			if (!isset($fields['CURRENCY']) || strval($fields['CURRENCY']) == "" )
 			{
 				$fields['CURRENCY'] = $order->getCurrency();
-
+				$this->setFieldNoDemand('CURRENCY', $fields['CURRENCY']);
 			}
 
 			if (!isset($fields['DATE_BILL']) || strval($fields['DATE_BILL']) == "" )
@@ -838,16 +839,6 @@ class Payment
 			: null;
 	}
 
-	/**
-	 * @internal
-	 * @param $price
-	 * @param $currency
-	 * @return float
-	 */
-	public static function roundByFormatCurrency($price, $currency)
-	{
-		return floatval(SaleFormatCurrency($price, $currency, false, true));
-	}
 
 	/**
 	 * @param array $filter
@@ -916,5 +907,17 @@ class Payment
 		}
 
 		return $paymentClone;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getHash()
+	{
+		return md5(
+			$this->getId().
+			PriceMaths::roundByFormatCurrency($this->getSum(), $this->getField('CURRENCY')).
+			$this->getField('DATE_BILL')
+		);
 	}
 }

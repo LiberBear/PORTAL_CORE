@@ -25,7 +25,6 @@ MobileWebrtc = function ()
 	this.iceCandidatesToSend = [];
 	this.iceCandidateTimeout = 0;
 	this.peerConnectionInited = false;
-	this.userId = BX.message('USER_ID');
 	this.utcOffest = BX.localStorage.get("bxUTCOffset");
 	if(this.utcOffest == null)
 	{
@@ -73,6 +72,36 @@ MobileWebrtc = function ()
 	);
 };
 
+MobileWebrtc.prototype.attachListeners = function ()
+{
+	webrtc.setEventListeners(
+		{
+			//UI callbacks
+			"onAnswer": BX.proxy(this.onAnswer, this),
+			"onDecline": BX.proxy(this.onDecline, this),
+			"onCallback": BX.proxy(this.onCallback, this),
+			"onClose": BX.proxy(this.onClose, this),
+			//WebRTC callbacks
+			"onUserMediaSuccess": BX.proxy(this.onUserMediaSuccess, this),
+			"onDisconnect": BX.proxy(this.onDisconnect, this),
+			"onPeerConnectionCreated": BX.proxy(this.onPeerConnectionCreated, this),
+			"onIceCandidateDiscovered": BX.proxy(this.onIceCandidateDiscovered, this),
+			"onLocalSessionDescriptionCreated": BX.proxy(this.onLocalSessionDescriptionCreated, this),
+			"onIceConnectionStateChanged": BX.proxy(this.onIceConnectionStateChanged, this),
+			"onIceGatheringStateChanged": BX.proxy(this.onIceGatheringStateChanged, this),
+			"onSignalingStateChanged": BX.proxy(this.onSignalingStateChanged, this),
+			"onError": BX.proxy(this.onError, this)
+		}
+	);
+};
+
+/**
+ * Returns identifier of the current user
+ */
+MobileWebrtc.prototype.getUserId = function()
+{
+	return BX.message('USER_ID');
+};
 
 /**
  * Invites user
@@ -83,7 +112,7 @@ MobileWebrtc = function ()
 MobileWebrtc.prototype.callInvite = function (userId, video, repeat)
 {
 
-	if (userId == this.userId || this.callInit)
+	if (userId == this.getUserId() || this.callInit)
 		return;
 
 	if (this.delayedIncomingCall.chatId && this.delayedIncomingCall.senderId == userId)
@@ -137,6 +166,7 @@ MobileWebrtc.prototype.callInvite = function (userId, video, repeat)
 			this.callChatId = params.CHAT_ID;
 			this.callToGroup = params.CALL_TO_GROUP;
 			this.callUserId = userId;
+			this.attachListeners();
 			webrtc.UI.show(
 				webrtc.UI.state.OUTGOING_CALL,
 				{
@@ -148,8 +178,8 @@ MobileWebrtc.prototype.callInvite = function (userId, video, repeat)
 					},
 					"caller":
 					{
-						"avatar": params["HR_PHOTO"][this.userId],
-						"name": params["USERS"][this.userId]["name"]
+						"avatar": params["HR_PHOTO"][this.getUserId()],
+						"name": params["USERS"][this.getUserId()]["name"]
 					}
 				}
 			);
@@ -180,6 +210,7 @@ MobileWebrtc.prototype.showIncomingCall = function (params)
 	this.initiator = false;
 	this.callInit = true;
 	this.callCommand(this.callChatId, 'wait');
+	this.attachListeners();
 	webrtc.UI.show(
 		webrtc.UI.state.INCOMING_CALL,
 		{
@@ -482,7 +513,7 @@ MobileWebrtc.prototype.onLocalSessionDescriptionCreated = function (params)
 MobileWebrtc.prototype.onUserMediaSuccess = function (params)
 {
 	webrtc.UI.showLocalVideo();
-	this.connected[this.userId] = true;
+	this.connected[this.getUserId()] = true;
 	this.callCommand(this.callChatId, "ready");
 	if (this.connected[this.callUserId] && this.initiator)
 	{
@@ -514,7 +545,7 @@ BX.addCustomEvent("onPullEvent-im", BX.proxy(function (command, params)
 		{
 			this.connected[params.senderId] = true;
 
-			if (this.connected[this.userId] && this.initiator == true)
+			if (this.connected[this.getUserId()] && this.initiator == true)
 			{
 				webrtc.createPeerConnection();
 			}
@@ -649,7 +680,7 @@ BX.addCustomEvent("onPullEvent-im", BX.proxy(function (command, params)
 		}
 		else if (this.callInit && this.callChatId == params.chatId)
 		{
-			if (params.command == 'signaling' && this.connected[this.userId])
+			if (params.command == 'signaling' && this.connected[this.getUserId()])
 			{
 				if (this.callInit && this.callChatId == params.chatId)
 					this.signalingPeerData(params.senderId, params.peer);

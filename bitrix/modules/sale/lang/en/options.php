@@ -188,4 +188,10 @@ $MESS["SALE_AUTO_ORDER_STATUS_TITLE"] = "Update e-store status";
 $MESS["SALE_AUTO_SHP_TR_STATUS_ON"] = "Update order status when shipment status changes";
 $MESS["SALE_AUTO_SHP_TR_STATUS_MAP"] = "Map shipment status to order status";
 $MESS["SALE_ORDER_HISTORY_LOG_LEVEL"] = "Enable detailed log for order history:";
+$MESS["SALE_PRODUCT_VIEWED_SAVE"] = "Save viewed catalog products:";
+$MESS["SMO_VALUE_PRECISION_TITLE"] = "Rounding precision";
+$MESS["SMO_VALUE_PRECISION_1"] = ".0";
+$MESS["SMO_VALUE_PRECISION_2"] = ".00";
+$MESS["SMO_VALUE_PRECISION_3"] = ".000";
+$MESS["SMO_VALUE_PRECISION_4"] = ".0000";
 ?>

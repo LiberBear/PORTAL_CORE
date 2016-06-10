@@ -1383,7 +1383,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 	}
 
 	// array(SONET_RELATIONS_TYPE_FRIENDS => "Друзья", SONET_RELATIONS_TYPE_FRIENDS2 => "Друзья друзей", 3 => ..., "Author" => "Автор")
-	public function GetAllowableUserGroups($documentType)
+	public function GetAllowableUserGroups($documentType, $withExtended = false)
 	{
 		if($storage = self::needProxyToDiskByDocType($documentType))
 		{

@@ -353,7 +353,10 @@ class ShipmentItemStore
 					throw new Main\ArgumentNullException('quantity');
 
 				$fields['DATE_MODIFY'] = new Main\Type\DateTime();
+				$this->setFieldNoDemand('DATE_MODIFY', $fields['DATE_MODIFY']);
+				
 				$fields['MODIFIED_BY'] = $USER->GetID();
+				$this->setFieldNoDemand('MODIFIED_BY', $fields['MODIFIED_BY']);
 
 				$r = Sale\Internals\ShipmentItemStoreTable::update($id, $fields);
 				if (!$r->isSuccess())
@@ -379,12 +382,19 @@ class ShipmentItemStore
 		{
 
 			if (!isset($fields["ORDER_DELIVERY_BASKET_ID"]))
+			{
 				$fields['ORDER_DELIVERY_BASKET_ID'] = $this->getParentShipmentItemId();
+				$this->setFieldNoDemand('ORDER_DELIVERY_BASKET_ID', $fields['ORDER_DELIVERY_BASKET_ID']);
+			}
 
 			if (!isset($fields["BASKET_ID"]))
+			{
 				$fields['BASKET_ID'] = $basketItem->getId();
+				$this->setFieldNoDemand('BASKET_ID', $fields['BASKET_ID']);
+			}
 
 			$fields['DATE_CREATE'] = new Main\Type\DateTime();
+			$this->setFieldNoDemand('DATE_CREATE', $fields['DATE_CREATE']);
 
 			if (!isset($fields["QUANTITY"]))
 				return $result;

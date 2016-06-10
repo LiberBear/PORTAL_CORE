@@ -314,7 +314,7 @@ class OrderCompatibility
 							$result->addErrors($r->getErrors());
 						}
 					}
-					elseif (intval($deliveryId) == 0 && isset($fields['DELIVERY_ID']))
+					elseif (intval($deliveryId) == 0 && isset($fields['DELIVERY_ID']) || (intval($deliveryId) !== intval($deliveryCode)))
 					{
 						unset($fields['DELIVERY_ID']);
 					}
@@ -702,22 +702,54 @@ class OrderCompatibility
 
 			$needSum = $order->getPrice() - $order->getSumPaid();
 
-			if ($countPayments == 0)
+			if ($countPayments <= 1)
 			{
-				if (!isset($fields["PAY_SYSTEM_ID"]))
-					$fields["PAY_SYSTEM_ID"] = static::getDefaultPaySystemId($order->getPersonTypeId());
 
-
-				/** @var Sale\PaySystem\Service $service */
-				if ($service = Sale\PaySystem\Manager::getObjectById($fields["PAY_SYSTEM_ID"]))
+				if ($order->getId() == 0)
 				{
-					/** @var Sale\Payment $paymentOuter */
-					$paymentOuter = $paymentCollection->createItem($service);
-					$paymentOuter->setField('DATE_BILL', new Main\Type\DateTime());
-					$paymentOuter->setField('SUM', $needSum);
-					$paymentOuter->setField('PAY_SYSTEM_NAME', $service->getField('NAME'));
-					$order->setFieldNoDemand('PAY_SYSTEM_ID', $fields["PAY_SYSTEM_ID"]);
-					$countPayments = 1;
+					if (!isset($fields["PAY_SYSTEM_ID"]))
+						$fields["PAY_SYSTEM_ID"] = static::getDefaultPaySystemId($order->getPersonTypeId());
+
+
+					/** @var Sale\PaySystem\Service $service */
+					if ($service = Sale\PaySystem\Manager::getObjectById($fields["PAY_SYSTEM_ID"]))
+					{
+						/** @var Sale\Payment $paymentOuter */
+						$paymentOuter = $paymentCollection->createItem($service);
+						$paymentOuter->setField('DATE_BILL', new Main\Type\DateTime());
+						$paymentOuter->setField('SUM', $needSum);
+						$paymentOuter->setField('PAY_SYSTEM_NAME', $service->getField('NAME'));
+						$order->setFieldNoDemand('PAY_SYSTEM_ID', $fields["PAY_SYSTEM_ID"]);
+						$countPayments = 1;
+					}
+				}
+				else
+				{
+					$paymentOuter = null;
+
+					/** @var Sale\Payment $payment */
+					foreach ($paymentCollection as $payment)
+					{
+						if ($payment->isInner())
+							continue;
+
+						$paymentOuter = $payment;
+					}
+
+					if ($paymentOuter !== null
+						&& ($paymentOuter->getPaymentSystemId() != intval($fields["PAY_SYSTEM_ID"]))
+					)
+					{
+						/** @var Sale\PaySystem\Service $service */
+						if ($service = Sale\PaySystem\Manager::getObjectById($fields["PAY_SYSTEM_ID"]))
+						{
+							/** @var Sale\Payment $paymentOuter */
+							$paymentOuter->setField('PAY_SYSTEM_NAME', $service->getField('NAME'));
+							$paymentOuter->setField('PAY_SYSTEM_ID', intval($fields["PAY_SYSTEM_ID"]));
+							$order->setFieldNoDemand('PAY_SYSTEM_ID', intval($fields["PAY_SYSTEM_ID"]));
+						}
+					}
+
 				}
 
 
@@ -1063,7 +1095,7 @@ class OrderCompatibility
 						if ($payment->isPaid() || $payment->isInner())
 							continue;
 
-						if (Sale\Payment::roundByFormatCurrency($payment->getSum(), $order->getCurrency()) == Sale\Payment::roundByFormatCurrency($deltaSumPaid, $fields['SUM_PAID']))
+						if (Sale\PriceMaths::roundByFormatCurrency($payment->getSum(), $order->getCurrency()) == Sale\PriceMaths::roundByFormatCurrency($deltaSumPaid, $fields['SUM_PAID']))
 						{
 							$paidPayment = true;
 							/** @var Sale\Result $r */
@@ -2494,9 +2526,10 @@ class OrderCompatibility
 	}
 
 	/**
+	 * @internal 
 	 * @return array
 	 */
-	protected static function getAliasFields()
+	public static function getAliasFields()
 	{
 		$fields = array(
 			'NAME_SEARCH' => array(
@@ -2770,6 +2803,7 @@ class OrderCompatibility
 			'DATE_PAY_BEFORE' => 'date',
 			'DATE_BILL' => 'date',
 			'DATE_MARKED' => 'datetime',
+			'DATE_CANCELED' => 'datetime',
 		);
 	}
 

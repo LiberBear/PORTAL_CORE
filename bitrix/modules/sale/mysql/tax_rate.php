@@ -40,7 +40,9 @@ class CSaleTaxRate extends CAllSaleTaxRate
 		for ($i=0; $i < $countFilteKey; $i++)
 		{
 			$val = $DB->ForSql($arFilter[$filter_keys[$i]]);
-			if (strlen($val)<=0) continue;
+
+			if (strval($val) == "")
+				$val = 0;
 
 			$key = $filter_keys[$i];
 			if ($key[0]=="!")

@@ -647,8 +647,13 @@ class ShipmentItem
 		else
 		{
 			$fields['ORDER_DELIVERY_ID'] = $this->getParentShipmentId();
+			$this->setFieldNoDemand('ORDER_DELIVERY_ID', $fields['ORDER_DELIVERY_ID']);
+
 			$fields['DATE_INSERT'] = new Main\Type\DateTime();
+			$this->setFieldNoDemand('DATE_INSERT', $fields['DATE_INSERT']);
+
 			$fields["BASKET_ID"] = $this->basketItem->getId();
+			$this->setFieldNoDemand('BASKET_ID', $fields['BASKET_ID']);
 
 			if (intval($fields['BASKET_ID']) <= 0)
 			{
@@ -682,6 +687,7 @@ class ShipmentItem
 			if (!isset($fields['RESERVED_QUANTITY']))
 			{
 				$fields['RESERVED_QUANTITY'] = $this->getReservedQuantity() === null ? 0 : $this->getReservedQuantity();
+				$this->setFieldNoDemand('RESERVED_QUANTITY', $fields['RESERVED_QUANTITY']);
 			}
 
 			$r = Internals\ShipmentItemTable::add($fields);

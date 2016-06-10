@@ -405,11 +405,11 @@ class Discount
 		$basketCurrency = (string)$this->getBasketCurrency($code);
 		if ($basketCurrency == '')
 			throw new Main\ArgumentNullException('basket item currency');
-		/** @noinspection PhpMethodOrClassCallIsNotCaseSensitiveInspection */
+		/** @noinspection PhpMethodOrClassCallIsNotCaseSensitiveInspection PhpInternalEntityUsedInspection */
 		$this->basketBasePrice[$code] = (
 			$currency == $basketCurrency
 			? $price
-			: roundEx(\CCurrencyRates::convertCurrency($price, $currency, $basketCurrency), SALE_VALUE_PRECISION)
+			: PriceMaths::roundPrecision(\CCurrencyRates::convertCurrency($price, $currency, $basketCurrency))
 		);
 		unset($basketCurrency);
 	}
@@ -431,11 +431,11 @@ class Discount
 			$basketCurrency = (string)$this->getBasketCurrency($code);
 			if ($basketCurrency == '')
 				throw new Main\ArgumentNullException('basket item currency');
-			/** @noinspection PhpMethodOrClassCallIsNotCaseSensitiveInspection */
+			/** @noinspection PhpMethodOrClassCallIsNotCaseSensitiveInspection PhpInternalEntityUsedInspection */
 			$this->basketBasePrice[$code] = (
 				$basketItem['CURRENCY'] == $basketCurrency
 				? $basketItem['PRICE']
-				: roundEx(\CCurrencyRates::convertCurrency($basketItem['PRICE'], $basketItem['CURRENCY'], $basketCurrency), SALE_VALUE_PRECISION)
+				: PriceMaths::roundPrecision(\CCurrencyRates::convertCurrency($basketItem['PRICE'], $basketItem['CURRENCY'], $basketCurrency))
 			);
 			unset($basketCurrency);
 		}
@@ -3329,12 +3329,13 @@ class Discount
 	protected function getApplyPrices()
 	{
 		$customPrice = isset($this->orderData['CUSTOM_PRICE_DELIVERY']) && $this->orderData['CUSTOM_PRICE_DELIVERY'] == 'Y';
+		/** @noinspection PhpInternalEntityUsedInspection */
 		$delivery = array(
 			'BASE_PRICE' => $this->orderData['BASE_PRICE_DELIVERY'],
 			'PRICE' => $this->orderData['PRICE_DELIVERY'],
 			'DISCOUNT' => (
 				!$customPrice
-				? roundEx($this->orderData['PRICE_DELIVERY_DIFF'], SALE_VALUE_PRECISION)
+				? PriceMaths::roundPrecision($this->orderData['PRICE_DELIVERY_DIFF'])
 				: 0
 			)
 		);
@@ -3343,7 +3344,7 @@ class Discount
 			if ($delivery['DISCOUNT'] > 0)
 				$delivery['PRICE'] = $delivery['BASE_PRICE'] - $delivery['DISCOUNT'];
 			else
-				$delivery['PRICE'] = roundEx($delivery['PRICE'], SALE_VALUE_PRECISION);
+				$delivery['PRICE'] = PriceMaths::roundPrecision($delivery['PRICE']);
 		}
 		unset($customPrice);
 
@@ -3356,14 +3357,14 @@ class Discount
 				$basket[$basketCode] = array(
 					'BASE_PRICE' => $basketItem['BASE_PRICE'],
 					'PRICE' => $basketItem['PRICE'],
-					'DISCOUNT' => (!$customPrice ? roundEx($basketItem['DISCOUNT_PRICE'], SALE_VALUE_PRECISION) : 0)
+					'DISCOUNT' => (!$customPrice ? PriceMaths::roundPrecision($basketItem['DISCOUNT_PRICE']) : 0)
 				);
 				if (!$customPrice)
 				{
 					if ($basket[$basketCode]['DISCOUNT'] > 0)
 						$basket[$basketCode]['PRICE'] = $basket[$basketCode]['BASE_PRICE'] - $basket[$basketCode]['DISCOUNT'];
 					else
-						$basket[$basketCode]['PRICE'] = roundEx($basket[$basketCode]['PRICE'], SALE_VALUE_PRECISION);
+						$basket[$basketCode]['PRICE'] = PriceMaths::roundPrecision($basket[$basketCode]['PRICE']);
 				}
 				unset($customPrice);
 			}

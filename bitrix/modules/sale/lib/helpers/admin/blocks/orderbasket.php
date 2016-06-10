@@ -481,45 +481,45 @@ class OrderBasket
 			totalBlockFields: {
 			PRICE_BASKET: {
 				id: "'.$this->idPrefix.'sale_order_edit_basket_price_basket",
-									value: "'.roundEx(floatval($totalPrices["PRICE_BASKET"]), SALE_VALUE_PRECISION).'",
-									type: "currency"
-								},
+					value: "'.Sale\PriceMaths::roundByFormatCurrency($totalPrices["PRICE_BASKET"], $this->order->getCurrency()).'",
+					type: "currency"
+				},
 			PRICE_BASKET_DISCOUNTED: {
 				id: "'.$this->idPrefix.'sale_order_edit_basket_price_discount",
-									value: "'.roundEx(floatval($totalPrices["PRICE_BASKET_DISCOUNTED"]), SALE_VALUE_PRECISION).'",
-									type: "currency"
-								},
+					value: "'.Sale\PriceMaths::roundByFormatCurrency($totalPrices["PRICE_BASKET_DISCOUNTED"], $this->order->getCurrency()).'",
+					type: "currency"
+				},
 			PRICE_DELIVERY: {
 				id: "'.$this->idPrefix.'sale_order_edit_basket_price_delivery",
-									value: "'.roundEx(floatval($totalPrices["PRICE_DELIVERY"]), SALE_VALUE_PRECISION).'",
-									type: "currency"
-								},
+					value: "'.Sale\PriceMaths::roundByFormatCurrency($totalPrices["PRICE_DELIVERY"], $this->order->getCurrency()).'",
+					type: "currency"
+				},
 			PRICE_DELIVERY_DISCOUNTED: {
 				id: "'.$this->idPrefix.'sale_order_edit_basket_price_delivery_discount",
-									value: "'.roundEx(floatval($totalPrices["PRICE_DELIVERY_DISCOUNTED"]), SALE_VALUE_PRECISION).'",
-									type: "currency"
-								},
+					value: "'.Sale\PriceMaths::roundByFormatCurrency($totalPrices["PRICE_DELIVERY_DISCOUNTED"], $this->order->getCurrency()).'",
+					type: "currency"
+				},
 			TAX_VALUE: {
 				id: "'.$this->idPrefix.'sale_order_edit_basket_tax",
-									value: "'.roundEx(floatval($totalPrices["TAX_VALUE"]), SALE_VALUE_PRECISION).'",
-									type: "currency"
-								},
+					value: "'.Sale\PriceMaths::roundByFormatCurrency($totalPrices["TAX_VALUE"], $this->order->getCurrency()).'",
+					type: "currency"
+				},
 			WEIGHT: {
 				id: "'.$this->idPrefix.'sale_order_edit_basket_weight",
-									value: "'.roundEx(floatval($data["WEIGHT"]), SALE_WEIGHT_PRECISION).'",
-									type: "weight"
-								},
+					value: "'.roundEx(floatval($data["WEIGHT"]), SALE_WEIGHT_PRECISION).'",
+					type: "weight"
+				},
 			SUM_PAID: {
 				id: "'.$this->idPrefix.'sale_order_edit_summ_paid",
-									value: "'.roundEx(floatval($totalPrices["SUM_PAID"]), SALE_VALUE_PRECISION).'",
-									//edit: true,
-									type: "currency"
-								},
+					value: "'.Sale\PriceMaths::roundByFormatCurrency($totalPrices["SUM_PAID"], $this->order->getCurrency()).'",
+					//edit: true,
+					type: "currency"
+				},
 			SUM_UNPAID: {
 				id: "'.$this->idPrefix.'sale_order_edit_basket_price_total",
-									value: "'.roundEx(floatval($totalPrices["SUM_UNPAID"]), SALE_VALUE_PRECISION).'",
-									type: "currency"
-								}
+					value: "'.Sale\PriceMaths::roundByFormatCurrency($totalPrices["SUM_UNPAID"], $this->order->getCurrency()).'",
+					type: "currency"
+				}
 		}';
 	}
 
@@ -714,17 +714,17 @@ class OrderBasket
 			{
 				if (isset($result['DISCOUNT_PRICE']))
 				{
-					$result['DISCOUNT_PRICE'] = roundEx($result['DISCOUNT_PRICE'], SALE_VALUE_PRECISION);
+					$result['DISCOUNT_PRICE'] = Sale\PriceMaths::roundByFormatCurrency($result['DISCOUNT_PRICE'], $result['CURRENCY']);
 				}
 
 				if (isset($result['PRICE']))
 				{
-					$result['PRICE'] = roundEx($result['PRICE'], SALE_VALUE_PRECISION);
+					$result['PRICE'] = Sale\PriceMaths::roundByFormatCurrency($result['PRICE'], $result['CURRENCY']);
 				}
 
 				if (isset($result['PRICE_BASE']))
 				{
-					$result['PRICE_BASE'] = roundEx($result['PRICE_BASE'], SALE_VALUE_PRECISION);
+					$result['PRICE_BASE'] = Sale\PriceMaths::roundByFormatCurrency($result['PRICE_BASE'], $result['CURRENCY']);
 				}
 			}
 			static $proxyProductData = array();
@@ -1823,8 +1823,8 @@ class OrderBasket
 
 				if(isset($discounts["PRICES"]["BASKET"][$basketCode]))
 				{
-					$params["PRICE_BASE"] = roundEx($discounts["PRICES"]["BASKET"][$basketCode]["BASE_PRICE"], SALE_VALUE_PRECISION);
-					$params["PRICE"] = roundEx($discounts["PRICES"]["BASKET"][$basketCode]["PRICE"], SALE_VALUE_PRECISION);
+					$params["PRICE_BASE"] = Sale\PriceMaths::roundByFormatCurrency($discounts["PRICES"]["BASKET"][$basketCode]["BASE_PRICE"], $this->order->getCurrency());
+					$params["PRICE"] = Sale\PriceMaths::roundByFormatCurrency($discounts["PRICES"]["BASKET"][$basketCode]["PRICE"], $this->order->getCurrency());
 				}
 
 				$params["CUSTOM_PRICE"] = $item->isCustomPrice() ? "Y" : "N";
@@ -1962,8 +1962,8 @@ class OrderBasket
 
 					if(isset($discounts["PRICES"]["BASKET"][$basketCode]))
 					{
-						$priceBase = roundEx($discounts["PRICES"]["BASKET"][$basketCode]["BASE_PRICE"], SALE_VALUE_PRECISION);
-						$price = roundEx($discounts["PRICES"]["BASKET"][$basketCode]["PRICE"], SALE_VALUE_PRECISION);
+						$priceBase = Sale\PriceMaths::roundByFormatCurrency($discounts["PRICES"]["BASKET"][$basketCode]["BASE_PRICE"], $this->order->getCurrency());
+						$price = Sale\PriceMaths::roundByFormatCurrency($discounts["PRICES"]["BASKET"][$basketCode]["PRICE"], $this->order->getCurrency());
 						$basketPriceBase += $priceBase * $item->getQuantity();
 						$basketPrice += $price * $item->getQuantity();
 
@@ -1974,9 +1974,9 @@ class OrderBasket
 			}
 
 			$result = array(
-				"BASKET_PRICE_BASE" => roundEx($basketPriceBase, SALE_VALUE_PRECISION),
-				"BASKET_PRICE" => roundEx($basketPrice, SALE_VALUE_PRECISION),
-				"DISCOUNT_VALUE" => roundEx($basketDiscount, SALE_VALUE_PRECISION)
+				"BASKET_PRICE_BASE" => Sale\PriceMaths::roundByFormatCurrency($basketPriceBase, $this->order->getCurrency()),
+				"BASKET_PRICE" => Sale\PriceMaths::roundByFormatCurrency($basketPrice, $this->order->getCurrency()),
+				"DISCOUNT_VALUE" => Sale\PriceMaths::roundByFormatCurrency($basketDiscount, $this->order->getCurrency())
 			);
 		}
 

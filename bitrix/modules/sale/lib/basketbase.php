@@ -133,10 +133,10 @@ abstract class BasketBase
 		foreach ($this->collection as $basketItem)
 		{
 			if (!$basketItem->isBundleChild())
-				$orderPrice += BasketItem::roundPrecision($basketItem->getBasePrice() * $basketItem->getQuantity());
+				$orderPrice += PriceMaths::roundPrecision($basketItem->getBasePrice() * $basketItem->getQuantity());
 		}
 
-		$orderPrice = BasketItem::roundPrecision($orderPrice);
+		$orderPrice = PriceMaths::roundPrecision($orderPrice);
 
 		return $orderPrice;
 	}

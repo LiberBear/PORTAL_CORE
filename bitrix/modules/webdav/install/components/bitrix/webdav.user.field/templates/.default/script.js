@@ -147,7 +147,7 @@ window.showWebdavHistoryPopup = function(historyUrl, docId, bindElement)
 				}),
 			closeByEsc: true,
 			draggable: true,
-			titleBar: {content: BX.create("span", { text: BX.message('WDUF_FILE_TITLE_REV_HISTORY')})},
+			titleBar: BX.message('WDUF_FILE_TITLE_REV_HISTORY'),
 			events : {
 				'onPopupClose': function()
 				{

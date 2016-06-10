@@ -404,7 +404,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && strlen($Update) > 0 && $SALE_RIGHT =
 
 		COption::SetOptionString("sale", "format_quantity", ($FORMAT_QUANTITY == 'AUTO' ? $FORMAT_QUANTITY: intval($FORMAT_QUANTITY)));
 
-		COption::SetOptionString("sale", "value_precision", (intval($VALUE_PRECISION) <= 0 ? SALE_VALUE_PRECISION : intval($VALUE_PRECISION)));
+		COption::SetOptionString("sale", "value_precision", (intval($VALUE_PRECISION) <= 0 ? 2 : intval($VALUE_PRECISION)));
 
 		$oldExpirationProcessingEvents = Option::get('sale', 'expiration_processing_events');
 

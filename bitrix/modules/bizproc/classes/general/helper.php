@@ -49,6 +49,9 @@ class CBPHelper
 			if (array_key_exists(strtolower($arUsers), $arAllowableUserGroups))
 				return $arAllowableUserGroups[strtolower($arUsers)];
 
+			if (CBPActivity::isExpression($arUsers))
+				return $arUsers;
+
 			$userId = 0;
 			if (substr($arUsers, 0, strlen("user_")) == "user_")
 				$userId = intval(substr($arUsers, strlen("user_")));
@@ -102,6 +105,11 @@ class CBPHelper
 		$strUsers = trim($strUsers);
 		if (strlen($strUsers) <= 0)
 			return ($callbackFunction != null) ? array(array(), array()) : array();
+
+		if (CBPActivity::isExpression($strUsers))
+		{
+			return ($callbackFunction != null) ? array(array($strUsers), array()) : array($strUsers);
+		}
 
 		$arUsers = array();
 		$strUsers = str_replace(";", ",", $strUsers);

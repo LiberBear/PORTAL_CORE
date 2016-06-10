@@ -129,8 +129,10 @@ switch ($property['TYPE'])
 		if (! $variants)
 		{
 			$result = CSaleOrderPropsVariant::GetList(($b='SORT'), ($o='ASC'), Array('ORDER_PROPS_ID' => $propertyId));
-			while ($row = $result->GetNext())
+			while ($row = $result->Fetch())
+			{
 				$variants []= $row;
+			}
 		}
 
 		break;

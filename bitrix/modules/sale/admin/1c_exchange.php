@@ -6,7 +6,6 @@ define("STATISTIC_SKIP_ACTIVITY_CHECK", true);
 
 if (isset($_REQUEST["type"]) && $_REQUEST["type"] == "crm")
 {
-	define("LANG", "en");
 	define("ADMIN_SECTION", true);
 }
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
@@ -48,6 +47,7 @@ elseif($type=="crm")
 		$IMPORT_SIZE = intval($_GET["IMPORT_SIZE"]);
 		$GZ_COMPRESSION_SUPPORTED = intval($_GET["GZ_COMPRESSION_SUPPORTED"]);
 	}
+
 	$APPLICATION->IncludeComponent("bitrix:sale.export.1c", "", Array(
 			"CRM_MODE" => "Y",
 			"ORDER_ID" => $orderId,

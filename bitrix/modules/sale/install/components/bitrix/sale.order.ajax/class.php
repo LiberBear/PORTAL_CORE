@@ -768,7 +768,7 @@ class SaleOrderAjax extends \CBitrixComponent
 		$arResult["CURRENT_SERVICE"] = false;
 		$arResult["FOR_INTRANET"] = false;
 
-		if (\Bitrix\Main\ModuleManager::isModuleInstalled("intranet") || \Bitrix\Main\ModuleManager::isModuleInstalled("rest"))
+		if (Bitrix\Main\ModuleManager::isModuleInstalled("intranet") || Bitrix\Main\ModuleManager::isModuleInstalled("rest"))
 			$arResult["FOR_INTRANET"] = true;
 
 		if (Loader::includeModule("socialservices") && $arResult["ALLOW_SOCSERV_AUTHORIZATION"] == 'Y')
@@ -1097,7 +1097,7 @@ class SaleOrderAjax extends \CBitrixComponent
 
 		if (is_array($userProps) && strlen($userProps['EMAIL']) > 0 && Option::get("main", "new_user_email_uniq_check", "") == "Y")
 		{
-			$res = \Bitrix\Main\UserTable::getRow(array(
+			$res = Bitrix\Main\UserTable::getRow(array(
 				'filter' => array(
 					"=EMAIL" => $userProps['EMAIL'],
 					"EXTERNAL_AUTH_ID" => ''
@@ -1729,7 +1729,7 @@ class SaleOrderAjax extends \CBitrixComponent
 			else
 				$arBasketItem["DISCOUNT_PRICE_PERCENT"] = 0;
 
-			$arBasketItem["DISCOUNT_PRICE_PERCENT_FORMATED"] = roundEx($arBasketItem["DISCOUNT_PRICE_PERCENT"], SALE_VALUE_PRECISION)."%";
+			$arBasketItem["DISCOUNT_PRICE_PERCENT_FORMATED"] = Bitrix\Sale\PriceMaths::roundPrecision($arBasketItem["DISCOUNT_PRICE_PERCENT"])."%";
 			$arBasketItem["BASE_PRICE_FORMATED"] = SaleFormatCurrency($basketItem->getBasePrice(), $this->order->getCurrency());
 
 			$arDim = unserialize($basketItem->getField('DIMENSIONS'));
@@ -3082,8 +3082,12 @@ class SaleOrderAjax extends \CBitrixComponent
 			}
 		}
 
+		$eventParameters = array(
+			$order, &$this->arUserResult, $this->request,
+			&$this->arParams, &$this->arResult, &$this->arDeliveryServiceAll, &$this->arPaySystemServiceAll
+		);
 		foreach (GetModuleEvents("sale", 'OnSaleComponentOrderDeliveriesCalculated', true) as $arEvent)
-			ExecuteModuleEventEx($arEvent, array($order, &$this->arUserResult, $this->request, &$this->arParams, &$this->arResult));
+			ExecuteModuleEventEx($arEvent, $eventParameters);
 	}
 
 	/**
@@ -4176,9 +4180,12 @@ class SaleOrderAjax extends \CBitrixComponent
 
 		$this->recalculatePayment($order);
 
-		//try to avoid use "executeEvent" methods and use new events like this
+		$eventParameters = array(
+			$order, &$this->arUserResult, $this->request,
+			&$this->arParams, &$this->arResult, &$this->arDeliveryServiceAll, &$this->arPaySystemServiceAll
+		);
 		foreach (GetModuleEvents("sale", 'OnSaleComponentOrderCreated', true) as $arEvent)
-			ExecuteModuleEventEx($arEvent, array($order, &$this->arUserResult, $this->request, &$this->arParams, &$this->arResult));
+			ExecuteModuleEventEx($arEvent, $eventParameters);
 
 		$this->calculateDeliveries($order);
 
@@ -4344,7 +4351,7 @@ class SaleOrderAjax extends \CBitrixComponent
 							\CSalePaySystemAction::InitParamArrays($order->getFieldValues(), $order->getId(), '', array(), $payment->getFieldValues());
 							$map = CSalePaySystemAction::getOldToNewHandlersMap();
 							$oldHandler = array_search($arPaySysAction["ACTION_FILE"], $map);
-							if ($oldHandler !== false)
+							if ($oldHandler !== false && !$paySystemService->isCustom())
 								$arPaySysAction["ACTION_FILE"] = $oldHandler;
 
 							if (strlen($arPaySysAction["ACTION_FILE"]) > 0 && $arPaySysAction["NEW_WINDOW"] != "Y")
@@ -4441,7 +4448,7 @@ class SaleOrderAjax extends \CBitrixComponent
 	public function executeComponent()
 	{
 		global $APPLICATION;
-
+		$this->setFrameMode(false);
 		$this->context = Main\Application::getInstance()->getContext();
 		$this->checkSession = $this->arParams["DELIVERY_NO_SESSION"] == "N" || check_bitrix_sessid();
 		$this->isRequestViaAjax = $this->request->isPost() && $this->request->get('via_ajax') == 'Y';

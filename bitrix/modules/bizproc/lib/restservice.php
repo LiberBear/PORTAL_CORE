@@ -2,9 +2,10 @@
 namespace Bitrix\Bizproc;
 
 use \Bitrix\Main\Loader;
+use \Bitrix\Rest\AppLangTable;
+use \Bitrix\Rest\AppTable;
 use \Bitrix\Rest\RestException;
 use \Bitrix\Rest\AccessException;
-use \Bitrix\OAuth\ClientTable;
 
 Loader::includeModule('rest');
 
@@ -55,13 +56,18 @@ class RestService extends \IRestService
 		if (empty($fields['APP_ID']))
 			return;
 
-		$app = \CBitrix24App::getByID($fields['APP_ID']);
+		if (!Loader::includeModule('rest'))
+			return;
+
+		$dbRes = AppTable::getById($fields['APP_ID']);
+		$app = $dbRes->fetch();
+
 		if(!$app)
 			return;
 
 		$iterator = RestActivityTable::getList(array(
 			'select' => array('ID'),
-			'filter' => array('=APP_ID' => $app['APP_ID'])
+			'filter' => array('=APP_ID' => $app['CLIENT_ID'])
 		));
 
 		while ($activity = $iterator->fetch())
@@ -428,11 +434,26 @@ class RestService extends \IRestService
 
 	private static function getAppName($appId)
 	{
-		$iterator = \CBitrix24App::getList(array(), array('APP_ID' => $appId));
+		if (!Loader::includeModule('rest'))
+			return array('*' => 'No app');
+
+		$iterator = AppTable::getList(
+			array(
+				'filter' => array(
+					'=CLIENT_ID' => $appId
+				),
+				'select' => array('ID', 'APP_NAME', 'CODE'),
+			)
+		);
 		$app = $iterator->fetch();
 		$result = array('*' => $app['APP_NAME'] ? $app['APP_NAME'] : $app['CODE']);
 
-		$iterator = \CBitrix24AppLang::getList($app['CODE']);
+		$iterator = AppLangTable::getList(array(
+			'filter' => array(
+				'=APP_ID' => $app['ID'],
+			),
+			'select' => array('LANGUAGE_ID', 'MENU_NAME')
+		));
 		while($lang = $iterator->fetch())
 		{
 			$result[strtoupper($lang['LANGUAGE_ID'])] = $lang['MENU_NAME'];
@@ -574,28 +595,25 @@ class RestService extends \IRestService
 	}
 
 	/**
-	 * @param $server
+	 * @param \CRestServer $server
 	 * @return array|bool|false|mixed|null
 	 * @throws \Bitrix\Main\ArgumentException
 	 * @throws \Bitrix\Main\LoaderException
 	 */
 	private static function getApp($server)
 	{
-		if (self::$app == null)
+		if(self::$app == null)
 		{
-			if (Loader::includeModule('bitrix24'))
+			if (Loader::includeModule('rest'))
 			{
-				$result = \CBitrix24App::getList(array(), array('APP_ID' => $server->getAppId()));
+				$result = AppTable::getList(
+					array(
+						'filter' => array(
+							'=CLIENT_ID' => $server->getAppId()
+						)
+					)
+				);
 				self::$app = $result->fetch();
-			}
-			elseif (Loader::includeModule('oauth'))
-			{
-				$result = ClientTable::getList(array('filter' => array('=CLIENT_ID' => $server->getAppId())));
-				self::$app = $result->fetch();
-				if (is_array(self::$app) && is_array(self::$app['SCOPE']))
-				{
-					self::$app['SCOPE'] = implode(',', self::$app['SCOPE']);
-				}
 			}
 		}
 

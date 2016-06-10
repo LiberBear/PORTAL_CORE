@@ -226,7 +226,7 @@ class CBPRequestInformationOptionalActivity
 				$this->IsTimeout = 1;
 				$this->taskStatus = CBPTaskStatus::Timeout;
 				$this->Unsubscribe($this);
-				$this->workflow->CloseActivity($this);
+				$this->ExecuteOnCancel();
 				return;
 			}
 		}

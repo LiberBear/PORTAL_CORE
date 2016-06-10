@@ -6,6 +6,7 @@ use Bitrix\Sale\Fuser;
 use Bitrix\Sale\Order;
 use Bitrix\Main\Loader;
 use Bitrix\Sale\Basket;
+use Bitrix\Sale\PriceMaths;
 use Bitrix\Sale\Result;
 use Bitrix\Sale\Provider;
 use Bitrix\Main\UserTable;
@@ -948,7 +949,7 @@ class OrderEdit
 			$product = $data[$basketCode];
 
 			if(isset($product['DISCOUNT_PRICE']))
-				$product['DISCOUNT_PRICE'] = roundEx($product['DISCOUNT_PRICE'], SALE_VALUE_PRECISION);
+				$product['DISCOUNT_PRICE'] = PriceMaths::roundByFormatCurrency($product['DISCOUNT_PRICE'], $order->getCurrency());
 
 			if(isset($productData['PRICE']) && isset($productData['CUSTOM_PRICE']) && $productData['CUSTOM_PRICE'] == 'Y')
 				$product['PRICE'] = $productData['PRICE'];

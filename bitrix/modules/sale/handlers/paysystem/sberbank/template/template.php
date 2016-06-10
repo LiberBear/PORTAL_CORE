@@ -1,10 +1,11 @@
 <?
 	use Bitrix\Main\Localization\Loc;
 	use Bitrix\Sale\Payment;
+	use Bitrix\Sale\PriceMaths;
 
-	Loc::loadMessages(__FILE__);
+Loc::loadMessages(__FILE__);
 	if (array_key_exists('PAYMENT_SHOULD_PAY', $params))
-		$params['PAYMENT_SHOULD_PAY'] = Payment::roundByFormatCurrency($params['PAYMENT_SHOULD_PAY'], $params['PAYMENT_CURRENCY']);
+		$params['PAYMENT_SHOULD_PAY'] = PriceMaths::roundByFormatCurrency($params['PAYMENT_SHOULD_PAY'], $params['PAYMENT_CURRENCY']);
 ?>
 <?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>

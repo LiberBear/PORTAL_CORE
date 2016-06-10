@@ -55,9 +55,10 @@ abstract class EntityCompatibility
 	}
 
 	/**
+	 * @internal
 	 * @return array
 	 */
-	protected static function getAliasFields()
+	public static function getAliasFields()
 	{
 		return array();
 	}

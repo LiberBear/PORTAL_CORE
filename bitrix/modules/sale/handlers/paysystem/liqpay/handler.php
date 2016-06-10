@@ -8,6 +8,7 @@ use Bitrix\Main\Type\DateTime;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Sale\PaySystem;
 use Bitrix\Sale\Payment;
+use Bitrix\Sale\PriceMaths;
 
 class LiqPayHandler extends PaySystem\ServiceHandler
 {
@@ -87,7 +88,7 @@ class LiqPayHandler extends PaySystem\ServiceHandler
 		$sum = $this->getValueByTag($this->getOperationXml($request), 'amount');
 		$paymentSum = $this->getBusinessValue($payment, 'PAYMENT_SHOULD_PAY');
 
-		return Payment::roundByFormatCurrency($paymentSum, $payment->getField('CURRENCY')) == Payment::roundByFormatCurrency($sum, $payment->getField('CURRENCY'));
+		return PriceMaths::roundByFormatCurrency($paymentSum, $payment->getField('CURRENCY')) == PriceMaths::roundByFormatCurrency($sum, $payment->getField('CURRENCY'));
 	}
 
 	/**

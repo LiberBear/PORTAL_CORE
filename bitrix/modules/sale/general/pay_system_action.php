@@ -455,6 +455,39 @@ class CAllSalePaySystemAction
 				}
 			);
 		}
+		if(isset($relatedData["MC_REQUISITE"]) && is_array($relatedData["MC_REQUISITE"]))
+		{
+			$GLOBALS["SALE_INPUT_PARAMS"]["MC_REQUISITE"] = $relatedData["MC_REQUISITE"];
+
+			self::$relatedData['MC_REQUISITE'] = array(
+				'GET_INSTANCE_VALUE' => function ($providerInstance, $providerValue, $personTypeId)
+				{
+					return $GLOBALS['SALE_INPUT_PARAMS']['MC_REQUISITE'][$providerValue];
+				}
+			);
+		}
+		if(isset($relatedData["MC_BANK_DETAIL"]) && is_array($relatedData["MC_BANK_DETAIL"]))
+		{
+			$GLOBALS["SALE_INPUT_PARAMS"]["MC_BANK_DETAIL"] = $relatedData["MC_BANK_DETAIL"];
+
+			self::$relatedData['MC_BANK_DETAIL'] = array(
+				'GET_INSTANCE_VALUE' => function ($providerInstance, $providerValue, $personTypeId)
+				{
+					return $GLOBALS['SALE_INPUT_PARAMS']['MC_BANK_DETAIL'][$providerValue];
+				}
+			);
+		}
+		if(isset($relatedData["CRM_MYCOMPANY"]) && is_array($relatedData["CRM_MYCOMPANY"]))
+		{
+			$GLOBALS["SALE_INPUT_PARAMS"]["CRM_MYCOMPANY"] = $relatedData["CRM_MYCOMPANY"];
+
+			self::$relatedData['CRM_MYCOMPANY'] = array(
+				'GET_INSTANCE_VALUE' => function ($providerInstance, $providerValue, $personTypeId)
+				{
+					return $GLOBALS['SALE_INPUT_PARAMS']['CRM_MYCOMPANY'][$providerValue];
+				}
+			);
+		}
 
 		if ($relatedData)
 		{

@@ -8,6 +8,8 @@ use Bitrix\Sale\Result;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Sale\Location\LocationTable;
 
+Loc::loadMessages(__FILE__);
+
 class Location
 {
 	const EXTERNAL_SERVICE_CODE = 'SPSR';
@@ -85,13 +87,11 @@ class Location
 
 		$res = ExternalServiceTable::add(array('CODE' => self::EXTERNAL_SERVICE_CODE));
 
-		if(!$res->isSuccess())
-		{
+		if($res->isSuccess())
+			$result =  $res->getId();
+		else
 			$result = 0;
-			return $result;
-		}
 
-		$result =  $res->getId();
 		return $result;
 	}
 
@@ -153,9 +153,12 @@ class Location
 		if(empty($cities))
 			return;
 
+		$srvId = self::getExternalServiceId();
+
 		$res = ExternalTable::getList(array(
 			'filter' => array(
-				'=XML_ID' => array_keys($cities)
+				'=XML_ID' => array_keys($cities),
+				'=SERVICE_ID' => $srvId
 			)
 		));
 
@@ -165,7 +168,6 @@ class Location
 		if(empty($cities))
 			return;
 
-		$srvId = self::getExternalServiceId();
 		foreach($cities as $xmlId => $city)
 		{
 			$locId = self::getLocationIdByNames($city['CityName'], $city['RegionName']);
@@ -222,6 +224,12 @@ class Location
 
 		$ids = array();
 
+		$cityName = ToUpper(
+			trim(
+				preg_replace('/\(.*\)/i'.BX_UTF_PCRE_MODIFIER, '', $cityName)
+			)
+		);
+
 		$res = LocationTable::getList(array(
 			'filter' => array(
 				'=NAME.NAME_UPPER' => ToUpper($cityName),
@@ -236,7 +244,6 @@ class Location
 			)
 		));
 
-		$local = "##";
 		while($loc = $res->fetch())
 		{
 			if(!in_array($loc['ID'], $ids))
@@ -253,7 +260,6 @@ class Location
 					return $loc['ID'];
 				}
 			}
-			$local .= "#".ToUpper($loc['NAME_UPPER']).":".$loc['PARENTS_NAME_UPPER'];
 		}
 
 		return current($ids);
@@ -341,7 +347,7 @@ class Location
 
 		if(intval($imported) <= 0)
 		{
-			$res = self::getLocationsRequest();
+			$res = self::getLocationsRequest('', Loc::getMessage('SALE_DLV_SRV_SPSR_RUSSIA'));
 
 			if(!$res->isSuccess())
 			{

@@ -121,7 +121,7 @@ final class LocationTable extends Tree
 	*/
 	public static function addExtended(array $data, array $additional = array())
 	{
-		$resetLegacy = isset($additional['RESET_LEGACY']) && $additional['RESET_LEGACY'] == false;
+		$resetLegacy = !isset($additional['RESET_LEGACY']) || $additional['RESET_LEGACY'] !== false;
 
 		if(isset($data['EXTERNAL']))
 		{
@@ -207,7 +207,7 @@ final class LocationTable extends Tree
 	public static function updateExtended($primary, array $data, array $additional = array())
 	{
 		$primary = Assert::expectIntegerPositive($primary, '$primary');
-		$resetLegacy = isset($additional['RESET_LEGACY']) && $additional['RESET_LEGACY'] == false;
+		$resetLegacy = !isset($additional['RESET_LEGACY']) || $additional['RESET_LEGACY'] !== false;
 
 		// first update parent, and if it succeed, do updates of the connected data
 
@@ -272,7 +272,7 @@ final class LocationTable extends Tree
 	public static function deleteExtended($primary, array $additional = array())
 	{
 		$primary = Assert::expectIntegerPositive($primary, '$primary');
-		$resetLegacy = isset($additional['RESET_LEGACY']) && $additional['RESET_LEGACY'] == false;
+		$resetLegacy = !isset($additional['RESET_LEGACY']) || $additional['RESET_LEGACY'] !== false;
 		$deleteSubtree = isset($additional['DELETE_SUBTREE']) && $additional['DELETE_SUBTREE'] == false;
 
 		// delete connected data of sub-nodes

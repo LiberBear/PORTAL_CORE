@@ -403,9 +403,10 @@ class CBPApproveActivity
 			}
 			else
 			{
-				if ($this->ApprovedPercent > $this->ApproveMinPercent)
+				$noneApprovedPercent = ($this->VotedCount-$this->ApprovedCount)/$this->TotalCount*100;
+				if ($this->ApprovedPercent > $this->ApproveMinPercent || $this->ApprovedPercent == 100 && $this->ApproveMinPercent == 100)
 					$result = "Approve";
-				elseif(($this->VotedCount-$this->ApprovedCount)/$this->TotalCount*100 >= 100 - $this->ApproveMinPercent)
+				elseif($noneApprovedPercent > 0 && $noneApprovedPercent >= 100 - $this->ApproveMinPercent)
 					$result = "NonApprove";
 			}
 		}

@@ -1,6 +1,7 @@
 <?
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Sale;
+use Bitrix\Sale\PriceMaths;
 
 Loc::loadMessages(__FILE__);
 
@@ -95,7 +96,7 @@ class CAllSaleOrder
 				{
 					if (in_array($fieldName, $roundOrderFields))
 					{
-						$arOrder[$fieldName] = \Bitrix\Sale\BasketItem::roundPrecision($arOrder[$fieldName]);
+						$arOrder[$fieldName] = PriceMaths::roundPrecision($arOrder[ $fieldName ]);
 					}
 				}
 			}
@@ -112,7 +113,7 @@ class CAllSaleOrder
 						{
 							if (isset($basketItem[$fieldName]))
 							{
-								$basketItem[$fieldName] = \Bitrix\Sale\BasketItem::roundPrecision($basketItem[$fieldName]);
+								$basketItem[$fieldName] = PriceMaths::roundPrecision($basketItem[ $fieldName ]);
 							}
 						}
 					}
@@ -145,8 +146,9 @@ class CAllSaleOrder
 		foreach(GetModuleEvents("sale", "OnSaleCalculateOrder", true) as $arEvent)
 			ExecuteModuleEventEx($arEvent, array(&$arOrder));
 
-		$arOrder["PRICE"] = roundEx($arOrder["PRICE"], SALE_VALUE_PRECISION);
-		$arOrder["TAX_VALUE"] = roundEx($arOrder["TAX_VALUE"], SALE_VALUE_PRECISION);
+		$arOrder["PRICE"] = \Bitrix\Sale\PriceMaths::roundPrecision($arOrder["PRICE"]);
+		$arOrder["TAX_VALUE"] = \Bitrix\Sale\PriceMaths::roundPrecision($arOrder["TAX_VALUE"]);
+
 		return $arOrder;
 	}
 
@@ -263,15 +265,15 @@ class CAllSaleOrder
 						$arResult['VAT_RATE'] = $arItem["VAT_RATE"];
 
 					$v = CSaleBasketHelper::getVat($arItem);
-					$arItem["VAT_VALUE"] = roundEx($v / $arItem["QUANTITY"], SALE_VALUE_PRECISION);
+					$arItem["VAT_VALUE"] = \Bitrix\Sale\PriceMaths::roundPrecision($v / $arItem["QUANTITY"]);
 					$arResult["VAT_SUM"] += $v;
 
 				}
 			}
 		}
 
-		$arResult['ORDER_PRICE'] = roundEx($arResult['ORDER_PRICE'], SALE_VALUE_PRECISION);
-		$arResult['VAT_SUM'] = roundEx($arResult['VAT_SUM'], SALE_VALUE_PRECISION);
+		$arResult['ORDER_PRICE'] = \Bitrix\Sale\PriceMaths::roundPrecision($arResult['ORDER_PRICE']);
+		$arResult['VAT_SUM'] = \Bitrix\Sale\PriceMaths::roundPrecision($arResult['VAT_SUM']);
 		unset($arItem);
 
 		return $arResult;

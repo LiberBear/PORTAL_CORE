@@ -47,7 +47,12 @@ $settings = $ebay->getSettings();
 
 if(isset($_POST["EBAY_SETTINGS"]) && is_array($_POST["EBAY_SETTINGS"]))
 {
-	$settings[$SITE_ID] = array_merge($settings[$SITE_ID], $_POST["EBAY_SETTINGS"]);
+	$site = !empty($_POST["SITE_ID_INITIAL"]) && $SITE_ID == $_POST["SITE_ID_INITIAL"] ? $SITE_ID : $_POST["SITE_ID_INITIAL"];
+
+	if(!is_array($settings[$site]))
+		$settings[$site] = array();
+
+	$settings[$site] = array_merge($settings[$site], $_POST["EBAY_SETTINGS"]);
 	$bSaved = $ebay->saveSettings($settings);
 }
 
@@ -96,6 +101,7 @@ if($bSaved)
 ?>
 <form method="post" action="<?=$APPLICATION->GetCurPage()?>?lang=<?=LANGUAGE_ID?>" name="ebay_policysettings_form">
 <?=bitrix_sessid_post();?>
+<input type="hidden" name="SITE_ID_INITIAL" value="<?=$SITE_ID?>">
 <table width="100%">
 	<tr>
 		<td align="left">

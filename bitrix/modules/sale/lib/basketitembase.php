@@ -200,7 +200,7 @@ abstract class BasketItemBase
 		$value = parent::getField($name);
 		if ($name == "BASE_PRICE" && $value === null)
 		{
-			$value = static::roundPrecision($this->getField('PRICE') + $this->getField('DISCOUNT_PRICE'));
+			$value = PriceMaths::roundPrecision($this->getField('PRICE') + $this->getField('DISCOUNT_PRICE'));
 		}
 
 		return $value;
@@ -239,6 +239,11 @@ abstract class BasketItemBase
 		if (array_key_exists('PRODUCT_PROVIDER_CLASS', $fields) && strval($fields['PRODUCT_PROVIDER_CLASS']) != '')
 		{
 			$this->setField('PRODUCT_PROVIDER_CLASS', $fields['PRODUCT_PROVIDER_CLASS']);
+		}
+
+		if (array_key_exists('SUBSCRIBE', $fields) && strval($fields['SUBSCRIBE']) != '')
+		{
+			$this->setField('SUBSCRIBE', $fields['SUBSCRIBE']);
 		}
 
 		return parent::setFields($fields);
@@ -290,9 +295,9 @@ abstract class BasketItemBase
 			return 0;
 
 		if ($this->isVatInPrice())
-			$vat = static::roundPrecision(($this->getPrice() * $this->getQuantity() * $this->getVatRate() / ($this->getVatRate() + 1)));
+			$vat = PriceMaths::roundPrecision(($this->getPrice() * $this->getQuantity() * $this->getVatRate() / ($this->getVatRate() + 1)));
 		else
-			$vat = static::roundPrecision(($this->getPrice() * $this->getQuantity() * $this->getVatRate()));
+			$vat = PriceMaths::roundPrecision(($this->getPrice() * $this->getQuantity() * $this->getVatRate()));
 
 		return $vat;
 	}
@@ -302,7 +307,7 @@ abstract class BasketItemBase
 	 */
 	public function getInitialPrice()
 	{
-		$price = static::roundPrecision($this->getPrice() * $this->getQuantity());
+		$price = PriceMaths::roundPrecision($this->getPrice() * $this->getQuantity());
 
 		if ($this->isVatInPrice())
 			$price -= $this->getVat();
@@ -315,7 +320,7 @@ abstract class BasketItemBase
 	 */
 	public function getFinalPrice()
 	{
-		$price = static::roundPrecision($this->getPrice() * $this->getQuantity());
+		$price = PriceMaths::roundPrecision($this->getPrice() * $this->getQuantity());
 
 		if (!$this->isVatInPrice())
 			$price += $this->getVat();
@@ -521,21 +526,5 @@ abstract class BasketItemBase
 		return false;
 	}
 
-	/**
-	 * @param $value
-	 *
-	 * @return float
-	 * @throws Main\ArgumentNullException
-	 */
-	public static function roundPrecision($value)
-	{
-		$valuePrecision = Main\Config\Option::get('sale', 'value_precision', SALE_VALUE_PRECISION);
-		if (intval($valuePrecision) <= 0)
-		{
-			$valuePrecision = SALE_VALUE_PRECISION;
-		}
-
-		return roundEx($value, $valuePrecision);
-	}
 
 }

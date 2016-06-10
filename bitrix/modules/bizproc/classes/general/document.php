@@ -1380,13 +1380,16 @@ class CBPDocument
 
 	/**
 	 * Method returns map of document fields aliases.
-	 * @param array $fieds Document fields.
+	 * @param array $fields Document fields.
 	 * @return array Aliases.
 	 */
-	public static function getDocumentFieldsAliasesMap(array $fieds)
+	public static function getDocumentFieldsAliasesMap($fields)
 	{
+		if (empty($fields) || !is_array($fields))
+			return array();
+
 		$aliases = array();
-		foreach ($fieds as $key => $property)
+		foreach ($fields as $key => $property)
 		{
 			if (isset($property['Alias']))
 			{

@@ -11,6 +11,7 @@ use Bitrix\Main\Web\HttpClient;
 use Bitrix\Sale\BusinessValue;
 use Bitrix\Sale\PaySystem;
 use Bitrix\Sale\Payment;
+use Bitrix\Sale\PriceMaths;
 
 Loc::loadMessages(__FILE__);
 
@@ -148,7 +149,7 @@ class YandexHandler extends PaySystem\ServiceHandler implements PaySystem\IRefun
 		$sum = $request->get('orderSumAmount');
 		$paymentSum = $this->getBusinessValue($payment, 'PAYMENT_SHOULD_PAY');
 
-		return Payment::roundByFormatCurrency($paymentSum, $payment->getField('CURRENCY')) == Payment::roundByFormatCurrency($sum, $payment->getField('CURRENCY'));
+		return PriceMaths::roundByFormatCurrency($paymentSum, $payment->getField('CURRENCY')) == PriceMaths::roundByFormatCurrency($sum, $payment->getField('CURRENCY'));
 	}
 
 	/**

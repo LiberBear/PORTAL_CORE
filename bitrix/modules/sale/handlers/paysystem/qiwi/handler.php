@@ -11,6 +11,7 @@ use Bitrix\Main\Web\HttpClient;
 use Bitrix\Sale\PaySystem;
 use Bitrix\Sale\Payment;
 use Bitrix\Main\Application;
+use Bitrix\Sale\PriceMaths;
 use Bitrix\Sale\Result;
 
 class QiwiHandler extends PaySystem\ServiceHandler implements PaySystem\ICheckable
@@ -334,8 +335,8 @@ class QiwiHandler extends PaySystem\ServiceHandler implements PaySystem\ICheckab
 			foreach($bill as $key => $value)
 				$psData['PS_STATUS_DESCRIPTION'] .= "{$key}:{$value}, ";
 
-			$billAmount = Payment::roundByFormatCurrency($bill['amount'], $payment->getField('CURRENCY'));
-			$paymentSum = Payment::roundByFormatCurrency($payment->getSum(), $payment->getField('CURRENCY'));
+			$billAmount = PriceMaths::roundByFormatCurrency($bill['amount'], $payment->getField('CURRENCY'));
+			$paymentSum = PriceMaths::roundByFormatCurrency($payment->getSum(), $payment->getField('CURRENCY'));
 
 			if($bill['status'] == "paid" && $billAmount == $paymentSum && $this->getBusinessValue($payment, 'PS_CHANGE_STATUS_PAY'))
 				$result->setOperationType(PaySystem\ServiceResult::MONEY_COMING);

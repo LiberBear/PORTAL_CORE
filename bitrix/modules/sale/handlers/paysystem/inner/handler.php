@@ -7,6 +7,7 @@ use Bitrix\Main\Request;
 use Bitrix\Sale\Order;
 use Bitrix\Sale\PaySystem;
 use Bitrix\Sale\Payment;
+use Bitrix\Sale\PriceMaths;
 use Bitrix\Sale\Result;
 use Bitrix\Sale\Internals\UserBudgetPool;
 use Bitrix\Main\Entity\EntityError;
@@ -107,8 +108,8 @@ class InnerHandler extends PaySystem\BaseServiceHandler implements PaySystem\IRe
 			return $result;
 		}
 
-		$paymentSum = Payment::roundByFormatCurrency($payment->getSum(), $order->getCurrency());
-		$userBudget = Payment::roundByFormatCurrency(UserBudgetPool::getUserBudgetByOrder($order), $order->getCurrency());
+		$paymentSum = PriceMaths::roundByFormatCurrency($payment->getSum(), $order->getCurrency());
+		$userBudget = PriceMaths::roundByFormatCurrency(UserBudgetPool::getUserBudgetByOrder($order), $order->getCurrency());
 
 		if($userBudget >= $paymentSum)
 			UserBudgetPool::addPoolItem($order, ( $paymentSum * -1 ), UserBudgetPool::BUDGET_TYPE_ORDER_PAY, $payment);

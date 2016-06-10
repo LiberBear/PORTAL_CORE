@@ -2009,7 +2009,7 @@ class CBPVirtualDocument
 	}
 
 	// array("1" => "Admins", 2 => "Guests", 3 => ..., "Author" => "Author")
-	public function GetAllowableUserGroups($documentType)
+	public function GetAllowableUserGroups($documentType, $withExtended = false)
 	{
 		$documentType = trim($documentType);
 		if (strlen($documentType) <= 0)

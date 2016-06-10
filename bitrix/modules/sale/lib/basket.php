@@ -149,26 +149,34 @@ class Basket
 
 			/** @var Result $r */
 			$r = Provider::checkAvailableProductQuantity($item, $deltaQuantity);
-			if (!$r->isSuccess())
+			if (!$r->isSuccess() && $item->getField('SUBSCRIBE') !== 'Y')
 			{
 				$result->addErrors($r->getErrors());
 				return $result;
 			}
 			else
 			{
-				$availableQuantityData = $r->getData();
-				if (array_key_exists('AVAILABLE_QUANTITY', $availableQuantityData))
+
+				if ($item->getField('SUBSCRIBE') === 'Y')
 				{
-					$availableQuantity = $availableQuantityData['AVAILABLE_QUANTITY'];
+					$availableQuantity = $value;
 				}
 				else
 				{
-					$result->addError( new ResultError(Loc::getMessage('SALE_BASKET_ITEM_WRONG_AVAILABLE_QUANTITY',
-																	   array(
-																			'#PRODUCT_NAME#' => $item->getField('NAME'),
-																		)), 'SALE_BASKET_ITEM_WRONG_AVAILABLE_QUANTITY')
-									);
-					return $result;
+					$availableQuantityData = $r->getData();
+					if (array_key_exists('AVAILABLE_QUANTITY', $availableQuantityData))
+					{
+						$availableQuantity = $availableQuantityData['AVAILABLE_QUANTITY'];
+					}
+					else
+					{
+						$result->addError( new ResultError(Loc::getMessage('SALE_BASKET_ITEM_WRONG_AVAILABLE_QUANTITY',
+																		   array(
+																				'#PRODUCT_NAME#' => $item->getField('NAME'),
+																			)), 'SALE_BASKET_ITEM_WRONG_AVAILABLE_QUANTITY')
+										);
+						return $result;
+					}
 				}
 			}
 
@@ -355,7 +363,7 @@ class Basket
 
 						if (in_array($k, $roundFields))
 						{
-							$v = BasketItem::roundPrecision($v);
+							$v = PriceMaths::roundPrecision($v);
 						}
 					}
 					$value1[$k] = $v;
@@ -681,6 +689,10 @@ class Basket
 
 					if (static::getExistsItemInBundle($parentBasketItem, $item->getField('MODULE'), $item->getProductId(), $propList))
 					{
+						if (empty($this->bundleIndex[$item->getId()]))
+						{
+							$this->bundleIndex[$item->getId()] = $parentBasketItem->getId();
+						}
 						continue;
 					}
 
@@ -880,7 +892,7 @@ class Basket
 			$itemsFromDbList = Internals\BasketTable::getList(
 				array(
 					"filter" => $filter,
-					"select" => array("ID", 'TYPE', 'SET_PARENT_ID', 'PRODUCT_ID', 'NAME', 'QUANTITY')
+					"select" => array("ID", 'TYPE', 'SET_PARENT_ID', 'PRODUCT_ID', 'NAME', 'QUANTITY', 'FUSER_ID', 'ORDER_ID')
 				)
 			);
 			while ($itemsFromDbItem = $itemsFromDbList->fetch())
@@ -940,15 +952,16 @@ class Basket
 					if ($isChanged)
 					{
 						OrderHistory::addLog('BASKET', $order->getId(), $isNew ? "BASKET_ITEM_ADD" : "BASKET_ITEM_UPDATE", $basketItem->getId(), $basketItem, $logFields, OrderHistory::SALE_ORDER_HISTORY_LOG_LEVEL_1);
+
+						OrderHistory::addAction(
+							'BASKET',
+							$order->getId(),
+							"BASKET_SAVED",
+							$basketItem->getId(),
+							$basketItem
+						);
 					}
 
-					OrderHistory::addAction(
-						'BASKET',
-						$order->getId(),
-						"BASKET_SAVED",
-						$basketItem->getId(),
-						$basketItem
-					);
 				}
 			}
 			else

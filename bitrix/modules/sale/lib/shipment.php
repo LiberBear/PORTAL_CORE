@@ -561,6 +561,8 @@ class Shipment
 			$event->send();
 		}
 
+		$isChanged = $this->isChanged();
+
 		if ($id > 0)
 		{
 			$fields = $this->fields->getChangedValues();
@@ -570,6 +572,8 @@ class Shipment
 				if (array_key_exists('REASON_MARKED', $fields) && strlen($fields['REASON_MARKED']) > 255)
 				{
 					$fields['REASON_MARKED'] = substr($fields['REASON_MARKED'], 0, 255);
+
+					$this->setFieldNoDemand('REASON_MARKED', $fields['REASON_MARKED']);
 				}
 
 				$r = Internals\ShipmentTable::update($id, $fields);
@@ -611,12 +615,19 @@ class Shipment
 		else
 		{
 			$fields['ORDER_ID'] = $this->getParentOrderId();
+			$this->setFieldNoDemand('ORDER_ID', $fields['ORDER_ID']);
+
 			$fields['DATE_INSERT'] = new Main\Type\DateTime();
+			$this->setFieldNoDemand('DATE_INSERT', $fields['DATE_INSERT']);
+
 			$fields['SYSTEM'] = $fields['SYSTEM']? 'Y' : 'N';
+			$this->setFieldNoDemand('SYSTEM', $fields['SYSTEM']);
 
 			if (array_key_exists('REASON_MARKED', $fields) && strlen($fields['REASON_MARKED']) > 255)
 			{
 				$fields['REASON_MARKED'] = substr($fields['REASON_MARKED'], 0, 255);
+
+				$this->setFieldNoDemand('REASON_MARKED', $fields['REASON_MARKED']);
 			}
 
 			$r = Internals\ShipmentTable::add($fields);
@@ -643,7 +654,7 @@ class Shipment
 
 			$this->setAccountNumber($id);
 
-			if ($order->getId() > 0 && !$this->isSystem())
+			if ($order->getId() > 0 && !$this->isSystem() && $isChanged)
 			{
 				OrderHistory::addAction(
 					'SHIPMENT',

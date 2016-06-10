@@ -8,6 +8,7 @@ use Bitrix\Main\Type\DateTime;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Sale\PaySystem;
 use Bitrix\Sale\Payment;
+use Bitrix\Sale\PriceMaths;
 
 Loc::loadMessages(__FILE__);
 
@@ -86,8 +87,8 @@ class RoboxchangeHandler extends PaySystem\ServiceHandler
 	 */
 	private function isCorrectSum(Payment $payment, Request $request)
 	{
-		$sum = Payment::roundByFormatCurrency($request->get('OutSum'), $payment->getField('CURRENCY'));
-		$paymentSum = Payment::roundByFormatCurrency($this->getBusinessValue($payment, 'PAYMENT_SHOULD_PAY'), $payment->getField('CURRENCY'));
+		$sum = PriceMaths::roundByFormatCurrency($request->get('OutSum'), $payment->getField('CURRENCY'));
+		$paymentSum = PriceMaths::roundByFormatCurrency($this->getBusinessValue($payment, 'PAYMENT_SHOULD_PAY'), $payment->getField('CURRENCY'));
 
 		return $paymentSum == $sum;
 	}

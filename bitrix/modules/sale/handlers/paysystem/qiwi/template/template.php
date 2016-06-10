@@ -23,7 +23,7 @@ if (isset($_POST["SET_NEW_PHONE"]))
 		<p>
 			<?=Loc::getMessage("SALE_HPS_QIWI_SUMM_TO_PAY")?>:
 			<?if (Loader::includeModule("currency")):?>
-				<strong><?=CCurrencyLang::CurrencyFormat($params['SHOULD_PAY'], $params['CURRENCY'], true);?></strong>
+				<strong><?=CCurrencyLang::CurrencyFormat($params['PAYMENT_SHOULD_PAY'], $params['PAYMENT_CURRENCY'], true);?></strong>
 			<?else:?>
 				<strong><?=$params['SHOULD_PAY'];?> <?=$params['CURRENCY']?></strong>
 			<?endif;?>

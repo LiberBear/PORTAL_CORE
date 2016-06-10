@@ -405,11 +405,17 @@ $tabControl->BeginNextTab();
 
 					if ($pathToDesc !== '')
 						include $pathToDesc;
+
+					$selected = false;
 				?>
 				<option value=""><?=Loc::getMessage("SPS_NO_ACT_FILE") ?></option>
 				<?if ($handlerList['USER']):?>
 					<optgroup label="<?=Loc::getMessage("SPS_ACT_USER");?>">
 						<?foreach($handlerList['USER'] as $handler => $title): ?>
+							<?
+								if (ToLower($handlerName) == ToLower($handler))
+									$selected = true;
+							?>
 							<option value="<?=htmlspecialcharsbx($handler) ?>"<?=(ToLower($handlerName) == ToLower($handler)) ? " selected" : '';?>>
 								<?=htmlspecialcharsbx($title);?>
 							</option>
@@ -424,7 +430,7 @@ $tabControl->BeginNextTab();
 							if ($innerId > 0 && $handler == 'inner' && $handlerName != 'inner')
 								continue;
 						?>
-						<option value="<?=htmlspecialcharsbx($handler) ?>"<?=(ToLower($handlerName) == ToLower($handler) ? " selected" : '');?>>
+						<option value="<?=htmlspecialcharsbx($handler) ?>"<?=((!$selected && ToLower($handlerName) == ToLower($handler)) ? " selected" : '');?>>
 							<?=htmlspecialcharsEx($title) ?>
 						</option>
 					<?endforeach;?>
@@ -434,34 +440,34 @@ $tabControl->BeginNextTab();
 		</td>
 	</tr>
 	<tbody id="pay_system_ps_mode">
-		<?
-			$psMode = $request->get('PS_MODE') ? $request->get('PS_MODE') : $paySystem['PS_MODE'];
-		?>
-		<?if ($paySystem['PS_MODE'] || $request->get('PS_MODE')):?>
+	<?
+		$psMode = $request->get('PS_MODE') ? $request->get('PS_MODE') : $paySystem['PS_MODE'];
+
+		/** @var PaySystem\BaseServiceHandler $className */
+		$className = PaySystem\Manager::getClassNameFromPath($handlerName);
+		if (!class_exists($className))
+		{
+			$path = PaySystem\Manager::getPathToHandlerFolder($handler);
+			$fullPath = $documentRoot.$path.'/handler.php';
+			if ($path && \Bitrix\Main\IO\File::isFileExists($fullPath))
+				require_once $fullPath;
+		}
+
+		$handlerModeList = array();
+		if (class_exists($className))
+			$handlerModeList = $className::getHandlerModeList();
+
+		if ($handlerModeList):?>
 			<tr>
 				<td width="40%" valign="top"><?=Loc::getMessage("F_PS_MODE");?>:</td>
 				<td width="60%" valign="top">
-					<?
-						$className = PaySystem\Manager::getClassNameFromPath($handlerName);
+				<?
+					if (!class_exists('\Bitrix\Sale\Internals\Input\Enum'))
+						require $documentRoot.'/bitrix/modules/sale/lib/internals/input.php';
 
-						if (!class_exists($className))
-						{
-							$path = PaySystem\Manager::getPathToHandlerFolder($handler);
-							$fullPath = $documentRoot.$path.'/handler.php';
-							if ($path && \Bitrix\Main\IO\File::isFileExists($fullPath))
-								require_once $fullPath;
-						}
-
-						if (!class_exists('\Bitrix\Sale\Internals\Input\Enum'))
-							require $documentRoot.'/bitrix/modules/sale/lib/internals/input.php';
-
-						if (class_exists($className))
-						{
-							echo Bitrix\Sale\Internals\Input\Enum::getEditHtml(
-								'PS_MODE',
-								array('OPTIONS' => $className::getHandlerModeList()), $psMode);
-						}
-					?>
+					if (class_exists($className))
+						echo Bitrix\Sale\Internals\Input\Enum::getEditHtml('PS_MODE', array('OPTIONS' => $handlerModeList), $psMode);
+				?>
 				</td>
 			</tr>
 		<?endif;?>

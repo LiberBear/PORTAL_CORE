@@ -25,24 +25,14 @@ if ($orderId > 0)
 			{
 				$context = \Bitrix\Main\Application::getInstance()->getContext();
 				$service = \Bitrix\Sale\PaySystem\Manager::getObjectById($payment->getPaymentSystemId());
-				if ($_REQUEST['pdf'])
+				if ($_REQUEST['pdf'] && $_REQUEST['GET_CONTENT'] == 'Y')
 				{
-					$template = $service->initiatePay($payment, $context->getRequest());
-					if ($_REQUEST['GET_CONTENT'] == 'Y')
-					{
-						$result = $service->initiatePay($payment, $context->getRequest(), \Bitrix\Sale\PaySystem\BaseServiceHandler::STRING);
-						if ($result->isSuccess())
-							return $result->getTemplate();
-					}
-					else
-					{
-						$result = $service->initiatePay($payment, $context->getRequest());
-					}
+					$result = $service->initiatePay($payment, $context->getRequest(), \Bitrix\Sale\PaySystem\BaseServiceHandler::STRING);
+					if ($result->isSuccess())
+						return $result->getTemplate();
 				}
-				else
-				{
-					$result = $service->initiatePay($payment, $context->getRequest());
-				}
+
+				$result = $service->initiatePay($payment, $context->getRequest());
 			}
 			CCurrencyLang::enableUseHideZero();
 		}

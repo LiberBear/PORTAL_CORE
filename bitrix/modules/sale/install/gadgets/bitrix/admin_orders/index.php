@@ -156,7 +156,7 @@ foreach($arDatePeriods as $key => $arPeriod)
 	}
 
 	$obCache = new CPHPCache;
-	$cache_id = $key."_".md5(serialize($arFilterLID))."_".md5(serialize($arGadgetParams["ORDERS_STATUS_1"]))."_".$GLOBALS["USER"]->GetUserGroupString();
+	$cache_id = $key."_".md5(serialize($arFilterLID))."_".md5(serialize($arGadgetParams["ORDERS_STATUS_1"]));
 	if($obCache->InitCache($arPeriod["CACHE_TIME"], $cache_id, "/"))
 	{
 		$vars = $obCache->GetVars();
@@ -186,7 +186,6 @@ foreach($arDatePeriods as $key => $arPeriod)
 						$arStatus["DB_FIELD"]."_TO" => $arPeriod["MAX_DATE"]
 					),
 					$arFilterLID,
-					$arFilterPerms,
 					$arFilterYField
 				);
 

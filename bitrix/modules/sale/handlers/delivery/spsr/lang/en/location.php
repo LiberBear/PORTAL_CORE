@@ -12,4 +12,5 @@ $MESS["SALE_DLV_SRV_SPSR_LOC_EX_HM_2"] = "Khanty-Mansiysk Autonomous Okrug";
 $MESS["SALE_DLV_SRV_SPSR_LOC_EX_EAO_1"] = "Jewish Autonomous Oblast";
 $MESS["SALE_DLV_SRV_SPSR_LOC_EX_EAO_2"] = "Jewish Autonomous Oblast";
 $MESS["SALE_DLV_SRV_SPSR_LOC_INST_ERROR"] = "SPSR location code match error ";
+$MESS["SALE_DLV_SRV_SPSR_RUSSIA"] = " ";
 ?>

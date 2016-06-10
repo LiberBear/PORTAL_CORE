@@ -1384,7 +1384,7 @@ class CIBlockDocumentWebdav extends CIBlockDocument
 	}
 
 	// array("1" => "Админы", 2 => "Гости", 3 => ..., "Author" => "Афтар")
-	public function GetAllowableUserGroups($documentType)
+	public function GetAllowableUserGroups($documentType, $withExtended = false)
 	{
 		if($storage = self::needProxyToDiskByDocType($documentType))
 		{

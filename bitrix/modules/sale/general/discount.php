@@ -818,7 +818,7 @@ class CAllSaleDiscount
 				}
 			}
 		}
-		if ($ACTION == 'ADD' && $executeModule == '')
+		if (($ACTION == 'ADD' || $updateData) && $executeModule == '')
 			$executeModule = 'all';
 		if ($executeModule != '')
 			$arFields['EXECUTE_MODULE'] = $executeModule;

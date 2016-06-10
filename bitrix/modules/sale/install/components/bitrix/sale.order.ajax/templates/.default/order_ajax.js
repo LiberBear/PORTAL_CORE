@@ -335,6 +335,7 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 					events: {
 						onAfterPopupShow: BX.proxy(function(){
 							BX.cleanNode(this.loadingScreen.popupContainer);
+							BX.removeClass(this.loadingScreen.popupContainer, 'popup-window');
 							this.loadingScreen.popupContainer.appendChild(
 								BX.create('IMG', {props: {src: this.templateFolder + "/images/loader.gif"}})
 							);
@@ -618,7 +619,7 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 
 			!!scroll && this.scrollToError();
 		},
-		
+
 		checkNotifications: function()
 		{
 			var informer = this.mainErrorsNode.querySelector('[data-type="informer"]'),
@@ -868,8 +869,8 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 						},
 						props: {className: 'bx-pag-prev'},
 						html: pagination.pageNumber == 1
-								? '<span>' + BX.util.htmlspecialchars(this.params.MESS_NAV_BACK) + '</span>'
-								: '<a href=""><span>' + BX.util.htmlspecialchars(this.params.MESS_NAV_BACK) + '</span></a>',
+							? '<span>' + BX.util.htmlspecialchars(this.params.MESS_NAV_BACK) + '</span>'
+							: '<a href=""><span>' + BX.util.htmlspecialchars(this.params.MESS_NAV_BACK) + '</span></a>',
 						events: {click: BX.proxy(this.doPagination, this)}
 					})
 				);
@@ -899,8 +900,8 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 						},
 						props: {className: 'bx-pag-next'},
 						html: pagination.pageNumber == pagination.pages.length
-								? '<span>' + BX.util.htmlspecialchars(this.params.MESS_NAV_FORWARD) + '</span>'
-								: '<a href=""><span>' + BX.util.htmlspecialchars(this.params.MESS_NAV_FORWARD) + '</span></a>',
+							? '<span>' + BX.util.htmlspecialchars(this.params.MESS_NAV_FORWARD) + '</span>'
+							: '<a href=""><span>' + BX.util.htmlspecialchars(this.params.MESS_NAV_FORWARD) + '</span></a>',
 						events: {click: BX.proxy(this.doPagination, this)}
 					})
 				);
@@ -3465,8 +3466,30 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 									var content = BX('bx-soa-image-popup-content');
 									if (content)
 									{
+										var windowSize = BX.GetWindowInnerSize(),
+											ratio = this.isMobile ? 0.5 : 0.9,
+											contentHeight, contentWidth;
+
 										BX.cleanNode(content);
 										content.appendChild(this);
+
+										contentHeight = content.offsetHeight;
+										contentWidth = content.offsetWidth;
+
+										if (contentHeight > windowSize.innerHeight * ratio)
+										{
+											content.style.height = windowSize.innerHeight * ratio + 'px';
+											content.style.width = contentWidth * (windowSize.innerHeight * ratio / contentHeight) + 'px';
+											contentHeight = content.offsetHeight;
+											contentWidth = content.offsetWidth;
+										}
+
+										if (contentWidth > windowSize.innerWidth * ratio)
+										{
+											content.style.width = windowSize.innerWidth * ratio + 'px';
+											content.style.height = contentHeight * (windowSize.innerWidth * ratio / contentWidth) + 'px';
+										}
+
 										that.popup.adjustPosition();
 									}
 								}
@@ -3685,7 +3708,10 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 				return;
 
 			if (active)
+			{
 				this.editActiveRegionBlock(true);
+				!this.regionBlockNotEmpty && this.editFadeRegionBlock();
+			}
 			else
 				this.editFadeRegionBlock();
 
@@ -3735,7 +3761,9 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 					{
 						BX.removeClass(this.regionBlockNode, 'bx-active');
 						this.regionBlockNode.style.display = 'none';
-						this.initFirstSection();
+
+						if (!this.result.IS_AUTHORIZED || this.result.LAST_ORDER_DATA.FAIL)
+							this.initFirstSection();
 					}
 				}
 
@@ -4934,9 +4962,9 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 					serviceNode = BX.create('DIV', {
 						props: {className: 'form-group bx-soa-pp-field'},
 						html: currentService.editControl
-							+ (currentService.description.length
-								? '<div class="bx-soa-service-small">' + BX.util.htmlspecialchars(currentService.description) + '</div>'
-								: '')
+						+ (currentService.description.length
+							? '<div class="bx-soa-service-small">' + BX.util.htmlspecialchars(currentService.description) + '</div>'
+							: '')
 					});
 
 					BX.prepend(serviceName, serviceNode);
@@ -4954,10 +4982,10 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 						children: [
 							BX.create('LABEL', {
 								html: currentService.editControl + BX.util.htmlspecialchars(currentService.name)
-									+ (currentService.price ? ' (' + currentService.priceFormatted + ')' : '')
-									+ (currentService.description.length
-										? '<div class="bx-soa-service-small">' + BX.util.htmlspecialchars(currentService.description) + '</div>'
-										: '')
+								+ (currentService.price ? ' (' + currentService.priceFormatted + ')' : '')
+								+ (currentService.description.length
+									? '<div class="bx-soa-service-small">' + BX.util.htmlspecialchars(currentService.description) + '</div>'
+									: '')
 							})
 						]
 					});
@@ -5053,7 +5081,7 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 			label = BX.create('DIV', {
 				props: {
 					className: 'bx-soa-pp-company-graf-container'
-						+ (item.CALCULATE_ERRORS || deliveryCached && deliveryCached.CALCULATE_ERRORS ? ' bx-bd-waring' : '')},
+					+ (item.CALCULATE_ERRORS || deliveryCached && deliveryCached.CALCULATE_ERRORS ? ' bx-bd-waring' : '')},
 				children: labelNodes
 			});
 
@@ -5837,9 +5865,9 @@ BX.namespace('BX.Sale.OrderAjaxComponent');
 			for (i = 0; i < length; i++)
 			{
 				pointsGeoQuery = ymaps.geoQuery({
-						type: 'FeatureCollection',
-						features: this.pickUpPointsJSON
-					});
+					type: 'FeatureCollection',
+					features: this.pickUpPointsJSON
+				});
 				res = pointsGeoQuery.getClosestTo(geoLocation);
 				storeId = res.properties.get('storeId');
 				currentStore = this.getPickUpInfoArray([storeId])[0];

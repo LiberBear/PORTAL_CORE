@@ -1114,7 +1114,8 @@ class CWebDavDiskDispatcher
 	public function processActionGetDiskSpace()
 	{
 		$this->enableIgnoreQuotaError();
-		$freeSpace = CDiskQuota::GetDiskQuota();
+		$quota = new CDiskQuota;
+		$freeSpace = $quota->GetDiskQuota();
 		if($freeSpace === true)
 		{
 			return $this->sendResponse(array(
@@ -1134,7 +1135,8 @@ class CWebDavDiskDispatcher
 	public function processActionGetDiskQuota()
 	{
 		$this->enableIgnoreQuotaError();
-		$quota = CDiskQuota::GetDiskQuota();
+		$diskQuota = new CDiskQuota;
+		$quota = $diskQuota->GetDiskQuota();
 		if($quota === true)
 		{
 			return $this->sendResponse(array(

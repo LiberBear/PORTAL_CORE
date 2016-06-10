@@ -71,7 +71,8 @@ class Actions
 	 */
 	public static function roundValue($value, /** @noinspection PhpUnusedParameterInspection */ $currency)
 	{
-		return roundEx($value, SALE_VALUE_PRECISION);
+		/** @noinspection PhpInternalEntityUsedInspection */
+		return Sale\PriceMaths::roundPrecision($value);
 	}
 
 	/**
@@ -394,15 +395,16 @@ class Actions
 		$maxBound = false;
 		if ($unit == self::VALUE_TYPE_FIX && $value < 0)
 			$maxBound = (isset($action['MAX_BOUND']) && $action['MAX_BOUND'] == 'Y');
+		$valueAction = (
+			$value < 0
+			? Sale\OrderDiscountManager::DESCR_VALUE_ACTION_DISCOUNT
+			: Sale\OrderDiscountManager::DESCR_VALUE_ACTION_EXTRA
+		);
 
 		$actionDescription = array(
 			'ACTION_TYPE' => Sale\OrderDiscountManager::DESCR_TYPE_VALUE,
 			'VALUE' => abs($value),
-			'VALUE_ACTION' => (
-			$value < 0
-				? Sale\OrderDiscountManager::DESCR_VALUE_ACTION_DISCOUNT
-				: Sale\OrderDiscountManager::DESCR_VALUE_ACTION_EXTRA
-			),
+			'VALUE_ACTION' => $valueAction
 		);
 		switch ($unit)
 		{
@@ -441,11 +443,16 @@ class Actions
 		if ($unit == self::VALUE_TYPE_SUMM || $unit == self::VALUE_TYPE_FIX)
 		{
 			if ($currency != $orderCurrency)
+				/** @noinspection PhpMethodOrClassCallIsNotCaseSensitiveInspection */
 				$value = \CCurrencyRates::convertCurrency($value, $currency, $orderCurrency);
 			if ($unit == self::VALUE_TYPE_SUMM)
 			{
 				$value = static::getPercentByValue($applyBasket, $value);
-				if ($value > 100)
+				if (
+					($valueAction == Sale\OrderDiscountManager::DESCR_VALUE_ACTION_DISCOUNT && ($value >= 0 || $value < -100))
+					||
+					($valueAction == Sale\OrderDiscountManager::DESCR_VALUE_ACTION_EXTRA && $value <= 0)
+				)
 					return;
 				$unit = self::VALUE_TYPE_PERCENT;
 			}
@@ -543,6 +550,7 @@ class Actions
 				$actionDescription['VALUE_TYPE'] = Sale\OrderDiscountManager::DESCR_VALUE_TYPE_CURRENCY;
 				$actionDescription['VALUE_UNIT'] = $currency;
 				if ($currency != $orderCurrency)
+					/** @noinspection PhpMethodOrClassCallIsNotCaseSensitiveInspection */
 					$value = \CCurrencyRates::convertCurrency($value, $currency, $orderCurrency);
 				break;
 		}
@@ -849,22 +857,22 @@ class Actions
 	 */
 	public static function getPercentByValue($basket, $value)
 	{
-		$summ = 0.0;
+		$summ = 0;
 		switch (static::getPercentMode())
 		{
 			case self::PERCENT_FROM_BASE_PRICE:
-				foreach ($basket as &$basketRow)
+				foreach ($basket as $basketRow)
 					$summ += (float)$basketRow['BASE_PRICE'] * (float)$basketRow['QUANTITY'];
 				unset($basketRow);
 				break;
 			case self::PERCENT_FROM_CURRENT_PRICE:
-				foreach ($basket as &$basketRow)
+				foreach ($basket as $basketRow)
 					$summ += (float)$basketRow['PRICE'] * (float)$basketRow['QUANTITY'];
 				unset($basketRow);
 				break;
 		}
 
-		return ($summ > 0 ? ($value * 100) / $summ : 0.0);
+		return static::roundZeroValue($summ > 0 ? ($value * 100) / $summ : 0);
 	}
 
 	/**

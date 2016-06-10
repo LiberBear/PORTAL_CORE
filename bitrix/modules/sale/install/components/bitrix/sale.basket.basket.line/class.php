@@ -183,13 +183,30 @@ class SaleBasketLineComponent extends CBitrixComponent
 		else
 		{
 			if($this->arParams["SHOW_TOTAL_PRICE"] == "Y")
-				$this->arResult = $this->getTotalPrice() + $this->arResult;
+			{
+
+				if (isset($_SESSION["SALE_BASKET_PRICE"]) && array_key_exists(SITE_ID, $_SESSION["SALE_BASKET_PRICE"]))
+				{
+					$totalPrice = floatval($_SESSION["SALE_BASKET_PRICE"][SITE_ID]);
+				}
+				else
+				{
+					$totalPrice = $this->getTotalPrice();
+				}
+
+				$this->arResult["TOTAL_PRICE"] = $totalPrice;
+			}
+
+			if (isset($_SESSION["SALE_BASKET_NUM_PRODUCTS"]) && array_key_exists(SITE_ID, $_SESSION["SALE_BASKET_NUM_PRODUCTS"]))
+			{
+				$numProducts = intval($_SESSION["SALE_BASKET_NUM_PRODUCTS"][SITE_ID]);
+			}
 			else
 			{
-				$this->arResult["NUM_PRODUCTS"] = isset($_SESSION["SALE_BASKET_NUM_PRODUCTS"][SITE_ID]) // && $_SESSION["SALE_BASKET_NUM_PRODUCTS"][SITE_ID] !== 0)
-					? $_SESSION["SALE_BASKET_NUM_PRODUCTS"][SITE_ID]
-					: $this->getNumProducts();
+				$numProducts = $this->getNumProducts();
 			}
+
+			$this->arResult["NUM_PRODUCTS"] = $numProducts;
 		}
 
 		if($this->arParams["SHOW_TOTAL_PRICE"] == "Y")
@@ -279,10 +296,7 @@ class SaleBasketLineComponent extends CBitrixComponent
 			$totalPrice = $arOrder['ORDER_PRICE'];
 		}
 
-		return array(
-			'NUM_PRODUCTS' => count($arBasketItems),
-			'TOTAL_PRICE' => $totalPrice
-		);
+		return $totalPrice;
 	}
 
 	private function calculateOrder($arBasketItems)
@@ -411,10 +425,28 @@ class SaleBasketLineComponent extends CBitrixComponent
 				$arOrder = $this->calculateOrder($arResult["CATEGORIES"]["READY"]);
 				$arResult["CATEGORIES"]["READY"] = $arOrder['BASKET_ITEMS'];
 
+				if (!empty($arResult["CATEGORIES"]["DELAY"]) && is_array($arResult["CATEGORIES"]["DELAY"]))
+				{
+					$orderDelay = $this->calculateOrder($arResult["CATEGORIES"]["DELAY"]);
+					$arResult["CATEGORIES"]["DELAY"] = $orderDelay['BASKET_ITEMS'];
+				}
+
+
 				foreach ($arResult["CATEGORIES"]["READY"] as &$arItem)
 				{
 					$arItem["SUM"] = CCurrencyLang::CurrencyFormat($arItem["PRICE"] * $arItem["QUANTITY"], $arItem["CURRENCY"], true);
 					$arItem["PRICE_FMT"] = CCurrencyLang::CurrencyFormat($arItem["PRICE"], $arItem["CURRENCY"], true);
+				}
+				unset($arItem);
+
+				if (!empty($arResult["CATEGORIES"]["DELAY"]) && is_array($arResult["CATEGORIES"]["DELAY"]))
+				{
+					foreach ($arResult["CATEGORIES"]["DELAY"] as &$arItem)
+					{
+						$arItem["SUM"] = CCurrencyLang::CurrencyFormat($arItem["PRICE"] * $arItem["QUANTITY"], $arItem["CURRENCY"], true);
+						$arItem["PRICE_FMT"] = CCurrencyLang::CurrencyFormat($arItem["PRICE"], $arItem["CURRENCY"], true);
+					}
+					unset($arItem);
 				}
 
 				$arResult["TOTAL_PRICE"] = $arOrder['ORDER_PRICE'];
@@ -422,7 +454,7 @@ class SaleBasketLineComponent extends CBitrixComponent
 		}
 
 		return array(
-			'NUM_PRODUCTS' => count($arBasketItems),
+			'NUM_PRODUCTS' => count($arResult["CATEGORIES"]["READY"]),
 			'TOTAL_PRICE'  => $arResult["TOTAL_PRICE"],
 			'CATEGORIES'   => $arResult["CATEGORIES"],
 		);
@@ -476,6 +508,154 @@ class SaleBasketLineComponent extends CBitrixComponent
 				$arItem["PICTURE_SRC"] = $arFileTmp["src"];
 			}
 		}
+	}
+
+	/**
+	 * @param \Bitrix\Main\Event $event
+	 *
+	 * @return \Bitrix\Main\EventResult
+	 */
+	public function onSaleBasketItemEntitySaved(\Bitrix\Main\Event $event)
+	{
+		$basketItem = $event->getParameter('ENTITY');
+
+		$originalValues = $event->getParameter('VALUES');
+		if ((!$basketItem instanceof \Bitrix\Sale\BasketItem))
+		{
+			return new \Bitrix\Main\EventResult( \Bitrix\Main\EventResult::SUCCESS, null, 'sale');
+		}
+
+		/** @var \Bitrix\Sale\Basket $basket */
+		if ((!$basket = $basketItem->getCollection())
+			|| ($basketItem->getFUserId() != \Bitrix\Sale\Fuser::getId(true))
+		)
+		{
+			return new \Bitrix\Main\EventResult( \Bitrix\Main\EventResult::SUCCESS, null, 'sale');
+		}
+
+		if ($basketItem->isChanged())
+		{
+			$updateSessionData = false;
+			$updateQuantity = false;
+
+			if (!$basket->getOrder())
+			{
+				if (!$updateSessionData && array_key_exists('QUANTITY', $originalValues))
+				{
+					$updateSessionData = true;
+				}
+
+				if (!$updateSessionData && (array_key_exists('PRICE', $originalValues) && \Bitrix\Sale\PriceMaths::roundPrecision($originalValues['PRICE']) !== \Bitrix\Sale\PriceMaths::roundPrecision($basketItem->getPrice())))
+				{
+					$updateSessionData = true;
+				}
+
+				if (!$updateSessionData && (array_key_exists('DISCOUNT_PRICE', $originalValues) && \Bitrix\Sale\PriceMaths::roundPrecision($originalValues['DISCOUNT_PRICE']) !== \Bitrix\Sale\PriceMaths::roundPrecision($basketItem->getDiscountPrice())))
+				{
+					$updateSessionData = true;
+				}
+			}
+
+			if (!$updateSessionData && (array_key_exists('ORDER_ID', $originalValues) && (intval($originalValues['ORDER_ID'])) == 0 && intval($basketItem->getField('ORDER_ID') > 0)))
+			{
+				$updateSessionData = true;
+				$updateQuantity = true;
+			}
+
+
+			if ($updateSessionData)
+			{
+				/** @var \Bitrix\Sale\Basket $allBasket */
+				if ($allBasket = $basketItem->getCollection())
+				{
+
+					$_SESSION["SALE_BASKET_PRICE"][SITE_ID] = static::getActualBasketPrice($allBasket);
+
+					if ($updateQuantity)
+					{
+						$_SESSION["SALE_BASKET_NUM_PRODUCTS"][SITE_ID] = static::getActualBasketQuantity($allBasket);
+					}
+				}
+			}
+		}
+
+		return new \Bitrix\Main\EventResult( \Bitrix\Main\EventResult::SUCCESS, null, 'sale');
+	}
+
+	/**
+	 * @param \Bitrix\Main\Event $event
+	 *
+	 * @return \Bitrix\Main\EventResult
+	 */
+	public function onSaleBasketItemDeleted(\Bitrix\Main\Event $event)
+	{
+		$originalValues = $event->getParameter('VALUES');
+		if ($originalValues['FUSER_ID'] != \Bitrix\Sale\Fuser::getId(true))
+		{
+			return new \Bitrix\Main\EventResult( \Bitrix\Main\EventResult::SUCCESS, null, 'sale');
+		}
+
+		$allBasket = \Bitrix\Sale\Basket::loadItemsForFUser($originalValues['FUSER_ID'], SITE_ID);
+		if ($allBasket)
+		{
+			$_SESSION["SALE_BASKET_PRICE"][SITE_ID] = static::getActualBasketPrice($allBasket);
+		}
+
+		return new \Bitrix\Main\EventResult( \Bitrix\Main\EventResult::SUCCESS, null, 'sale');
+	}
+
+	/**
+	 * @param \Bitrix\Sale\Basket $basket
+	 *
+	 * @return float
+	 */
+	protected static function getActualBasketPrice(\Bitrix\Sale\Basket $basket)
+	{
+		$basketPrice = 0;
+
+		/** @var \Bitrix\Sale\Basket $basketOrderable */
+		$basketOrderable = $basket->getOrderableItems();
+		foreach ($basketOrderable as $basketItem)
+		{
+			if (intval($basketItem->getField('ORDER_ID')) > 0)
+			{
+				continue;
+			}
+
+			if (!$basketItem->isBundleChild())
+			{
+				$basketPrice += $basketItem->getFinalPrice();
+			}
+		}
+
+		return $basketPrice;
+	}
+
+	/**
+	 * @param \Bitrix\Sale\Basket $basket
+	 *
+	 * @return float
+	 */
+	protected static function getActualBasketQuantity(\Bitrix\Sale\Basket $basket)
+	{
+		$basketQuantity = 0;
+
+		/** @var \Bitrix\Sale\Basket $basketOrderable */
+		$basketOrderable = $basket->getOrderableItems();
+		foreach ($basketOrderable as $basketItem)
+		{
+			if (intval($basketItem->getField('ORDER_ID')) > 0)
+			{
+				continue;
+			}
+
+			if (!$basketItem->isBundleChild())
+			{
+				$basketQuantity++;
+			}
+		}
+
+		return $basketQuantity;
 	}
 }
 

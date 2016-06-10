@@ -63,6 +63,21 @@ if (CModule::IncludeModule("sale"))
 			$arOrder['PRICE_DELIVERY'] = $data['PRICE_DELIVERY'];
 		}
 
+		$shipmentRes = \Bitrix\Sale\Shipment::getList(array(
+			'select' => array( 'DATE_ALLOW_DELIVERY', 'EMP_ALLOW_DELIVERY_ID', 'DATE_DEDUCTED', 'EMP_ALLOW_DELIVERY_ID', 'TRACKING_NUMBER', 'DELIVERY_DOC_NUM', 'DELIVERY_DOC_DATE' ),
+			'filter' => array(
+				'ORDER_ID' => $arOrder['ID'],
+				'SYSTEM' => 'N'
+			),
+			'order' => array('ID' => 'DESC'),
+			'limit' => 1
+		));
+
+		if ($shipmentData = $shipmentRes->fetch())
+		{
+			$arOrder = array_merge($arOrder, $shipmentData);
+		}
+
 		$rep_file_name = GetRealPath2Report($doc.".php");
 		if (strlen($rep_file_name)<=0)
 		{

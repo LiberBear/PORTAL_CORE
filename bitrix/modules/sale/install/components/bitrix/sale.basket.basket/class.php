@@ -5,6 +5,7 @@ use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Loader;
 use Bitrix\Highloadblock as HL;
 use Bitrix\Sale\DiscountCouponsManager;
+use Bitrix\Sale\PriceMaths;
 
 class CBitrixBasketComponent extends CBitrixComponent
 {
@@ -104,7 +105,7 @@ class CBitrixBasketComponent extends CBitrixComponent
 		if (!Loader::includeModule('sale'))
 			return false;
 		DiscountCouponsManager::init();
-		parent::setFramemode(false);
+		$this->setFramemode(false);
 		$this->weightKoef = $this->arParams["WEIGHT_KOEF"];
 		$this->weightUnit = $this->arParams["WEIGHT_UNIT"];
 		$this->columns = $this->arParams["COLUMNS_LIST"];
@@ -300,15 +301,30 @@ class CBitrixBasketComponent extends CBitrixComponent
 
 			if (array_key_exists($arItem["PRODUCT_ID"], $arSku2Parent)) // if sku element doesn't have value of some property - we'll show parent element value instead
 			{
+				$replaceImageFields = true;
 				$arFieldsToFill = array_merge($this->arCustomSelectFields, $arImgFields); // fields to be filled with parents' values if empty
+
+				$parentId = $arSku2Parent[$arItem["PRODUCT_ID"]];
+
+				foreach($arImgFields as $imageFieldName)
+				{
+					if (!empty($arProductData[$arItem["PRODUCT_ID"]][$imageFieldName]))
+					{
+						$replaceImageFields = false;
+						$arItem[$imageFieldName] = $arProductData[$arItem["PRODUCT_ID"]][$imageFieldName];
+					}
+				}
+
 				foreach ($arFieldsToFill as $field)
 				{
 					$fieldVal = (in_array($field, $arImgFields)) ? $field : $field."_VALUE";
-					$parentId = $arSku2Parent[$arItem["PRODUCT_ID"]];
 
 					if ((!isset($arItem[$fieldVal]) || (isset($arItem[$fieldVal]) && strlen($arItem[$fieldVal]) == 0))
 						&& (isset($arProductData[$parentId][$fieldVal]) && !empty($arProductData[$parentId][$fieldVal]))) // can be array or string
 					{
+						if (in_array($field, $arImgFields) && !$replaceImageFields)
+							continue;
+
 						$arItem[$fieldVal] = $arProductData[$parentId][$fieldVal];
 					}
 				}
@@ -416,7 +432,7 @@ class CBitrixBasketComponent extends CBitrixComponent
 			elseif ($arItem["CAN_BUY"] == "Y" && $arItem["DELAY"] == "Y")
 			{
 				$bShowDelay = true;
-
+				$arItem["SUM"] = CCurrencyLang::CurrencyFormat($arItem["PRICE"] * $arItem["QUANTITY"], $arItem["CURRENCY"], true);
 				$arResult["ITEMS"]["DelDelCanBuy"][] = $arItem;
 			}
 			elseif ($arItem["CAN_BUY"] == "N" && $arItem["SUBSCRIBE"] == "Y")
@@ -463,7 +479,7 @@ class CBitrixBasketComponent extends CBitrixComponent
 			{
 				if (in_array($fieldName, $roundOrderFields))
 				{
-					$arOrder[$fieldName] = \Bitrix\Sale\BasketItem::roundPrecision($arOrder[$fieldName]);
+					$arOrder[$fieldName] = PriceMaths::roundPrecision($arOrder[ $fieldName ]);
 				}
 			}
 		}
@@ -480,7 +496,7 @@ class CBitrixBasketComponent extends CBitrixComponent
 					{
 						if (isset($basketItem[$fieldName]))
 						{
-							$basketItem[$fieldName] = \Bitrix\Sale\BasketItem::roundPrecision($basketItem[$fieldName]);
+							$basketItem[$fieldName] = PriceMaths::roundPrecision($basketItem[ $fieldName ]);
 						}
 					}
 				}
@@ -488,7 +504,7 @@ class CBitrixBasketComponent extends CBitrixComponent
 				$arOrder['ORDER_PRICE'] += $basketItem['PRICE'] * $basketItem['QUANTITY'];
 			}
 
-			$arOrder['ORDER_PRICE'] = \Bitrix\Sale\BasketItem::roundPrecision($arOrder['ORDER_PRICE']);
+			$arOrder['ORDER_PRICE'] = PriceMaths::roundPrecision($arOrder['ORDER_PRICE']);
 		}
 
 		$allSum = 0;
@@ -508,14 +524,14 @@ class CBitrixBasketComponent extends CBitrixComponent
 			$allVATSum += roundEx($arOneItem["PRICE_VAT_VALUE"] * $arOneItem["QUANTITY"], SALE_VALUE_PRECISION);
 			$arOneItem["PRICE_FORMATED"] = CCurrencyLang::CurrencyFormat($arOneItem["PRICE"], $arOneItem["CURRENCY"], true);
 
-			$arOneItem["FULL_PRICE"] = \Bitrix\Sale\Payment::roundByFormatCurrency($arOneItem["PRICE"] + $arOneItem["DISCOUNT_PRICE"], $arOneItem["CURRENCY"]);
+			$arOneItem["FULL_PRICE"] = PriceMaths::roundByFormatCurrency($arOneItem["PRICE"] + $arOneItem["DISCOUNT_PRICE"], $arOneItem["CURRENCY"]);
 			$arOneItem["FULL_PRICE_FORMATED"] = CCurrencyLang::CurrencyFormat($arOneItem["FULL_PRICE"], $arOneItem["CURRENCY"], true);
 
 			$arOneItem["SUM"] = CCurrencyLang::CurrencyFormat($arOneItem["PRICE"] * $arOneItem["QUANTITY"], $arOneItem["CURRENCY"], true);
 
 			if (0 < doubleval($arOneItem["DISCOUNT_PRICE"] + $arOneItem["PRICE"]))
 			{
-				$arOneItem["DISCOUNT_PRICE_PERCENT"] = \Bitrix\Sale\Payment::roundByFormatCurrency($arOneItem["DISCOUNT_PRICE"]*100 / ($arOneItem["DISCOUNT_PRICE"] + $arOneItem["PRICE"]), $arOneItem["CURRENCY"]);
+				$arOneItem["DISCOUNT_PRICE_PERCENT"] = PriceMaths::roundByFormatCurrency($arOneItem["DISCOUNT_PRICE"] * 100 / ($arOneItem["DISCOUNT_PRICE"] + $arOneItem["PRICE"]), $arOneItem["CURRENCY"]);
 			}
 			else
 			{
@@ -537,7 +553,7 @@ class CBitrixBasketComponent extends CBitrixComponent
 			}
 		}
 
-		$arResult["allSum"] = \Bitrix\Sale\Payment::roundByFormatCurrency($allSum, $allCurrency);
+		$arResult["allSum"] = PriceMaths::roundByFormatCurrency($allSum, $allCurrency);
 		$arResult["allWeight"] = $allWeight;
 		$arResult["allWeight_FORMATED"] = roundEx(doubleval($allWeight/$this->weightKoef), SALE_WEIGHT_PRECISION)." ".$this->weightUnit;
 		$arResult["allSum_FORMATED"] = CCurrencyLang::CurrencyFormat($allSum, $allCurrency, true);
@@ -546,7 +562,7 @@ class CBitrixBasketComponent extends CBitrixComponent
 
 		if ($this->priceVatShowValue == 'Y')
 		{
-			$arResult["allVATSum"] = \Bitrix\Sale\Payment::roundByFormatCurrency($allVATSum, $allCurrency);
+			$arResult["allVATSum"] = PriceMaths::roundByFormatCurrency($allVATSum, $allCurrency);
 			$arResult["allVATSum_FORMATED"] = CCurrencyLang::CurrencyFormat($allVATSum, $allCurrency, true);
 			$arResult["allSum_wVAT_FORMATED"] = CCurrencyLang::CurrencyFormat(doubleval($arResult["allSum"]-$allVATSum), $allCurrency, true);
 		}

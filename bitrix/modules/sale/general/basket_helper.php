@@ -201,11 +201,11 @@ class CSaleBasketHelper
 
 		if (isset($basketItemData['VAT_INCLUDED']) && $basketItemData['VAT_INCLUDED'] === 'N')
 		{
-			$vat = roundEx(($basketItemData['PRICE'] * $basketItemData['QUANTITY'] * $basketItemData['VAT_RATE']), SALE_VALUE_PRECISION);
+			$vat = \Bitrix\Sale\PriceMaths::roundPrecision(($basketItemData['PRICE'] * $basketItemData['QUANTITY'] * $basketItemData['VAT_RATE']));
 		}
 		else
 		{
-			$vat = roundEx(($basketItemData['PRICE'] * $basketItemData['QUANTITY'] * $basketItemData['VAT_RATE'] / ($basketItemData['VAT_RATE'] + 1)), SALE_VALUE_PRECISION);
+			$vat = \Bitrix\Sale\PriceMaths::roundPrecision(($basketItemData['PRICE'] * $basketItemData['QUANTITY'] * $basketItemData['VAT_RATE'] / ($basketItemData['VAT_RATE'] + 1)));
 		}
 
 		return $vat;

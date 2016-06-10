@@ -4,6 +4,7 @@ namespace Bitrix\Sale\PaySystem;
 
 use Bitrix\Main\Entity\EntityError;
 use Bitrix\Main\Error;
+use Bitrix\Main\Event;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\NotSupportedException;
 use Bitrix\Main\Request;
@@ -19,6 +20,8 @@ Loc::loadMessages(__FILE__);
 
 class Service
 {
+	const EVENT_ON_BEFORE_PAYMENT_PAID = 'OnSalePsServiceProcessRequestBeforePaid';
+
 	/** @var ServiceHandler|IHold|IRefund|IPrePayable|ICheckable|IPayable $handler */
 	private $handler = null;
 
@@ -218,6 +221,15 @@ class Service
 
 			if ($status !== null)
 			{
+				$event = new Event('sale', self::EVENT_ON_BEFORE_PAYMENT_PAID,
+					array(
+						'payment' => $payment,
+						'status' => $status,
+						'pay_system_id' => $this->getField('ID')
+					)
+				);
+				$event->send();
+
 				$paidResult = $payment->setPaid($status);
 				if (!$paidResult->isSuccess())
 				{
@@ -608,5 +620,22 @@ class Service
 	public function isClone()
 	{
 		return $this->isClone;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isCustom()
+	{
+		return in_array($this->handler->getHandlerType(), array('CUSTOM', 'USER'));
+	}
+
+	/**
+	 * @param Payment $payment
+	 * @return array
+	 */
+	public function getParamsBusValue(Payment $payment)
+	{
+		return $this->handler->getParamsBusValue($payment);
 	}
 }

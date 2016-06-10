@@ -182,7 +182,8 @@ class CWebDavDiskComponent extends CBitrixComponent
 					CModule::includeModule('disk');
 
 
-				$quota = CDiskQuota::GetDiskQuota();
+				$diskQuota = new CDiskQuota;
+				$quota = $diskQuota->GetDiskQuota();
 				$this->arResult['showDiskQuota'] = false; //$quota !== true; //now without quota
 				$this->arResult['diskSpace'] = (float)COption::GetOptionInt('main', 'disk_space')*1024*1024;
 				$this->arResult['quota'] = $quota;

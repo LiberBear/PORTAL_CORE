@@ -370,7 +370,7 @@ if ($arParams["SET_NAV_CHAIN"] == "Y")
 		$GLOBALS["APPLICATION"]->AddChainItem(GetMessage("WD_ORIGINAL").": ".htmlspecialcharsEx($arResult["ELEMENT_ORIGINAL"]["~NAME"]),
 		WDAddPageParams(
 			CComponentEngine::MakePathFromTemplate($arParams["~ELEMENT_URL"],
-			array("PATH" => $arResult["ELEMENT_ORIGINAL"]["PATH"], "SECTION_ID" => intVal($$arResult["ELEMENT_ORIGINAL"]["IBLOCK_SECTION_ID"]), "ELEMENT_ID" => $arResult["ELEMENT_ORIGINAL"]["ID"], "ELEMENT_NAME" => $arResult["ELEMENT_ORIGINAL"]["~NAME"]))
+			array("PATH" => $arResult["ELEMENT_ORIGINAL"]["PATH"], "SECTION_ID" => intVal($arResult["ELEMENT_ORIGINAL"]["IBLOCK_SECTION_ID"]), "ELEMENT_ID" => $arResult["ELEMENT_ORIGINAL"]["ID"], "ELEMENT_NAME" => $arResult["ELEMENT_ORIGINAL"]["~NAME"]))
 			, array($arParams["FORM_ID"]."_active_tab" => "tab_version")));
 	}
 	$GLOBALS["APPLICATION"]->AddChainItem(htmlspecialcharsEx($arResult["ELEMENT"]["~NAME"]), $arResult["ELEMENT"]["URL"]["VIEW"]);

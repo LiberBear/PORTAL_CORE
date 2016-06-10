@@ -142,7 +142,7 @@ echo htmlspecialcharsbx($arPaySys["NAME"]);
 $priceTotal = 0;
 $bUseVat = false;
 $arBasketOrder = array();
-for ($i = 0; $i < count($arBasketIDs); $i++)
+for ($i = 0, $max = count($arBasketIDs); $i < $max; $i++)
 {
 	$arBasketTmp = CSaleBasket::GetByID($arBasketIDs[$i]);
 
@@ -236,7 +236,7 @@ ClearVars("b_");
 			{
 				$basket_tax = CSaleOrderTax::CountTaxes($b_AMOUNT*$arQuantities[$mi], $arTaxList, $arOrder["CURRENCY"]);
 
-				for ($i = 0; $i < count($arTaxList); $i++)
+				for ($i = 0, $max = count($arTaxList); $i < $max; $i++)
 				{
 					if ($arTaxList[$i]["IS_IN_PRICE"] == "Y")
 					{
@@ -316,12 +316,13 @@ ClearVars("b_");
 
 					if ($deliveryService = $res->fetch())
 						if(strlen($deliveryService["NAME"]) > 0)
-							echo "(".$deliveryService["NAME"].")";
+							echo "(".htmlspecialcharsEx($deliveryService["NAME"]).")";
 
 					$basket_tax = CSaleOrderTax::CountTaxes(DoubleVal($arOrder["PRICE_DELIVERY"]), $arTaxList, $arOrder["CURRENCY"]);
 					$nds_val = 0;
 					$item_price = DoubleVal($arOrder["PRICE_DELIVERY"]);
-					for ($i = 0; $i < count($arTaxList); $i++)
+
+					for ($i = 0, $max = count($arTaxList); $i < $max; $i++)
 					{
 						if ($arTaxList[$i]["IS_IN_PRICE"] == "Y")
 						{

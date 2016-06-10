@@ -294,5 +294,12 @@ abstract class BaseServiceHandler
 	{
 		return $this->isClone;
 	}
-	
+
+	/**
+	 * @return string
+	 */
+	public function getHandlerType()
+	{
+		return $this->handlerType;
+	}
 }

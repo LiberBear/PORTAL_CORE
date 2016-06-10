@@ -1371,8 +1371,14 @@ class CBitrixPersonalOrderDetailComponent extends CBitrixComponent
 					{
 						CSalePaySystemAction::InitParamArrays($this->dbResult, $this->requestData["ID"], '', array(), $payment);
 
-						$handlerFolder = \Bitrix\Sale\PaySystem\Manager::getPathToHandlerFolder($service->getField('ACTION_FILE'));
-						$pathToAction = Main\Application::getDocumentRoot().$handlerFolder;
+						// for compatibility
+						$actionFile = $service->getField('ACTION_FILE');
+						$map = CSalePaySystemAction::getOldToNewHandlersMap();
+						$oldHandler = array_search($actionFile, $map);
+						if ($oldHandler !== false && !$service->isCustom())
+							$actionFile = $oldHandler;
+
+						$pathToAction = Main\Application::getDocumentRoot().$actionFile;
 						$pathToAction = str_replace("\\", "/", $pathToAction);
 						while (substr($pathToAction, strlen($pathToAction) - 1, 1) == "/")
 							$pathToAction = substr($pathToAction, 0, strlen($pathToAction) - 1);
@@ -1412,6 +1418,8 @@ class CBitrixPersonalOrderDetailComponent extends CBitrixComponent
 							}
 						}
 					}
+
+					$payment["PAY_SYSTEM"]["PSA_NEW_WINDOW"] = $payment["PAY_SYSTEM"]["NEW_WINDOW"];
 				}
 			}
 		}
@@ -1871,6 +1879,7 @@ class CBitrixPersonalOrderDetailComponent extends CBitrixComponent
 	{
 		try
 		{
+			$this->setFramemode(false);
 			$this->checkRequiredModules();
 
 			$this->checkAuthorized();

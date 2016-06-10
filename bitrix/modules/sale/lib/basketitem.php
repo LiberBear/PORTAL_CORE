@@ -32,6 +32,9 @@ class BasketItem
 	/** @var null|int */
 	protected $parentId = null;
 
+	/** @var bool|null */
+	private $isNew = null;
+
 	/** @var array */
 	protected static $mapFields = array();
 
@@ -137,7 +140,7 @@ class BasketItem
 		$result = new Result();
 		$id = $this->getId();
 		$changedFields = $this->fields->getChangedValues();
-		$isNew = ($id <= 0);
+		$this->isNew = ($id == 0);
 
 
 		if (!empty($changedFields))
@@ -148,7 +151,7 @@ class BasketItem
 			/** @var Event $event */
 			$event = new Event('sale', EventActions::EVENT_ON_BASKET_ITEM_BEFORE_SAVED, array(
 				'ENTITY' => $this,
-				'IS_NEW' => $isNew,
+				'IS_NEW' => $this->isNew(),
 				'VALUES' => $oldEntityValues,
 			));
 			$event->send();
@@ -217,6 +220,8 @@ class BasketItem
 				{
 					$fields['ORDER_ID'] = $orderId;
 					$includedOrderId = true;
+
+					$this->setFieldNoDemand('ORDER_ID', $orderId);
 				}
 			}
 
@@ -273,10 +278,12 @@ class BasketItem
 		{
 
 			$fields['ORDER_ID'] = $this->getParentOrderId();
-			$fields['DATE_INSERT'] = new DateTime();
-			$fields['DATE_UPDATE'] = new DateTime();
+			$this->setFieldNoDemand('ORDER_ID', $fields['ORDER_ID']);
 
+			$fields['DATE_INSERT'] = new DateTime();
 			$this->setFieldNoDemand('DATE_INSERT', $fields['DATE_INSERT']);
+
+			$fields['DATE_UPDATE'] = new DateTime();
 			$this->setFieldNoDemand('DATE_UPDATE', $fields['DATE_UPDATE']);
 
 			if (!$this->isBundleChild() && (!isset($fields["FUSER_ID"]) || intval($fields["FUSER_ID"]) <= 0))
@@ -320,7 +327,9 @@ class BasketItem
 				$fields['LID'] = $parentBasketItem->getField('LID');
 
 				if (!isset($fields["FUSER_ID"]) || intval($fields["FUSER_ID"]) <= 0)
+				{
 					$fields['FUSER_ID'] = intval($parentBasketItem->getField('FUSER_ID'));
+				}
 
 			}
 
@@ -386,7 +395,7 @@ class BasketItem
 			$result->setId($id);
 		}
 
-		if ($isNew || !empty($changedFields))
+		if ($this->isNew() || !empty($changedFields))
 		{
 			/** @var array $oldEntityValues */
 			$oldEntityValues = $this->fields->getOriginalValues();
@@ -394,7 +403,7 @@ class BasketItem
 			/** @var Event $event */
 			$event = new Event('sale', EventActions::EVENT_ON_BASKET_ITEM_SAVED, array(
 				'ENTITY' => $this,
-				'IS_NEW' => $isNew,
+				'IS_NEW' => $this->isNew(),
 				'VALUES' => $oldEntityValues,
 			));
 			$event->send();
@@ -446,7 +455,7 @@ class BasketItem
 
 				$itemsFromDb = array();
 
-				if (!$isNew)
+				if (!$this->isNew())
 				{
 					$itemsFromDbList = Internals\BasketTable::getList(
 						array(
@@ -1199,6 +1208,16 @@ class BasketItem
 		
 
 		return $basketItemClone;
+	}
+
+
+	/**
+	 * @internal
+	 * @return null|bool
+	 */
+	public function isNew()
+	{
+		return $this->isNew;
 	}
 
 }

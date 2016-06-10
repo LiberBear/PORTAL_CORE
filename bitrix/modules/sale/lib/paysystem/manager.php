@@ -26,7 +26,8 @@ final class Manager
 	/**
 	 * @var array
 	 */
-	protected static $handlerDirectories = array(
+	private static $handlerDirectories = array(
+		'CUSTOM' => '',
 		'LOCAL' => '/local/php_interface/include/sale_payment/',
 		'SYSTEM' => '/bitrix/modules/sale/handlers/paysystem/',
 		'SYSTEM_OLD' => '/bitrix/modules/sale/payment/'
@@ -67,7 +68,7 @@ final class Manager
 			'filter' => array('ID' => $id)
 		);
 
-		$dbRes = Manager::getList($params);
+		$dbRes = self::getList($params);
 		return $dbRes->fetch();
 	}
 
@@ -82,7 +83,7 @@ final class Manager
 			'filter' => array('CODE' => $code)
 		);
 
-		$dbRes = Manager::getList($params);
+		$dbRes = self::getList($params);
 		return $dbRes->fetch();
 	}
 
@@ -94,17 +95,13 @@ final class Manager
 	{
 		$documentRoot = Application::getDocumentRoot();
 
-		$params = array(
-			'select' => array('*')
-		);
-
-		$items = self::getList($params);
+		$items = self::getList(array('select' => array('*')));
 
 		while ($item = $items->fetch())
 		{
 			$name = $item['ACTION_FILE'];
 
-			foreach (Manager::getHandlerDirectories() as $type => $path)
+			foreach (self::getHandlerDirectories() as $type => $path)
 			{
 				if (File::isFileExists($documentRoot.$path.$name.'/handler.php'))
 				{

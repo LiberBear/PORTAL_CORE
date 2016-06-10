@@ -9,6 +9,7 @@ use Bitrix\Main\Type\DateTime;
 use Bitrix\Sale\Payment;
 use Bitrix\Sale\PaySystem;
 use Bitrix\Sale\PaySystem\ServiceResult;
+use Bitrix\Sale\PriceMaths;
 
 Loc::loadMessages(__FILE__);
 
@@ -174,8 +175,8 @@ class WebMoneyHandler extends PaySystem\ServiceHandler
 	 */
 	protected function checkSum(Payment $payment, Request $request)
 	{
-		$paymentShouldPay = Payment::roundByFormatCurrency($this->getBusinessValue($payment, 'PAYMENT_SHOULD_PAY'), $payment->getField('CURRENCY'));
-		$lmiPaymentAmount = Payment::roundByFormatCurrency($request->get('LMI_PAYMENT_AMOUNT'), $payment->getField('CURRENCY'));
+		$paymentShouldPay = PriceMaths::roundByFormatCurrency($this->getBusinessValue($payment, 'PAYMENT_SHOULD_PAY'), $payment->getField('CURRENCY'));
+		$lmiPaymentAmount = PriceMaths::roundByFormatCurrency($request->get('LMI_PAYMENT_AMOUNT'), $payment->getField('CURRENCY'));
 
 		return $paymentShouldPay == $lmiPaymentAmount;
 	}

@@ -343,7 +343,7 @@ BizProcActivity = function()
 				JSToPHP(arWorkflowVariables, 'arWorkflowVariables')  + '&' +
 				JSToPHP(Array(rootActivity.Serialize()), 'arWorkflowTemplate') + '&' +
 				'current_site_id=' + encodeURIComponent(CURRENT_SITE_ID) + '&' +
-				'sessid=' + phpVars.bitrix_sessid,
+				'sessid=' + BX.bitrix_sessid(),
 			'height': 500,
 			'width': 800
 			})).Show();

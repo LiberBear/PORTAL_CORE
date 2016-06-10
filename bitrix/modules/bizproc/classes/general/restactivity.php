@@ -115,22 +115,22 @@ class CBPRestActivity
 
 		if ($userId > 0)
 		{
-			$session = CRestEventSession::Get();
+			$session = \Bitrix\Rest\Event\Session::get();
 			if(!$session)
 			{
 				throw new Exception('Rest session error');
 			}
 
-			$auth = CRestUtil::getAuthForEvent(
-				$activityData['APP_ID'],
-				$userId,
-				array(
-					'WORKFLOW_ID' => $this->getWorkflowInstanceId(),
-					'ACTIVITY_NAME' => $this->name,
-					'CODE' => $activityData['CODE'],
-					'EVENT_SESSION' => $session,
-				)
-			);
+			$auth = \Bitrix\Rest\Event\Sender::getAuth($activityData['APP_ID'], $userId, array(
+				'WORKFLOW_ID' => $this->getWorkflowInstanceId(),
+				'ACTIVITY_NAME' => $this->name,
+				'CODE' => $activityData['CODE'],
+				'EVENT_SESSION' => $session,
+			), array(
+				"sendAuth" => true,
+				"sendRefreshToken" => false,
+				"category" => Sqs::CATEGORY_BIZPROC
+			));
 		}
 
 		$this->eventId = \Bitrix\Main\Security\Random::getString(32, true);

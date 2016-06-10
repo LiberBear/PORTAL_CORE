@@ -11,8 +11,8 @@ function ShowExtLinkDialog(urlGetExtLink, urlGetDialogDiv)
 			offsetTop: 0,
 			draggable: {restrict:true},
 			closeByEsc: true,
-			titleBar: {content: BX.create("span", { props: {className: "ext-link-title-div"}, html: BX.message('WD_EXT_LINKS_DIALOG_TITLE' )})},
-			closeIcon: { right : "12px", top : "10px"},
+			titleBar: BX.create("span", { props: {className: "ext-link-title-div"}, html: BX.message('WD_EXT_LINKS_DIALOG_TITLE' )}),
+			closeIcon : true,
 			buttons: [
 				new BX.PopupWindowButton({
 					text: BX.message('WD_EXT_LINKS_DIALOG_GET'),

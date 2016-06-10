@@ -371,15 +371,15 @@ class ShipmentCollection
 					if ($isChanged)
 					{
 						OrderHistory::addLog('SHIPMENT', $order->getId(), $isNew ? 'SHIPMENT_ADD' : 'SHIPMENT_UPDATE', $shipment->getId(), $shipment, $logFields , OrderHistory::SALE_ORDER_HISTORY_LOG_LEVEL_1);
+						
+						OrderHistory::addAction(
+							'SHIPMENT',
+							$order->getId(),
+							"SHIPMENT_SAVED",
+							$shipment->getId(),
+							$shipment
+						);
 					}
-
-					OrderHistory::addAction(
-						'SHIPMENT',
-						$order->getId(),
-						"SHIPMENT_SAVED",
-						$shipment->getId(),
-						$shipment
-					);
 				}
 
 			}

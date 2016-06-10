@@ -215,26 +215,26 @@ class CBPPropertyVariableCondition
 					$arCurrentValues["variable_condition_value_".$i] = $value[2];
 					$arCurrentValues["variable_condition_joiner_".$i] = $value[3];
 
-					if (array_key_exists($value[0], $arWorkflowParameters))
-					{
-						if ($arFieldTypes[$arWorkflowParameters[$value[0]]["Type"]]["BaseType"] == "user" && $arWorkflowParameters[$value[0]]["Type"] != "S:employee")
-						{
-							if (!is_array($arCurrentValues["variable_condition_value_".$i]))
-								$arCurrentValues["variable_condition_value_".$i] = array($arCurrentValues["variable_condition_value_".$i]);
-
-							$arCurrentValues["variable_condition_value_".$i] = CBPHelper::UsersArrayToString($arCurrentValues["variable_condition_value_".$i], $arWorkflowTemplate, $documentType);
-						}
-					}
-					elseif (array_key_exists($value[0], $arWorkflowVariables))
-					{
-						if ($arFieldTypes[$arWorkflowVariables[$value[0]]["Type"]]["BaseType"] == "user" && $arWorkflowParameters[$value[0]]["Type"] != "S:employee")
-						{
-							if (!is_array($arCurrentValues["variable_condition_value_".$i]))
-								$arCurrentValues["variable_condition_value_".$i] = array($arCurrentValues["variable_condition_value_".$i]);
-
-							$arCurrentValues["variable_condition_value_".$i] = CBPHelper::UsersArrayToString($arCurrentValues["variable_condition_value_".$i], $arWorkflowTemplate, $documentType);
-						}
-					}
+					//if (array_key_exists($value[0], $arWorkflowParameters))
+					//{
+					//	if ($arFieldTypes[$arWorkflowParameters[$value[0]]["Type"]]["BaseType"] == "user" && $arWorkflowParameters[$value[0]]["Type"] != "S:employee")
+					//	{
+					//		if (!is_array($arCurrentValues["variable_condition_value_".$i]))
+					//			$arCurrentValues["variable_condition_value_".$i] = array($arCurrentValues["variable_condition_value_".$i]);
+					//
+					//		$arCurrentValues["variable_condition_value_".$i] = CBPHelper::UsersArrayToString($arCurrentValues["variable_condition_value_".$i], $arWorkflowTemplate, $documentType);
+					//	}
+					//}
+					//elseif (array_key_exists($value[0], $arWorkflowVariables))
+					//{
+					//	if ($arFieldTypes[$arWorkflowVariables[$value[0]]["Type"]]["BaseType"] == "user" && $arWorkflowParameters[$value[0]]["Type"] != "S:employee")
+					//	{
+					//		if (!is_array($arCurrentValues["variable_condition_value_".$i]))
+					//			$arCurrentValues["variable_condition_value_".$i] = array($arCurrentValues["variable_condition_value_".$i]);
+					//
+					//		$arCurrentValues["variable_condition_value_".$i] = CBPHelper::UsersArrayToString($arCurrentValues["variable_condition_value_".$i], $arWorkflowTemplate, $documentType);
+					//	}
+					//}
 
 					$i++;
 				}

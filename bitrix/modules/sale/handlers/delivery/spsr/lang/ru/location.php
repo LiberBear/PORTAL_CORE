@@ -12,4 +12,5 @@ $MESS["SALE_DLV_SRV_SPSR_LOC_EX_HM_2"] = "ХАНТЫ-МАНСИЙСКИЙ АВТ
 $MESS["SALE_DLV_SRV_SPSR_LOC_EX_EAO_1"] = "Еврейская авт. обл.";
 $MESS["SALE_DLV_SRV_SPSR_LOC_EX_EAO_2"] = "ЕВРЕЙСКАЯ АВТОНОМНАЯ ОБЛАСТЬ";
 $MESS["SALE_DLV_SRV_SPSR_LOC_INST_ERROR"] = "Ошибка установки соответствия кодов местоположений СПСР";
+$MESS["SALE_DLV_SRV_SPSR_RUSSIA"] = "Россия";
 ?>

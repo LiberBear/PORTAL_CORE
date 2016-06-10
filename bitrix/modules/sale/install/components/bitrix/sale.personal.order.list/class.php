@@ -1006,6 +1006,7 @@ class CBitrixPersonalOrderListComponent extends CBitrixComponent
 	{
 		try
 		{
+			$this->setFramemode(false);
 			$this->checkRequiredModules();
 			$this->checkAuthorized();
 			$this->setTitle();

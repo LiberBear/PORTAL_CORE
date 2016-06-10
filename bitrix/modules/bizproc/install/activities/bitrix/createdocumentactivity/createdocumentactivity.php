@@ -52,6 +52,7 @@ class CBPCreateDocumentActivity
 		if (!is_array($arWorkflowVariables))
 			$arWorkflowVariables = array();
 
+		/** @var CBPDocumentService $documentService */
 		$documentService = $runtime->GetService("DocumentService");
 		$arDocumentFieldsTmp = $documentService->GetDocumentFields($documentType);
 		$documentFieldsAliasesMap = CBPDocument::getDocumentFieldsAliasesMap($arDocumentFieldsTmp);

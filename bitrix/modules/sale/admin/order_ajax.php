@@ -539,8 +539,8 @@ class AjaxProcessor
 		else
 			$result['BASE_PRICE_DELIVERY'] = $order->getDeliveryPrice();
 
-		$result['BASE_PRICE_DELIVERY'] = roundEx($result['BASE_PRICE_DELIVERY'], SALE_VALUE_PRECISION);
-		$result['DELIVERY_PRICE_DISCOUNT'] = roundEx($result["DISCOUNTS_LIST"]['PRICES']['DELIVERY']['PRICE'], SALE_VALUE_PRECISION);
+		$result['BASE_PRICE_DELIVERY'] = Sale\PriceMaths::roundByFormatCurrency($result['BASE_PRICE_DELIVERY'], $order->getCurrency());
+		$result['DELIVERY_PRICE_DISCOUNT'] = Sale\PriceMaths::roundByFormatCurrency($result["DISCOUNTS_LIST"]['PRICES']['DELIVERY']['PRICE'], $order->getCurrency());
 		$result["COUPONS_LIST"] = Admin\OrderEdit::getCouponList($order, false);
 		$result["TOTAL_PRICES"] = Admin\OrderEdit::getTotalPrices($order, $orderBasket, false);
 		$result["DELIVERY_DISCOUNT"] = $result["TOTAL_PRICES"]["DELIVERY_DISCOUNT"];
@@ -1020,9 +1020,9 @@ class AjaxProcessor
 		}
 		else
 		{
-			$result["BASE_PRICE_DELIVERY"] = $deliveryPrice;
-			$shipment->setField('BASE_PRICE_DELIVERY', $deliveryPrice);
-			$this->request['formData']['SHIPMENT'][$index]['BASE_PRICE_DELIVERY'] = $deliveryPrice;
+			$result["PRICE_DELIVERY"] = $deliveryPrice;
+			$shipment->setField('PRICE_DELIVERY', $deliveryPrice);
+			$this->request['formData']['SHIPMENT'][$index]['PRICE_DELIVERY'] = $deliveryPrice;
 		}
 
 		$this->addResultData("SHIPMENT_DATA", $result);

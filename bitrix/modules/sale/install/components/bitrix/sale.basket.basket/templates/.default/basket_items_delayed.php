@@ -1,5 +1,6 @@
 <?if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
 <?
+$bPriceType  = false;
 $bDelayColumn  = false;
 $bDeleteColumn = false;
 $bWeightColumn = false;
@@ -17,6 +18,7 @@ $bPropsColumn  = false;
 						$arHeader["name"] = GetMessage("SALE_".$arHeader["id"]);
 					if (in_array($arHeader["id"], array("TYPE"))) // some header columns are shown differently
 					{
+						$bPriceType = true;
 						continue;
 					}
 					elseif ($arHeader["id"] == "PROPS")
@@ -262,7 +264,7 @@ $bPropsColumn  = false;
 									<div class="current_price"><?=$arItem["PRICE_FORMATED"];?></div>
 								<?endif?>
 
-								<?if (strlen($arItem["NOTES"]) > 0):?>
+								<?if ($bPriceType && strlen($arItem["NOTES"]) > 0):?>
 									<div class="type_price"><?=GetMessage("SALE_TYPE")?></div>
 									<div class="type_price_value"><?=$arItem["NOTES"]?></div>
 								<?endif;?>

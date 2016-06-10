@@ -137,9 +137,11 @@ BX.WebDavFileDialog.openDialog = function(name)
 		offsetTop: parseInt(BX.WebDavFileDialog.obElementBindPopup[name].offsetTop),
 		bindOptions: {forceBindPosition: true},
 		closeByEsc: true,
-		closeIcon : {'top': '10px', 'right': '15px'},
+		closeIcon : true,
 		draggable: BX.WebDavFileDialog.obElementBindPopup[name].node == null? {restrict: true}: false,
-		titleBar: {content: BX.create("span", {html: BX.WebDavFileDialog.obLocalize[name].title, 'props': {'className': 'bx-file-dialog-title'}})},
+		titleBar: BX.WebDavFileDialog.obLocalize[name].title,
+		contentColor : 'white',
+		contentNoPaddings : true,
 		events : {
 			onPopupClose : function() {
 				if (BX.WebDavFileDialog.popupWaitWindow !== null)

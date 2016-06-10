@@ -64,6 +64,8 @@ class CBPMailActivity
 
 		$strMailUserFrom = "";
 		$separator = $this->MailSeparator;
+		if (empty($separator))
+			$separator = static::DEFAULT_SEPARATOR;
 
 		list($mailUserFromArray, $mailUserFromArrayString) = static::ExtractEmails($this->MailUserFromArray);
 

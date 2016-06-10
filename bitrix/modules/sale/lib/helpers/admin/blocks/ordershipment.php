@@ -1479,14 +1479,23 @@ class OrderShipment
 					$result->addErrors($basketResult->getErrors());
 			}
 
-			self::$shipment->setFields(
-				array(
-					'CUSTOM_PRICE_DELIVERY' => $item['CUSTOM_PRICE_DELIVERY'],
-					'PRICE_DELIVERY' => (float)str_replace(',', '.', $item['PRICE_DELIVERY']),
-					'BASE_PRICE_DELIVERY' => self::getDeliveryPrice(self::$shipment),
-					'ALLOW_DELIVERY' => $item['ALLOW_DELIVERY']
-				)
+			$fields = array(
+				'CUSTOM_PRICE_DELIVERY' => $item['CUSTOM_PRICE_DELIVERY'],
+				'ALLOW_DELIVERY' => $item['ALLOW_DELIVERY']
 			);
+
+			if ($item['CUSTOM_PRICE_DELIVERY'] == 'Y')
+			{
+				$fields['PRICE_DELIVERY'] = (float)str_replace(',', '.', $item['PRICE_DELIVERY']);
+				$fields['BASE_PRICE_DELIVERY'] = $fields['PRICE_DELIVERY'];
+			}
+			else
+			{
+				$fields['PRICE_DELIVERY'] = (float)str_replace(',', '.', $item['PRICE_DELIVERY']);
+				$fields['BASE_PRICE_DELIVERY'] = self::getDeliveryPrice(self::$shipment);
+			}
+
+			self::$shipment->setFields($fields);
 
 			if($deliveryService && !empty($item['ADDITIONAL']))
 			{

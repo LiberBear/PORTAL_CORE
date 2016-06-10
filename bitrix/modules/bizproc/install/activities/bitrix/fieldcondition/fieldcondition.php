@@ -243,13 +243,13 @@ class CBPFieldCondition
 					$arCurrentValues["field_condition_value_".$i] = $value[2];
 					$arCurrentValues["field_condition_joiner_".$i] = $value[3];
 
-					if ($arDocumentFieldsTmp[$arCurrentValues["field_condition_field_".$i]]["BaseType"] == "user"
-						&& $arDocumentFieldsTmp[$arCurrentValues["field_condition_field_".$i]]["Type"] != 'S:employee')
-					{
-						if (!is_array($arCurrentValues["field_condition_value_".$i]))
-							$arCurrentValues["field_condition_value_".$i] = array($arCurrentValues["field_condition_value_".$i]);
-						$arCurrentValues["field_condition_value_".$i] = CBPHelper::UsersArrayToString($arCurrentValues["field_condition_value_".$i], $arWorkflowTemplate, $documentType);
-					}
+					//if ($arDocumentFieldsTmp[$arCurrentValues["field_condition_field_".$i]]["BaseType"] == "user"
+					//	&& $arDocumentFieldsTmp[$arCurrentValues["field_condition_field_".$i]]["Type"] != 'S:employee')
+					//{
+					//	if (!is_array($arCurrentValues["field_condition_value_".$i]))
+					//		$arCurrentValues["field_condition_value_".$i] = array($arCurrentValues["field_condition_value_".$i]);
+					//	$arCurrentValues["field_condition_value_".$i] = CBPHelper::UsersArrayToString($arCurrentValues["field_condition_value_".$i], $arWorkflowTemplate, $documentType);
+					//}
 
 					$i++;
 				}

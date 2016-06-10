@@ -398,7 +398,7 @@ if(!empty($filter_delivery_service) && is_array($filter_delivery_service))
 		$runtimeFields["REQUIRED_DLV_PRESENTED"] = array(
 			'data_type' => 'boolean',
 			'expression' => array(
-				'CASE WHEN EXISTS (SELECT ID FROM b_sale_order_delivery WHERE ORDER_ID = %s AND '.$whereExpression.') THEN 1 ELSE 0 END',
+				'CASE WHEN EXISTS (SELECT ID FROM b_sale_order_delivery WHERE ORDER_ID = %s AND SYSTEM="N" AND '.$whereExpression.') THEN 1 ELSE 0 END',
 				'ID'
 			)
 		);
@@ -2274,7 +2274,7 @@ if (!empty($orderList) && is_array($orderList))
 				|| $arOrder["PAYED"] != "Y" && CSaleOrder::CanUserDeleteOrder($orderId, $arUserGroups, $intUserID))
 			{
 				$arActions[] = array("SEPARATOR" => true);
-				$arActions[] = array("ICON"=>"delete", "TEXT"=>Loc::getMessage("SALE_DELETE_DESCR"), "ACTION"=>"if(confirm('".Loc::getMessage('SALE_CONFIRM_DEL_MESSAGE')."')) ".$lAdmin->ActionDoGroup($orderId, "delete"));
+				$arActions[] = array("ICON"=>"delete", "TEXT"=>Loc::getMessage("SALE_DELETE_DESCR"), "ACTION"=>"if(confirm('".Loc::getMessage('SALE_CONFIRM_DEL_MESSAGE')."')) ".$lAdmin->ActionDoGroup($orderId, "delete", GetFilterParams("filter_", false)));
 			}
 		}
 

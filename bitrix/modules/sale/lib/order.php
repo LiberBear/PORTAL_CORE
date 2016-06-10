@@ -1354,7 +1354,7 @@ class Order
 							if ($overPaid > 0)
 							{
 								$userBudget = Internals\UserBudgetPool::getUserBudgetByOrder($this);
-								if (Payment::roundByFormatCurrency($overPaid, $this->getCurrency()) > Payment::roundByFormatCurrency($userBudget, $this->getCurrency()))
+								if (PriceMaths::roundByFormatCurrency($overPaid, $this->getCurrency()) > PriceMaths::roundByFormatCurrency($userBudget, $this->getCurrency()))
 								{
 									$result->addError(new Entity\EntityError(Loc::getMessage('SALE_ORDER_PAYMENT_RETURN_PAID')));
 									return $result;
@@ -1407,7 +1407,7 @@ class Order
 				}
 
 				$userBudget = Internals\UserBudgetPool::getUserBudgetByOrder($this);
-				if (Payment::roundByFormatCurrency($userBudget, $this->getCurrency()) < Payment::roundByFormatCurrency($payment->getSum(), $this->getCurrency()))
+				if (PriceMaths::roundByFormatCurrency($userBudget, $this->getCurrency()) < PriceMaths::roundByFormatCurrency($payment->getSum(), $this->getCurrency()))
 				{
 					$result->addError( new ResultError( Loc::getMessage('SALE_ORDER_PAYMENT_NOT_ENOUGH_USER_BUDGET'), "SALE_ORDER_PAYMENT_NOT_ENOUGH_USER_BUDGET") );
 					return $result;
@@ -1842,7 +1842,7 @@ class Order
 			}
 		}
 
-		$paid = ($finalSumPaid >= 0 && Payment::roundByFormatCurrency($this->getPrice(), $this->getCurrency()) <= Payment::roundByFormatCurrency($finalSumPaid, $this->getCurrency()));
+		$paid = ($finalSumPaid >= 0 && PriceMaths::roundByFormatCurrency($this->getPrice(), $this->getCurrency()) <= PriceMaths::roundByFormatCurrency($finalSumPaid, $this->getCurrency()));
 
 		$this->setFieldNoDemand('PAYED', $paid ? "Y" : "N");
 
@@ -1922,7 +1922,7 @@ class Order
 
 		if ($debitSum > 0)
 		{
-			if (Payment::roundByFormatCurrency($debitSum, $this->getCurrency()) > Payment::roundByFormatCurrency($userBudget, $this->getCurrency()))
+			if (PriceMaths::roundByFormatCurrency($debitSum, $this->getCurrency()) > PriceMaths::roundByFormatCurrency($userBudget, $this->getCurrency()))
 			{
 				$result->addError( new ResultError(Loc::getMessage('SALE_ORDER_PAYMENT_CANCELLED_PAID'), 'SALE_ORDER_PAYMENT_NOT_ENOUGH_USER_BUDGET_SYNCPAID') );
 				return $result;
@@ -2434,8 +2434,8 @@ class Order
 							$basketItemData['PRICE'] = (float)$basketItemData['PRICE'];
 							if ($basketItemData['PRICE'] >= 0 && $basketItem->getPrice() != $basketItemData['PRICE'])
 							{
-								$basketItemData['PRICE'] = BasketItem::roundPrecision($basketItemData['PRICE']);
-								$basketItemData['DISCOUNT_PRICE'] = BasketItem::roundPrecision($basketItemData['DISCOUNT_PRICE']);
+								$basketItemData['PRICE'] = PriceMaths::roundPrecision($basketItemData['PRICE']);
+								$basketItemData['DISCOUNT_PRICE'] = PriceMaths::roundPrecision($basketItemData['DISCOUNT_PRICE']);
 								$basketItem->setField('PRICE', $basketItemData['PRICE']);
 								$basketItem->setField('DISCOUNT_PRICE', $basketItemData['DISCOUNT_PRICE']);
 							}
@@ -2458,7 +2458,7 @@ class Order
 				{
 					if (floatval($data['PRICE_DELIVERY']) >= 0 && !$shipment->isCustomPrice())
 					{
-						$data['PRICE_DELIVERY'] = BasketItem::roundPrecision(floatval($data['PRICE_DELIVERY']));
+						$data['PRICE_DELIVERY'] = PriceMaths::roundPrecision(floatval($data['PRICE_DELIVERY']));
 						$shipment->setField('PRICE_DELIVERY', $data['PRICE_DELIVERY']);
 					}
 
@@ -2470,7 +2470,7 @@ class Order
 
 		if (isset($data['DISCOUNT_PRICE']) && floatval($data['DISCOUNT_PRICE']) >= 0)
 		{
-			$data['DISCOUNT_PRICE'] = BasketItem::roundPrecision(floatval($data['DISCOUNT_PRICE']));
+			$data['DISCOUNT_PRICE'] = PriceMaths::roundPrecision(floatval($data['DISCOUNT_PRICE']));
 			$this->setField('DISCOUNT_PRICE', $data['DISCOUNT_PRICE']);
 		}
 

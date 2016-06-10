@@ -6,7 +6,6 @@ global $DBType;
 
 IncludeModuleLangFile(__FILE__);
 
-
 $GLOBALS["SALE_FIELD_TYPES"] = array(
 	"TEXT" => GetMessage("SALE_TYPE_TEXT"),
 	"CHECKBOX" => GetMessage("SALE_TYPE_CHECKBOX"),
@@ -322,6 +321,9 @@ CModule::AddAutoloadClasses(
 		"\\Bitrix\\Sale\\Internals\\Pool" => "lib/internals/pool.php",
 		"\\Bitrix\\Sale\\Internals\\UserBudgetPool" => "lib/internals/userbudgetpool.php",
 		"\\Bitrix\\Sale\\Internals\\EventsPool" => "lib/internals/eventspool.php",
+		"\\Bitrix\\Sale\\Internals\\Events" => "lib/internals/events.php",
+
+		"\\Bitrix\\Sale\\PriceMaths" => "lib/pricemaths.php",
 
 		"IPaymentOrder" => "lib/internals/paymentinterface.php",
 		"IShipmentOrder" => "lib/internals/shipmentinterface.php",
@@ -840,13 +842,27 @@ function getRatio($arBasketItems)
 {
 	if (Loader::includeModule('catalog'))
 	{
+		static $cacheRatio = array();
 		$map = array();
 		$arElementId = array();
 		foreach ($arBasketItems as $key => $arItem)
 		{
-			$arElementId[$arItem["PRODUCT_ID"]] = $arItem["PRODUCT_ID"];
+			$hash = md5((!empty($arItem['PRODUCT_PROVIDER_CLASS']) ? $arItem['PRODUCT_PROVIDER_CLASS']: "")."|".(!empty($arItem['MODULE']) ? $arItem['MODULE']: "")."|".$arItem["PRODUCT_ID"]);
+
+			if (array_key_exists($hash, $cacheRatio))
+			{
+				$arBasketItems[$key]["MEASURE_RATIO"] = $cacheRatio[$hash];
+			}
+			else
+			{
+				$arElementId[$arItem["PRODUCT_ID"]] = $arItem["PRODUCT_ID"];
+			}
+
 			if (!isset($map[$arItem["PRODUCT_ID"]]))
+			{
 				$map[$arItem["PRODUCT_ID"]] = array();
+			}
+
 			$map[$arItem["PRODUCT_ID"]][] = $key;
 		}
 
@@ -857,8 +873,17 @@ function getRatio($arBasketItems)
 			{
 				if (empty($map[$arRatio["PRODUCT_ID"]]))
 					continue;
+
 				foreach ($map[$arRatio["PRODUCT_ID"]] as $key)
+				{
 					$arBasketItems[$key]["MEASURE_RATIO"] = $arRatio["RATIO"];
+
+					$itemData = $arBasketItems[$key];
+
+					$hash = md5((!empty($itemData['PRODUCT_PROVIDER_CLASS']) ? $itemData['PRODUCT_PROVIDER_CLASS']: "")."|".(!empty($itemData['MODULE']) ? $itemData['MODULE']: "")."|".$itemData["PRODUCT_ID"]);
+					
+					$cacheRatio[$hash] = $arRatio["RATIO"];
+				}
 				unset($key);
 			}
 			unset($arRatio, $dbRatio);
